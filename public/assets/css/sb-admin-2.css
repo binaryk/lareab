@@ -1,0 +1,637 @@
+/*!
+ * Start Bootstrap - SB Admin 2 Bootstrap Admin Theme (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+body {
+    background-color: #f8f8f8;
+}
+
+#wrapper {
+    width: 100%;
+}
+
+#page-wrapper {
+    padding: 0 15px;
+    min-height: 568px;
+    background-color: #fff;
+    padding-bottom: 20px !important;
+}
+
+@media(min-width:768px) {
+    #page-wrapper {
+        position: inherit;
+        margin: 0 0 0 250px;
+        padding: 0 30px;
+        border-left: 1px solid #e7e7e7;
+    }
+}
+
+.navbar-top-links li {
+    display: inline-block;
+}
+
+.navbar-top-links li:last-child {
+    margin-right: 15px;
+}
+
+.navbar-top-links li a {
+    padding: 15px;
+    min-height: 50px;
+}
+
+.navbar-top-links .dropdown-menu li {
+    display: block;
+}
+
+.navbar-top-links .dropdown-menu li:last-child {
+    margin-right: 0;
+}
+
+.navbar-top-links .dropdown-menu li a {
+    padding: 3px 20px;
+    min-height: 0;
+}
+
+.navbar-top-links .dropdown-menu li a div {
+    white-space: normal;
+}
+
+.navbar-top-links .dropdown-messages,
+.navbar-top-links .dropdown-tasks,
+.navbar-top-links .dropdown-alerts {
+    width: 310px;
+    min-width: 0;
+}
+
+.navbar-top-links .dropdown-messages {
+    margin-left: 5px;
+}
+
+.navbar-top-links .dropdown-tasks {
+    margin-left: -59px;
+}
+
+.navbar-top-links .dropdown-alerts {
+    margin-left: -123px;
+}
+
+.navbar-top-links .dropdown-user {
+    right: 0;
+    left: auto;
+}
+
+.sidebar .sidebar-nav.navbar-collapse {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.sidebar .sidebar-search {
+    padding: 15px;
+}
+
+.sidebar ul li {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.sidebar ul li a.active {
+    background-color: #eee;
+}
+
+.sidebar .arrow {
+    float: right;
+}
+
+.sidebar .fa.arrow:before {
+    content: "\f104";
+}
+
+.sidebar .active>a>.fa.arrow:before {
+    content: "\f107";
+}
+
+.sidebar .nav-second-level li,
+.sidebar .nav-third-level li {
+    border-bottom: 0!important;
+}
+
+.sidebar .nav-second-level li a {
+    padding-left: 37px;
+}
+
+.sidebar .nav-third-level li a {
+    padding-left: 52px;
+}
+
+@media(min-width:768px) {
+    .sidebar {
+        z-index: 1;
+        position: absolute;
+        width: 250px;
+        margin-top: 51px;
+    }
+
+    .navbar-top-links .dropdown-messages,
+    .navbar-top-links .dropdown-tasks,
+    .navbar-top-links .dropdown-alerts {
+        margin-left: auto;
+    }
+}
+
+.btn-outline {
+    color: inherit;
+    background-color: transparent;
+    transition: all .5s;
+}
+
+.btn-primary.btn-outline {
+    color: #428bca;
+}
+
+.btn-success.btn-outline {
+    color: #5cb85c;
+}
+
+.btn-info.btn-outline {
+    color: #5bc0de;
+}
+
+.btn-warning.btn-outline {
+    color: #f0ad4e;
+}
+
+.btn-danger.btn-outline {
+    color: #d9534f;
+}
+
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+    color: #fff;
+}
+
+.chat {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.chat li {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #999;
+}
+
+.chat li.left .chat-body {
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body {
+    margin-right: 60px;
+}
+
+.chat li .chat-body p {
+    margin: 0;
+}
+
+.panel .slidedown .glyphicon,
+.chat .glyphicon {
+    margin-right: 5px;
+}
+
+.chat-panel .panel-body {
+    height: 350px;
+    overflow-y: scroll;
+}
+
+.login-panel {
+    margin-top: 25%;
+}
+
+.flot-chart {
+    display: block;
+    height: 400px;
+}
+
+.flot-chart-content {
+    width: 100%;
+    height: 100%;
+}
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+    background: 0 0;
+}
+
+table.dataTable thead .sorting_asc:after {
+    content: "\f0de";
+    float: right;
+    font-family: fontawesome;
+}
+
+table.dataTable thead .sorting_desc:after {
+    content: "\f0dd";
+    float: right;
+    font-family: fontawesome;
+}
+
+table.dataTable thead .sorting:after {
+    content: "\f0dc";
+    float: right;
+    font-family: fontawesome;
+    color: rgba(50,50,50,.5);
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.428571429;
+}
+
+.btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: 18px;
+    line-height: 1.33;
+}
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.show-grid [class^=col-] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #ddd;
+    background-color: #eee!important;
+}
+
+.show-grid {
+    margin: 15px 0;
+}
+
+.huge {
+    font-size: 40px;
+}
+
+.panel-green {
+    border-color: #5cb85c;
+}
+
+.panel-green .panel-heading {
+    border-color: #5cb85c;
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.panel-green a {
+    color: #5cb85c;
+}
+
+.panel-green a:hover {
+    color: #3d8b3d;
+}
+
+.panel-red {
+    border-color: #d9534f;
+}
+
+.panel-red .panel-heading {
+    border-color: #d9534f;
+    color: #fff;
+    background-color: #d9534f;
+}
+
+.panel-red a {
+    color: #d9534f;
+}
+
+.panel-red a:hover {
+    color: #b52b27;
+}
+
+.panel-yellow {
+    border-color: #f0ad4e;
+}
+
+.panel-yellow .panel-heading {
+    border-color: #f0ad4e;
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
+.panel-yellow a {
+    color: #f0ad4e;
+}
+
+.panel-yellow a:hover {
+    color: #df8a13;
+}
+
+.has-info .tooltip-inner {
+    color: #31708f;
+    background-color: #d9edf7;
+    border: 1px solid;
+    border-color: #bce8f1 !important;
+    width: 350px;
+    max-width: 350px;
+}
+
+.has-info .tooltip-arrow {
+    border-right-color: #bce8f1 !important;
+}
+
+.has-error .tooltip-inner {
+    background-color: #F2DEDE;
+    color: #a94442;
+    max-width: 300px;
+    width: 300px;
+    line-height: 30px;
+}
+
+.has-error .tooltip-arrow {
+    border-right-color: #F2DEDE !important;
+}
+
+.pass-hide {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.fa-trash-o {
+    color: rgb(223, 0, 0);
+}
+.fa-pencil-square-o {
+    color: rgb(22, 171, 12);
+}
+.action-buttons {
+    font-size: 20px;
+}
+
+@media(max-width: 768px) {
+    .margin-bottom {
+        margin-bottom: 15px;
+    }
+}
+
+.calendar_timeline {
+    position: absolute;
+    border: 0 !important;
+    border-top: 1px solid red !important;
+    width: 100%;
+    z-index: 6;
+    background: #6AA4C1 !important;
+
+    top: 0;
+    left: 77px;
+    height: 350px;
+    background: rgb(255, 255, 255) !important;
+    opacity: 0.3;
+    border-bottom: 2px solid blue !important;
+    pointer-events: none;
+}
+
+.timeline:before {
+    background: none !important;
+}
+
+.fc-slats {
+    z-index: auto !important;
+}
+
+.fc-time[data-start] span {
+    font-size: 14px;
+    margin: 10px 0 0 10px;
+    display: inline-block;
+}
+
+.fc-title {
+    font-size: 18px;
+    text-align: center;
+}
+
+.fc-ltr .fc-time-grid .fc-event-container {
+    margin: 0 !important;
+}
+
+.info-box {
+    color: #86CAD8;
+    font-size: 16px;
+    position: relative;
+    bottom: -1px;
+    cursor: pointer;
+}
+
+.sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+.sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em;  height: 30px; cursor: all-scroll; }
+.sortable li span { position: absolute; margin-left: -1.3em; }
+.dataTable tfoot input {
+    width: 100% !important;
+}
+.dataTable tfoot_ {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+} 
+
+.dataTables_info
+{
+    /*font-size: 40px !important;*/
+}
+
+.label_check
+{
+    display: inline-block; max-width: 100% !important;
+    margin-bottom: 5px !important;
+    font-weight: 700 !important;
+}
+
+.row-full-height {
+  height: 100%;
+}
+.col-full-height {
+  height: 100%;
+  vertical-align: middle;
+}
+.row-same-height {
+  display: table;
+  width: 100%;
+  /* fix overflow */
+  table-layout: fixed;
+}
+.col-xs-height {
+  display: table-cell;
+  float: none !important;
+}
+
+@media (min-width: 768px) {
+  .col-sm-height {
+    display: table-cell;
+    float: none !important;
+  }
+}
+@media (min-width: 992px) {
+  .col-md-height {
+    display: table-cell;
+    float: none !important;
+  }
+}
+@media (min-width: 1200px) {
+  .col-lg-height {
+    display: table-cell;
+    float: none !important;
+  }
+}
+
+.col-top {
+  vertical-align: top;
+}
+.col-middle {
+  vertical-align: middle;
+}
+.col-bottom {
+  vertical-align: bottom;
+}
+
+
+A sample showing a extended bootstrap modal with descriptive colors added. This approach makes it possible to extend bootstrap classes if you like the default themes provided to you. As a bonus I have added tabs to get a wizzard like dialog. Bonus 2: How you enable the bootstrap tooltip to the elements. See <a href="http://getbootstrap.com/javascript/#tooltips">documentation to see bootstraps reason for this choice. I found this solution on <a href="http://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working#answer-23200033">StackOverflow</a>.I found it as the most elegant solution.
+
+    Preview
+    Edit
+    Code
+
+    index.html
+    script.js
+    style.css
+    README.md
+
+style.css
+
+/* Styles go here */
+
+
+.jumbotron-header {
+
+  padding-bottom: 9px;
+
+  margin: 20px 0 30px;
+
+}
+
+
+.modal-success {
+
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#dff0d8), to(#c8e5bc));
+
+  background-image: -webkit-linear-gradient(#dff0d8 0%, #c8e5bc 100%);
+
+  background-image: -moz-linear-gradient(#dff0d8 0%, #c8e5bc 100%);
+
+  background-image: -o-linear-gradient(#dff0d8 0%, #c8e5bc 100%);
+
+  background-image: linear-gradient(#dff0d8 0%, #c8e5bc 100%);
+
+  background-repeat: repeat-x;
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdff0d8', endColorstr='#ffc8e5bc', GradientType=0);
+
+  border-color: #b2dba1;
+
+  border-radius: 6px 6px 0 0;
+
+}
+
+
+.modal-info {
+
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#d9edf7), to(#428BCA));
+
+  background-image: -webkit-linear-gradient(#d9edf7 0%, #428BCA 100%);
+
+  background-image: -moz-linear-gradient(#d9edf7 0%, #428BCA 100%);
+
+  background-image: -o-linear-gradient(#d9edf7 0%, #428BCA 100%);
+
+  background-image: linear-gradient(#d9edf7 0%, #428BCA 100%);
+
+  background-repeat: repeat-x;
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9edf7', endColorstr='#ffb9def0', GradientType=0);
+
+  border-color: #9acfea;
+
+  border-radius: 6px 6px 0 0;
+
+}
+
+
+.modal-warning {
+
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fcf8e3), to(#f8efc0));
+
+  background-image: -webkit-linear-gradient(#fcf8e3 0%, #f8efc0 100%);
+
+  background-image: -moz-linear-gradient(#fcf8e3 0%, #f8efc0 100%);
+
+  background-image: -o-linear-gradient(#fcf8e3 0%, #f8efc0 100%);
+
+  background-image: linear-gradient(#fcf8e3 0%, #f8efc0 100%);
+
+  background-repeat: repeat-x;
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffcf8e3', endColorstr='#fff8efc0', GradientType=0);
+
+  border-color: #f5e79e;
+
+  border-radius: 6px 6px 0 0;
+
+}
+
+
+.modal-danger {
+
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f2dede), to(#e7c3c3));
+
+  background-image: -webkit-linear-gradient(#f2dede 0%, #e7c3c3 100%);
+
+  background-image: -moz-linear-gradient(#f2dede 0%, #e7c3c3 100%);
+
+  background-image: -o-linear-gradient(#f2dede 0%, #e7c3c3 100%);
+
+  background-image: linear-gradient(#f2dede 0%, #e7c3c3 100%);
+
+  background-repeat: repeat-x;
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2dede', endColorstr='#ffe7c3c3', GradientType=0);
+
+  border-color: #dca7a7;
+
+  border-radius: 6px 6px 0 0;
+
+}
+
+.linie-orizontala {
+  border-bottom: 1px solid #ccc;
+}
+
+.top24 { margin-top:24px; } 

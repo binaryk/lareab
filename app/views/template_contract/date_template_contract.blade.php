@@ -1,0 +1,979 @@
+@extends('layouts.master')
+
+@section('head_scripts')
+    <!-- DataTables CSS -->
+    {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}
+    {{ HTML::style('assets/css/tabs.css') }}
+@stop
+
+@section('title')
+    <p>Date template contract</p>
+@stop
+
+@section('content')
+
+    <div class="row-expander">
+        <div class="panel-group">
+            @foreach($tip_contract as $tip_ctr)
+                <div class="panel panel-default" id="tip_ctr_{{ $tip_ctr->id_tip_contract }}" data-id="{{ $tip_ctr->id_tip_contract }}" data-table="tip_contract">
+
+                    <div class="panel-heading">
+                        <span class="panel-title">
+                            <a data-toggle="collapse" class="collapsed" style="text-decoration:none">
+                                <i class="fa fa-plus-square"></i> Tip contract:
+                            </a>
+                        </span>
+                        <a href="#" id="denumire_tipcontract" class="xedit-denumire_tipcontract" data-name="denumire" data-type="text" data-pk="{{ $tip_ctr->id_tip_contract }}"  data-url="{{ URL::to('/date_template_contract/tip_contract/edit') }}">{{ $tip_ctr->denumire }}</a>
+                        <a style="float:right" href="#" onclick="DeleteDateTemplate('tip_ctr_' + {{ $tip_ctr->id_tip_contract }}, '{{ URL::route('tip_contract_delete') }}', 'id_tip_contract')"><i class="fa fa-trash-o  fa-lg" title="Sterge"></i></a>
+                    </div>
+
+                    <div class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="panel-group">
+                                @foreach($tip_activitate as $tip_act)
+                                    @if($tip_act->id_tip_contract == $tip_ctr->id_tip_contract)
+                                        <div class="panel panel-default" id="tip_act_{{ $tip_act->id_tip_activitate }}" data-id="{{ $tip_act->id_tip_activitate }}" data-table="tip_activitate">
+
+                                            <div class="panel-heading" style="background-color:#E2E2E2">
+                                                <span class="panel-title">
+                                                    <a data-toggle="collapse" style="text-decoration:none">
+                                                        <i class="fa fa-minus-square"></i> Tip activitate:
+                                                    </a>
+                                                </span>
+                                                <a href="#" id="denumire_tipactivitate" class="xedit-denumire_tipactivitate" data-name="denumire" data-type="text" data-pk="{{ $tip_act->id_tip_activitate }}"  data-url="{{ URL::to('/date_template_contract/tip_activitate/edit') }}">{{ $tip_act->denumire }}</a>
+                                                <a style="float:right" href="#" onclick="DeleteDateTemplate('tip_act_' + {{ $tip_act->id_tip_activitate }}, '{{ URL::route('tip_activitate_delete') }}', 'id_tip_activitate')"><i class="fa fa-trash-o  fa-lg" title="Sterge"></i></a>
+                                            </div>
+                                            
+                                            <div class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <div class="panel-group">
+                                                        @foreach($tip_activitate_tipizata as $tip_act_tip)
+                                                            @if($tip_act_tip->id_tip_activitate == $tip_act->id_tip_activitate)
+                                                                <div class="panel panel-default" id="act_tip_{{ $tip_act_tip->id_tip_activitate_tipizata }}" data-id="{{ $tip_act_tip->id_tip_activitate_tipizata }}" data-table="tip_activitate_tipizata">
+                                                                    
+                                                                    <div class="panel-heading">
+                                                                        <span class="panel-title">
+                                                                            <a data-toggle="collapse" style="text-decoration:none">
+                                                                                <i class="fa fa-minus-square"></i> Tip activitate tipizata:
+                                                                            </a>
+                                                                        </span>
+                                                                        <a href="#" id="denumire_tipactivitatetipizata" class="xedit-denumire_tipactivitatetipizata" data-name="denumire" data-type="text" data-pk="{{ $tip_act_tip->id_tip_activitate_tipizata }}"  data-url="{{ URL::to('/date_template_contract/tip_activitate_tipizata/edit') }}" style="left: 108px;">{{ $tip_act_tip->denumire }}</a>
+                                                                        <a style="float:right" href="#" onclick="DeleteDateTemplate('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }}, '{{ URL::route('tip_activitate_tipizata_delete') }}', 'id_tip_activitate_tipizata')"><i class="fa fa-trash-o fa-lg" title="Sterge"></i></a>
+                                                                    </div>
+
+                                                                    <div class="panel-collapse collapse in">
+
+                                                                        <div class="tabs">
+                                                                            <div class="panel-default">
+                                                                                <div class="panel-heading">
+                                                                                    <ul class="tab-links">
+                                                                                        <li class="active tab-links"><a href="#tab1" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }})">Livrabile</a></li>
+                                                                                        <li class="tab-links"><a href="#tab2" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }})">Obligatii si sarcini contractuale tipizate</a></li>
+                                                                                        <li class="tab-links"><a href="#tab3" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }})">Responsabilitati activitate tipizata</a></li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="tab-content">
+
+                                                                                <div id="tab1" class="tab active"> 
+                                                                                    <div class="panel-body">
+                                                                                        <div class="panel-group">
+                                                                                            <div class="panel panel-default">
+                                                                                                <div class="panel-heading" style="background-color:#E2E2E2">
+                                                                                                    <h4 class="panel-title">
+                                                                                                        <a data-toggle="collapse" style="text-decoration:none">Livrabile</a>
+                                                                                                        <a href="#" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }}) "data-toggle="modal" data-target="#myModalTipLivrabile" class="btn btn-primary btn-xs add-level" title="Adauga tip livrabil">Adauga</a> <!-- Adauga tip livrabil -->
+                                                                                                    </h4>
+                                                                                                </div>
+                                                                                                <div class="panel-collapse collapse in">
+                                                                                                    <div class="panel-body">
+                                                                                                        <div class="table-responsive">
+                                                                                                            <table class="table table-striped table-hover table-bordered">
+                                                                                                                <thead>
+                                                                                                                    <tr>
+                                                                                                                        <th style="text-align:center">Denumire livrabil</th>
+                                                                                                                        <th style="text-align:center">Actiuni</th>
+                                                                                                                    </tr>
+                                                                                                                </thead>
+                                                                                                                <tbody>
+                                                                                                                    @foreach($tip_livrabile as $tip_liv)
+                                                                                                                        @if($tip_liv->id_tip_activitate_tipizata == $tip_act_tip->id_tip_activitate_tipizata)
+                                                                                                                            <tr id="tip_liv_{{ $tip_liv->id_tip_livrabile }}" data-id="{{ $tip_liv->id_tip_livrabile }}" data-table="tip_livrabile" class="">
+                                                                                                                                <td>
+                                                                                                                                    <a href="#" data-pk="{{ $tip_liv->id_tip_livrabile }}" data-url="{{ URL::to('/date_template_contract/tip_livrabile/edit') }}" data-name="denumire" id="denumire_tiplivrabile" class="xedit-denumire_tiplivrabile" data-type="text">{{ $tip_liv->denumire }}</a>
+                                                                                                                                </td>
+                                                                                                                                <td>
+                                                                                                                                    <div align="center">
+                                                                                                                                        <a href="#" onclick="DeleteDateTemplate('tip_liv_' + {{ $tip_liv->id_tip_livrabile }}, '{{ URL::route('tip_livrabile_delete') }}', 'id_tip_livrabile')" style="text:center"><i class="fa fa-trash-o fa-lg" title="Sterge"></i></a>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            </tr>
+                                                                                                                        @endif
+                                                                                                                    @endforeach
+                                                                                                                </tbody>
+                                                                                                            </table>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                        
+                                                                                <div id="tab2" class="tab">
+                                                                                    <div class="panel-body">
+                                                                                        <div class="panel-group">
+                                                                                            <div class="panel panel-default">
+                                                                                                <div class="panel-heading" style="background-color:#E2E2E2">
+                                                                                                    <h4 class="panel-title">
+                                                                                                        <a data-toggle="collapse" style="text-decoration:none">Obligatii si sarcini contractuale tipizate</a>
+                                                                                                        <a href="#" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }}) "data-toggle="modal" data-target="#myModalTipObligatiiSarcini" class="btn btn-primary btn-xs add-level" title="Adauga tip obligatii sarcini">Adauga</a> <!-- Adauga tip obligatii sarcini -->
+                                                                                                    </h4>
+                                                                                                </div>
+                                                                                                <div class="panel-collapse collapse in">
+                                                                                                    <div class="panel-body">
+                                                                                                        <div class="table-responsive">
+                                                                                                            <table class="table table-striped table-hover table-bordered">
+                                                                                                                <thead>
+                                                                                                                    <tr>    
+                                                                                                                        <th style="text-align:center">Denumire</th>
+                                                                                                                        <th style="text-align:center">Responsabil</th>
+                                                                                                                        <th style="text-align:center">Actiuni</th>
+                                                                                                                    </tr>
+                                                                                                                </thead>
+                                                                                                                <tbody>
+                                                                                                                    @foreach($tip_obligatii_sarcini as $tip_ob_sar)
+                                                                                                                        @if($tip_ob_sar->id_tip_activitate_tipizata == $tip_act_tip->id_tip_activitate_tipizata)
+                                                                                                                            <tr id="obl_sar_{{ $tip_ob_sar->id_tip_obligatie_sarcina }}" data-id="{{ $tip_ob_sar->id_tip_obligatie_sarcina }}" data-table="tip_obligatii_sarcini" class="">
+                                                                                                                                <td>
+                                                                                                                                    <a href="#" data-pk="{{ $tip_ob_sar->id_tip_obligatie_sarcina }}" data-url="{{ URL::to('/date_template_contract/tip_obligatii_sarcini/edit') }}" data-name="denumire" id="denumire_tipobligatiisarcini" class="xedit-denumire_tipobligatiisarcini" data-type="text">{{ $tip_ob_sar->denumire }}</a>
+                                                                                                                                </td>
+                                                                                                                                <td>
+                                                                                                                                    <a href="#" data-pk="{{ $tip_ob_sar->id_tip_obligatie_sarcina }}" data-url="{{ URL::to('/date_template_contract/tip_obligatii_sarcini/edit') }}" data-name="id_tip_responsabil" id="responsabilobligatie" class="xedit-responsabilobligatie" data-type="select">{{ $tip_ob_sar->DenumireResponsabil}}</a>
+                                                                                                                                </td>
+                                                                                                                                <td>
+                                                                                                                                    <div align="center">
+                                                                                                                                        <a href="#" onclick="DeleteDateTemplate('obl_sar_' + {{ $tip_ob_sar->id_tip_obligatie_sarcina }}, '{{ URL::route('tip_obligatii_sarcini_delete') }}', 'id_tip_obligatie_sarcina')" style="text:center"><i class="fa fa-trash-o fa-lg" title="Sterge"></i></a>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            </tr>
+                                                                                                                        @endif
+                                                                                                                    @endforeach
+                                                                                                                </tbody>
+                                                                                                            </table>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                
+                                                                                <div id="tab3" class="tab"> 
+                                                                                    <div class="panel-body">
+                                                                                        <div class="panel-group">
+                                                                                            <div class="panel panel-default">
+                                                                                                <div class="panel-heading" style="background-color:#E2E2E2">
+                                                                                                    <h4 class="panel-title">
+                                                                                                        <a data-toggle="collapse" style="text-decoration:none">Responsabilitati activitate tipizata</a>
+                                                                                                        <a href="#" onclick="GetIdTipActivitateTipizata('act_tip_' + {{ $tip_act_tip->id_tip_activitate_tipizata }}) "data-toggle="modal" data-target="#myModalResponsabilitateActTip" class="btn btn-primary btn-xs add-level" title="Adauga responsabilitate tipizata">Adauga</a> <!-- Adauga responsabilitate act tip -->
+                                                                                                    </h4>
+                                                                                                </div>
+                                                                                                <div class="panel-collapse collapse in">
+                                                                                                    <div class="panel-body">
+                                                                                                        <div class="table-responsive">
+                                                                                                            <table class="table table-striped table-hover table-bordered">
+                                                                                                                <thead>
+                                                                                                                    <tr>
+                                                                                                                        <th style="text-align:center">Denumire responsabilitate</th>
+                                                                                                                        <th style="text-align:center">Actiuni</th>
+                                                                                                                    </tr>
+                                                                                                                </thead>
+                                                                                                                <tbody>
+                                                                                                                    @foreach($responsabilitate_act_tip as $resp_act_tip)
+                                                                                                                        @if($resp_act_tip->id_activitate_tipizata == $tip_act_tip->id_tip_activitate_tipizata)
+                                                                                                                            <tr id="res_act_{{ $resp_act_tip->id_resp_at }}" data-id="{{ $resp_act_tip->id_resp_at }}" data-table="responsabilitate_act_tip" class="">
+                                                                                                                                <td>
+                                                                                                                                    <a href="#" data-pk="{{ $resp_act_tip->id_resp_at }}" data-url="{{ URL::to('/date_template_contract/responsabilitate_act_tip/edit') }}" data-name="id_responsabilitate" id="responsabilitatitipizate" class="xedit-responsabilitatitipizate" data-type="select">{{ $resp_act_tip->Responsabilitate }}</a>
+                                                                                                                                </td>
+                                                                                                                                <td>
+                                                                                                                                    <div align="center">
+                                                                                                                                        <a href="#" onclick="DeleteDateTemplate('res_act_' + {{ $resp_act_tip->id_resp_at }}, '{{ URL::route('responsabilitate_act_tip_delete') }}', 'id_resp_at')"><i class="fa fa-trash-o fa-lg" title="Sterge"></i></a>
+                                                                                                                                    </div>
+                                                                                                                                </td>
+                                                                                                                            </tr>
+                                                                                                                        @endif
+                                                                                                                    @endforeach
+                                                                                                                </tbody>
+                                                                                                            </table>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div> <!-- End of tab content -->
+                                                                        </div> <!-- End of tabs -->
+
+                                                                    </div>
+
+                                                                </div>
+                                                            @endif
+                                                        @endforeach
+                                                    </div>
+                                                    <a href="#" onclick="GetIdTipActivitate('tip_act_' + {{ $tip_act->id_tip_activitate }}) "data-toggle="modal" data-target="#myModalTipActivitateTipizata" class="btn btn-primary btn-lg add-level" title="Adauga tip activitate tipizata">Adauga</a> <!-- Adauga tip activitate tipizata -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+
+                            </div>
+                            <a href="#" data-toggle="modal" data-target="#myModalTipActivitate" class="btn btn-primary btn-lg add-level" title="Adauga tip activitate">Adauga</a> <!-- Adauga tip activitate -->
+
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+        </div>
+        <a href="#" onclick="GedIdTipContract('tip_ctr_' + {{ $tip_ctr->id_tip_contract }})" data-toggle="modal" data-target="#myModalTipContract" class="btn btn-primary btn-lg add-level" title="Adauga tip contract">Adauga</a> <!-- Adauga tip contract -->
+
+        <select name="responsabili_obligatie_select" id="responsabili_obligatie_select" 
+          class="selectpicker form-control hidden" data-live-search="true">
+              @foreach ($tip_resp_ob_sar as $resp_sar) 
+                  <option value="{{ $resp_sar->id_tip_responsabil }}">{{ $resp_sar->denumire }}</option>
+              @endforeach                            
+        </select>
+
+        <select name="responsabilitati_tipizate_select" id="responsabilitati_tipizate_select" 
+          class="selectpicker form-control hidden" data-live-search="true">
+              @foreach ($resp_sub_cat_pers_pr as $resp_pr) 
+                  <option value="{{ $resp_pr->id_responsabil_scp }}">{{ $resp_pr->Responsabilitate }}</option>
+              @endforeach                            
+        </select>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalTipContract" tabindex="-1" role="dialog" aria-labelledby="myModalLabelTipContract" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelTipContract">Adauga tip contract</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>     
+                        <div class="form-group col-lg-10                   
+                            @if ($errors->has('denumire')) has-error 
+                            @elseif(Input::old('denumire')) has-success 
+                            @endif">
+                            <label>Denumire</label>
+                            <input class="form-control" name="denumire" id="DenumireTipContract" type="text" value="{{ Input::old('denumire') }}" 
+                            @if ($errors->has('required')) 
+                                title="{{ $errors->first('required') }}" 
+                            @endif>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitTipContract" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalTipActivitate" tabindex="-1" role="dialog" aria-labelledby="myModalLabelTipActivitate" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelTipActivitate">Adauga tip activitate</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>     
+                        <div class="form-group col-lg-10                   
+                            @if ($errors->has('denumire')) has-error 
+                            @elseif(Input::old('denumire')) has-success 
+                            @endif">
+                            <label>Denumire</label>
+                            <input class="form-control" name="denumire" id="DenumireTipActivitate" type="text" value="{{ Input::old('denumire') }}" 
+                            @if ($errors->has('required')) 
+                                title="{{ $errors->first('required') }}" 
+                            @endif>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitTipActivitate" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalTipActivitateTipizata" tabindex="-1" role="dialog" aria-labelledby="myModalLabelTipActivitateTipizata" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelTipActivitateTipizata">Adauga tip activitate tipizata</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>     
+                        <div class="form-group col-lg-10                   
+                            @if ($errors->has('denumire')) has-error 
+                            @elseif(Input::old('denumire')) has-success 
+                            @endif">
+                            <label>Denumire</label>
+                            <input class="form-control" name="denumire" id="DenumireTipActivitateTipizata" type="text" value="{{ Input::old('denumire') }}" 
+                            @if ($errors->has('required')) 
+                                title="{{ $errors->first('required') }}" 
+                            @endif>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitTipActivitateTipizata" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalTipLivrabile" tabindex="-1" role="dialog" aria-labelledby="myModalLabelTipLivrabile" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelTipLivrabile">Adauga tip livrabile</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>     
+                        <div class="form-group col-lg-10                   
+                            @if ($errors->has('denumire')) has-error 
+                            @elseif(Input::old('denumire')) has-success 
+                            @endif">
+                            <label>Denumire livrabil</label>
+                            <input class="form-control" name="denumire" id="DenumireTipLivrabile" type="text" value="{{ Input::old('denumire') }}" 
+                            @if ($errors->has('required')) 
+                                title="{{ $errors->first('required') }}" 
+                            @endif>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitTipLivrabile" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalTipObligatiiSarcini" tabindex="-1" role="dialog" aria-labelledby="myModalLabelTipObligatiiSarcini" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelTipObligatiiSarcini">Adauga obligatie sarcini contractuale tipizate</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>     
+                        <div class="form-group col-lg-10                   
+                            @if ($errors->has('denumire')) has-error 
+                            @elseif(Input::old('denumire')) has-success 
+                            @endif">
+                            <label>Denumire</label>
+                            <input class="form-control" name="denumire" id="DenumireTipObligatiiSarcini" type="text" value="{{ Input::old('denumire') }}" 
+                            @if ($errors->has('required')) 
+                                title="{{ $errors->first('required') }}" 
+                            @endif>
+                        </div>
+                        <div class="form-group col-lg-10
+                            @if($errors->has('resp_sar')) has-error 
+                            @elseif(Input::old('resp_sar')) has-success 
+                            @endif ">
+                            <label for = "">Responsabil</label>
+                            <select name="resp_sar" id="resp_sar" 
+                            class="selectpicker form-control" data-live-search="true">
+                                @foreach ($tip_resp_ob_sar as $resp_sar) 
+                                    <option value="{{ $resp_sar->id_tip_responsabil }}">{{ $resp_sar->denumire }}
+                                    </option>
+                                @endforeach                            
+                            </select>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitTipObligatiiSarcini" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="myModalResponsabilitateActTip" tabindex="-1" role="dialog" aria-labelledby="myModalLabelResponsabilitateActTip" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header modal-info">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabelResponsabilitateActTip">Adauga responsabilitate activitate tipizata</h4>
+              </div>
+              <div class="modal-body">
+                 <form role="form" action="{{ URL::current() }}" method="post">
+                    <fieldset>
+                        <div class="form-group col-lg-10
+                            @if($errors->has('resp_pr')) has-error 
+                            @elseif(Input::old('resp_pr')) has-success 
+                            @endif ">
+                            <label for = "">Denumire responsabilitate</label>
+                            <select name="resp_pr" id="resp_pr" 
+                            class="selectpicker form-control" data-live-search="true">
+                                @foreach ($resp_sub_cat_pers_pr as $resp_pr) 
+                                    <option value="{{ $resp_pr->id_responsabil_scp }}">{{ $resp_pr->Responsabilitate }}
+                                    </option>
+                                @endforeach                            
+                            </select>
+                        </div>                                                                                                                                                                                                                                                                                                                                          
+                    </fieldset>
+                 </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
+                <input type="submit" name="submit" id="submitResponsabilitateActTip" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                {{ Form::token() }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+
+@stop
+
+@section('footer_scripts')
+
+    {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/dataTables.bootstrap.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.columnFilter.js') }}
+    {{ HTML::script('assets/js/plugins/bootbox.js') }} 
+
+    <script>
+
+        $(document).ready(function() {
+
+            // Functie care face update la id-urile nivelurlior noi create pe toggle la row-expander
+            function update_accordion() {
+                
+                var i = 0;
+                $('.row-expander .panel-title a').each(function() {
+                    $(this).closest('.panel-heading').next().attr('id', 'collapse_'+(++i));
+                    $(this).attr('href', '#collapse_'+(i));
+                });
+            }
+            
+            update_accordion();
+
+            // Schimba plus cu minus pe iconita de toggle
+            $("body").on('click', ".panel-title a", function() {
+                
+                $(this).find('i').toggleClass('fa-plus-square fa-minus-square');
+            });
+
+            
+            // Initializarea plugin-ului x-editable
+            $.fn.editable.defaults.mode = 'inline';
+
+            $('a.xedit-denumire_tipcontract').css('cursor','pointer').editable('option', 'validate', function(v) {              
+                if(!v) return 'Camp obligatoriu!';
+            });
+
+            $('a.xedit-denumire_tipactivitate').css('cursor','pointer').editable('option', 'validate', function(v) {              
+                if(!v) return 'Camp obligatoriu!';
+            });
+
+            $('a.xedit-denumire_tipactivitatetipizata').css('cursor','pointer').editable('option', 'validate', function(v) {              
+                if(!v) return 'Camp obligatoriu!';
+            });
+
+            $('a.xedit-denumire_tiplivrabile').css('cursor','pointer').editable('option', 'validate', function(v) {              
+                if(!v) return 'Camp obligatoriu!';
+            });
+
+            $('a.xedit-denumire_tipobligatiisarcini').css('cursor','pointer').editable('option', 'validate', function(v) {              
+                if(!v) return 'Camp obligatoriu!';
+            });
+
+            // Parcurge dropdown-ul hidden cu responsabili obligatie si ii incarca intr-un array
+            var responsabili_obligatie = [];            
+            $('#responsabili_obligatie_select option').each(function(k,v) { 
+                var obj = {};               
+                obj.value = v.value;
+                obj.text = v.text;
+                responsabili_obligatie.push(obj);
+            });
+
+            //console.log(responsabili_obligatie);
+            $('a.xedit-responsabilobligatie').css('cursor','pointer').editable({
+                type: 'select',
+                title: 'Responsabil obligatie',
+                placement: 'right',
+                source: responsabili_obligatie
+            });
+
+            // Parcurge dropdown-ul hidden cu responsabilitatile tipizate si le incarca intr-un array
+            var responsabilitati_tipizate = [];            
+            $('#responsabilitati_tipizate_select option').each(function(k,v) { 
+                var obj = {};               
+                obj.value = v.value;
+                obj.text = v.text;
+                responsabilitati_tipizate.push(obj);
+            });
+
+            //console.log(responsabilitati_tipizate);
+            $('a.xedit-responsabilitatitipizate').css('cursor','pointer').editable({
+                type: 'select',
+                title: 'Responsabilitate tipizata',
+                placement: 'right',
+                source: responsabilitati_tipizate
+            });
+
+            var deps = [];
+            
+            function init_editable() {
+
+                parent = '.row-expander';
+                $('.editable, .description, .score', parent).editable();
+
+                $('.parent', parent).editable({
+                    source: deps,
+                    select2: {
+                        width: 300,
+                        firstItem: 'none'
+                    }
+                });
+
+            }
+            init_editable();
+            
+            // Initializare taburi din ultimul nivel
+            $('.tabs .tab-links a').on('click', function(e)  {
+                    var currentAttrValue = $(this).attr('href');
+             
+                    // Show/Hide Tabs
+                    $('.tabs ' + currentAttrValue).fadeIn(800).siblings().hide();
+             
+                    // Change/remove current tab to active
+                    $(this).parent('li').addClass('active').siblings().removeClass('active');
+             
+                    e.preventDefault();
+            });
+
+        });
+        
+        // Stergerea oricarui camp
+        function DeleteDateTemplate(id, url_delete, id_name) {             
+            
+            var id_str = id.substring(8);
+            var id_nr = parseInt(id_str);
+
+            bootbox.confirm({
+                
+                title: "Sunteti sigur de stergerea inregistrarii?",
+                message: ' ',
+                buttons: {
+                    'confirm': {
+                        label: "Da, sterge!",
+                        className: "btn-success"
+                    },
+                    'cancel': {
+                        label: "Nu, renunta!",
+                        className: "btn-danger"
+                    }
+                },
+                
+                callback: function(result) {
+                    if(result) {
+                        $.ajax({
+                            type: "POST",
+                            url : url_delete,
+                            data : {
+                                "_token": $(this).find('input[name=_token]').val(),
+                                id_name : id_nr
+                            },
+                            success : function(data){
+                                $('#'+id).fadeOut();
+                            }
+                        });
+                    }
+                }
+
+            });
+        }
+
+        // Initializare pop-up modal
+        var btnModal; 
+        function btn_click(msg) {
+            btnModal = msg;
+        }
+        
+        $("#submitTipContract").click(function() {
+          $("#myModalTipContract").modal("hide");  
+        });
+
+        $("#submitTipActivitate").click(function() {
+          $("#myModalTipActivitate").modal("hide");  
+        });
+
+        $("#submitTipActivitateTipizata").click(function() {
+          $("#myModalTipActivitateTipizata").modal("hide");  
+        });
+
+        $("#submitTipLivrabile").click(function() {
+          $("#myModalTipLivrabile").modal("hide");  
+        });
+
+        $("#submitTipObligatiiSarcini").click(function() {
+          $("#myModalTipObligatiiSarcini").modal("hide");  
+        });
+
+        $("#submitResponsabilitateActTip").click(function() {
+          $("#myModalResponsabilitateActTip").modal("hide");  
+        });
+
+        //Functii pentru preluarea id-urilor principale
+        function GedIdTipContract(id) {
+            
+
+            id_str_ctr = id.substring(8);
+            id_tip_contract = parseInt(id_str_ctr);
+
+        }
+
+        function GetIdTipActivitate(id) {
+            
+
+            id_str_act = id.substring(8);
+            id_tip_activitate = parseInt(id_str_act);
+
+        }
+
+        function GetIdTipActivitateTipizata(id) {
+            
+
+            id_str_act_tip = id.substring(8);
+            id_tip_activitate_tipizata = parseInt(id_str_act_tip);
+
+        }
+
+
+        //jQuery pentru activarea si folosirea pop-urilor modal pentru adaugare inregistrari noi
+        $("#myModalTipContract").on('hide.bs.modal', function(e) {
+            
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                
+                var denumire = $('#DenumireTipContract').val();   
+                var url_add = "{{ URL::route('tip_contract_add') }}";
+
+                var parametrii = [];
+                parametrii.push(denumire);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                //console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract') }}";
+                              MessageBox("SUCCESS", "Tip contract", data.message);
+                              var divToAdd = $('#tip_ctr_{{ $tip_ctr->id_tip_contract }}');
+                              divToAdd.hide();
+                              $('div:last-child').after(divToAdd);
+                              divToAdd.fadeIn(800);
+                          }
+                          else
+                              MessageBox("ERROR", "Tip contract", data.message);
+                      }
+                      else
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");               
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+        
+        $("#myModalTipActivitate").on('hide.bs.modal', function(e) {
+
+
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                
+                var denumire = $('#DenumireTipActivitate').val();   
+                var url_add = "{{ URL::route('tip_activitate_add') }}";
+
+                var parametrii = [];
+                parametrii.push(denumire);
+                parametrii.push(id_tip_contract);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                //console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract', '_idct_') }}";
+                              ruta = ruta.replace("'_idct_'", parseInt(id_tip_contract));
+                              MessageBox("SUCCESS", "Tip activitate", data.message);
+                              window.setTimeout(function(){location.reload()},2000);
+                          }
+                          else
+                              MessageBox("ERROR", "Tip activitate", data.message);
+                      }
+                      else
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");               
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+
+        $("#myModalTipActivitateTipizata").on('hide.bs.modal', function(e) {
+
+
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                
+                var denumire = $('#DenumireTipActivitateTipizata').val();   
+                var url_add = "{{ URL::route('tip_activitate_tipizata_add') }}";
+
+                var parametrii = [];
+                parametrii.push(denumire);
+                parametrii.push(id_tip_activitate);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                //console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract', '_idact_') }}";
+                              ruta = ruta.replace("'_idact_'", parseInt(id_tip_activitate));
+                              MessageBox("SUCCESS", "Tip activitate tipizata", data.message);
+                              window.setTimeout(function(){location.reload()},2000);
+                          }
+                          else
+                              MessageBox("ERROR", "Tip activitate tipizata", data.message);
+                      }
+                      else
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");               
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+
+        $("#myModalTipLivrabile").on('hide.bs.modal', function(e) {
+
+
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                
+                var denumire = $('#DenumireTipLivrabile').val();   
+                var url_add = "{{ URL::route('tip_livrabile_add') }}";
+
+                var parametrii = [];
+                parametrii.push(denumire);
+                parametrii.push(id_tip_activitate_tipizata);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                //console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract', '_idactt_') }}";
+                              ruta = ruta.replace("'_idactt_'", parseInt(id_tip_activitate_tipizata));
+                              MessageBox("SUCCESS", "Tip livrabile", data.message);
+                              window.setTimeout(function(){location.reload()},2000);
+                          }
+                          else
+                              MessageBox("ERROR", "Tip livrabile", data.message);
+                      }
+                      else
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");               
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+
+        $("#myModalTipObligatiiSarcini").on('hide.bs.modal', function(e) {
+
+
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                
+                var denumire = $('#DenumireTipObligatiiSarcini').val();   
+                var url_add = "{{ URL::route('tip_obligatii_sarcini_add') }}";
+                var resp_sar = $('#resp_sar').val();
+
+                var parametrii = [];
+                parametrii.push(denumire);
+                parametrii.push(id_tip_activitate_tipizata);
+                parametrii.push(resp_sar);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                //console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract', '_idactt_') }}";
+                              ruta = ruta.replace("'_idactt_'", parseInt(id_tip_activitate_tipizata));
+                              MessageBox("SUCCESS", "Tip obligatii sarcini", data.message);
+                              window.setTimeout(function(){location.reload()},2000);
+                          }
+                          else
+                              MessageBox("ERROR", "Tip obligatii sarcini", data.message);
+                      }
+                      else
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");               
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+
+        $("#myModalResponsabilitateActTip").on('hide.bs.modal', function(e) {
+
+
+            console.error(e.target);
+            console.error("MDL" + btnModal);
+            if (btnModal === 'SAVE')
+            {
+                 
+                var resp_pr = $('#resp_pr').val();
+                var url_add = "{{ URL::route('responsabilitate_act_tip_add') }}";
+                console.log(url_add);
+                
+
+                var parametrii = [];
+                parametrii.push(id_tip_activitate_tipizata);
+                parametrii.push(resp_pr);
+
+
+                var stringed = JSON.stringify(parametrii);
+                //var id = $(this).closest('tr').data('id');
+                console.error(stringed);
+                $.ajax({
+                    url: url_add,
+                    type: 'POST',
+                    data : { 
+                        "parametrii": stringed
+                    },
+                    success: function(data){
+                      if (typeof data === 'object') {
+                          if (data.status === "OK") {
+                              var ruta = "{{ URL::route('date_template_contract', '_idactt_') }}";
+                              ruta = ruta.replace("'_idactt_'", parseInt(id_tip_activitate_tipizata));
+                              MessageBox("SUCCESS", "Responsabilitate activitate tipizata", data.message);
+                              window.setTimeout(function(){location.reload()},2000);
+                          }
+                          else
+                              MessageBox("ERROR", "Responsabilitate activitate tipizata", data.message);
+                      }
+                      else 
+                          MessageBox("ERROR", "Server", "Eroare de server SCS");              
+                    },
+                    error:function(){
+                        MessageBox("ERROR", "Server", "Eroare de server ERR");
+                    }
+                })
+            }
+        });
+
+        $(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-Token': $('meta[name="_token"]').attr('content')
+                }
+            });
+        });
+        $('[title]:not([data-placement])').tooltip({'placement': 'top'});
+
+    </script>
+
+@stop
