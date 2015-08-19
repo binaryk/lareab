@@ -25,9 +25,9 @@
                         <table class="table table-striped table-bordered table-hover" id="dataTables-stadii">
                            <thead>
                                <tr>                                   
-                                   <th>Stadiu</th>
-                                   <th>Data</th>
-                                   <th>Utilizator</th>
+                                   <th class="text-center">Stadiu</th>
+                                   <th class="text-center">Data</th>
+                                   <th class="text-center">Utilizator</th>
                                </tr>
                            </thead>
                            <tbody>
@@ -38,7 +38,7 @@
                                     @if ($cnt == 0) 
                                         <span style="visibility: hidden">
                                             {{ $ultimul_stadiu = $stadiu->stadiu; 
-                                                $id_ultimul_stadiu = $stadiu->id_stadiu_livrabil;}}
+                                                $id_ultimul_stadiu = $stadiu->id;}}
                                         </span>
                                     @endif
                                     <span style="visibility: hidden">{{ $cnt++ }}</span>
@@ -57,20 +57,24 @@
                                 @endif 
                                 <input type="hidden" name="id_livrabil_etapa" value="{{ $id_livrabil_etapa }}" />                           
                                 
-                                <label>Schimba stadiu</label>
-                                <select class="form-control" name="stadiu_selectionat">
-                                    <option>Selectioneaza un stadiu</option>
-                                    @foreach($stadii_livrabil as $stadiu_livrabil)
-                                        @if ($stadiu_livrabil->id_stadiu_livrabil > $id_ultimul_stadiu)
-                                        <option value="{{ $stadiu_livrabil->id_stadiu_livrabil }}">{{ $stadiu_livrabil->denumire }}</option>
-                                        @endif
-                                    @endforeach                                   
-                                </select>
-                                <label>Numarul de ore lucrate pe acest livrabil:</label>
-                                <input type="number" class="form-control" name="ore_lucrate" value="{{ $ore_lucrate[0]->ore_lucrate }}" />
-
-                                <p>&nbsp</p>
-                                <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Salvare"/>
+                                <div class="col-lg-6">
+                                    <label>Schimba stadiu</label>
+                                    <select class="form-control" name="stadiu_selectionat">
+                                        <option>Selectioneaza un stadiu</option>
+                                        @foreach($stadii_livrabil as $stadiu_livrabil)
+                                            @if ($stadiu_livrabil->id > $id_ultimul_stadiu)
+                                            <option value="{{ $stadiu_livrabil->id }}">{{ $stadiu_livrabil->denumire }}</option>
+                                            @endif
+                                        @endforeach                                   
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Numarul de ore lucrate pe acest livrabil:</label>
+                                    <input type="number" class="form-control" name="ore_lucrate" value="{{ $ore_lucrate }}" />
+                                </div>
+                                <div class="col-lg-12 text-center top24">
+                                    <input type="submit" name="btn_submit" class="btn btn-lg btn-primary" value="Salvare"/>
+                                </div>                                    
                                 {{ Form::token() }}
                             </fieldset>
                         </form>

@@ -14,82 +14,38 @@
                     @endif
                     {{ Form::open() }}
 
-                    <div class="form-group col-lg-12                   
-                        @if ($errors->has('Valoare')) has-error 
-                        @elseif(Input::old('Valoare')) has-success 
-                        @endif">
-                        <label>Valoare garantie de participare</label>
-                        <input class="form-control auto text-right" name="Valoare" type="text" data-a-dec="," data-a-sep="." 
-                        @if ($gr_participare)    
-                            value = "{{ $gr_participare->Valoare }}"
-                        @else
-                            value = "{{ Input::old('Valoare') }}" 
-                        @endif
-                        @if ($errors->has('Valoare')) 
-                            title="{{ $errors->first('Valoare') }}" 
-                        @endif>
+                    <div class="col-md-12">
+                        {{ Form::textNumericField('Valoare garantie de participare', 'valoare', isset($gr_participare->valoare) ? $gr_participare->valoare : 0) }}                    
                     </div>
 
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('PerioadaValabilitate')) has-error 
-                        @elseif(Input::old('PerioadaValabilitate')) has-success 
-                        @endif">
-                        <label>Perioada de valabilitate a garantiei de participare</label>
-                        <input class="form-control auto text-right" name="PerioadaValabilitate" type="text" data-a-dec="," data-a-sep="." 
-                        @if ($gr_participare)    
-                            value = "{{ $gr_participare->PerioadaValabilitate }}"
-                        @else
-                            value = "{{ Input::old('PerioadaValabilitate') }}" 
-                        @endif
-                        @if ($errors->has('PerioadaValabilitate')) 
-                            title="{{ $errors->first('PerioadaValabilitate') }}" 
-                        @endif>
-                    </div>
+                    <div class="col-md-6">
+                        {{ Form::textNumericField('Perioada de valabilitate a garantiei de participare', 'perioada_valabilitate', isset($gr_participare->perioada_valabilitate) ? $gr_participare->perioada_valabilitate : 0) }}                    
+                    </div>                     
 
-                    <div class="form-group col-lg-6
-                        @if($errors->has('um_timp')) has-error 
-                        @elseif(Input::old('um_timp')) has-success 
-                        @endif ">
-                        <label for = "">Unitate de masura de timp</label>
-                        <select name="um_timp" id="um_timp" 
-                        class="selectpicker form-control" data-live-search="true">
-                            <option value="0">Selectioneaza unitatea de masura de timp</option>
-                            @if ($gr_participare)
-                                @foreach ($ums_timp as $um_timp) 
-                                    <option value="{{ $um_timp->IdUM }}" 
-                                        @if ($um_timp->IdUM == $gr_participare->id_um) selected @endif>{{ $um_timp->Denumire }}
-                                    </option>
-                                @endforeach
-                            @else
-                                @foreach ($ums_timp as $um_timp)
-                                    <option value="{{ $um_timp->IdUM }}" 
-                                        @if (Input::old('um_timp')) selected @endif>{{ $um_timp->Denumire }}
-                                    </option> 
-                                @endforeach
-                            @endif
-                        </select>
-                    </div> 
+                    <div class="col-md-6">
+                        {{ Form::selectField('Unitate de masura de timp', 'um_timp', $ums_timp, isset($gr_participare->id_um) ? $gr_participare->id_um : null) }}
+                    </div>                        
 
                     <div class="form-group col-lg-6">
                         <label>Data constituirii garantiei de participare</label>
                         <div class="input-group 
-                        @if ($errors->has('DataConstituirii')) has-error 
-                        @elseif(Input::old('DataConstituirii')) has-success 
+                        @if ($errors->has('data_constituirii')) has-error 
+                        @elseif(Input::old('data_constituirii')) has-success 
                         @endif">
                             <input 
                                 class="form-control data-picker" 
-                                name="DataConstituirii" 
+                                name="data_constituirii" 
                                 data-placement="top" 
                                 placeholder="Data deschiderii contului de garantie" 
                                 type="text"
 
                             @if ($gr_participare)
-                                value = "{{ $gr_participare->DataConstituirii }}"
+                                value = "{{ $gr_participare->data_constituirii }}"
                             @else 
-                                value = "{{ Input::old('DataConstituirii') }}"
+                                value = "{{ Input::old('data_constituirii') }}"
                             @endif 
-                            @if ($errors->has('DataConstituirii')) 
-                                title="{{ $errors->first('DataConstituirii') }}" 
+                            @if ($errors->has('data_constituirii')) 
+                                title="{{ $errors->first('data_constituirii') }}" 
                             @endif />
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
@@ -98,44 +54,44 @@
                     <div class="form-group col-lg-6">
                         <label>Data eliberarii garantiei de participare</label>
                         <div class="input-group 
-                        @if ($errors->has('DataEliberarii')) has-error 
-                        @elseif(Input::old('DataEliberarii')) has-success 
+                        @if ($errors->has('data_eliberarii')) has-error 
+                        @elseif(Input::old('data_eliberarii')) has-success 
                         @endif">
                             <input 
                                 class="form-control data-picker" 
-                                name="DataEliberarii" 
+                                name="data_eliberarii" 
                                 data-placement="top" 
                                 placeholder="Data eliberarii garantiei de participare" 
                                 type="text"
 
                             @if ($gr_participare)
-                                value = "{{ $gr_participare->DataEliberarii }}"
+                                value = "{{ $gr_participare->data_eliberarii }}"
                             @else 
-                                value = "{{ Input::old('DataEliberarii') }}"
+                                value = "{{ Input::old('data_eliberarii') }}"
                             @endif 
-                            @if ($errors->has('DataEliberarii')) 
-                                title="{{ $errors->first('DataEliberarii') }}" 
+                            @if ($errors->has('data_eliberarii')) 
+                                title="{{ $errors->first('data_eliberarii') }}" 
                             @endif />
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         </div>
                     </div>
 
                     <div class="form-group col-lg-6                   
-                        @if ($errors->has('NecesitaGarantie')) has-error 
-                        @elseif(Input::old('NecesitaGarantie')) has-success 
+                        @if ($errors->has('necesita_garantie')) has-error 
+                        @elseif(Input::old('necesita_garantie')) has-success 
                         @endif">
                         <div class="checkbox checkbox-primary">
                              @if ($gr_participare) 
-                             {{ Form::checkbox('NecesitaGarantie', '1', $gr_participare->NecesitaGarantie ) }} 
+                             {{ Form::checkbox('necesita_garantie', '1', $gr_participare->necesita_garantie ) }} 
                              @else
-                             {{ Form::checkbox('NecesitaGarantie', '1', (Input::old('NecesitaGarantie', ''))) }}
+                             {{ Form::checkbox('necesita_garantie', '1', (Input::old('necesita_garantie', ''))) }}
                              @endif                               
-                            <label for="NecesitaGarantie" class="label_check">S-a constituit garantie de participare</label>
+                            <label for="necesita_garantie" class="label_check">S-a constituit garantie de participare</label>
                         </div>
                     </div> 
 
                     <div class="form-group col-lg-12 text-center">               
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg" value="Salveaza" />
                         {{ Form::token() }}
                     </div>
 

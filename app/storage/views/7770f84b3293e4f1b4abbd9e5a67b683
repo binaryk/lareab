@@ -1,0 +1,15 @@
+<?php if($errors->has($name)): ?> <div class="form-group has-error"> <?php else: ?> <div class="form-group"> <?php endif; ?>
+
+	<?php if(!is_null($label)): ?>
+		<?php echo Form::label($name, $label, ['class' => 'control-label']); ?>
+
+	<?php endif; ?>	
+
+	<?php echo Form::password($name, $options + ['class' => 'form-control']); ?>
+
+
+	<?php if($errors->has($name)): ?>
+		<p class="help-block"><?php echo $errors->first($name); ?></p>
+	<?php endif; ?>
+
+</div>

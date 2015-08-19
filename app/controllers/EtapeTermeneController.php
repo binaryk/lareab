@@ -14,7 +14,7 @@ class EtapeTermeneController extends BaseController
             epl.nr_etapa,           
             date_format(epl.data_start, '%d-%m-%Y') AS data_start 
             FROM etape_predare_livrabile epl
-            LEFT OUTER JOIN um_timp ON um_timp.id_um = epl.id_um_timp AND um_timp.logical_delete = 0
+            LEFT OUTER JOIN um_timp ON um_timp.id = epl.id_um_timp AND um_timp.logical_delete = 0
             WHERE epl.logical_delete = 0";
 
         $obiectiv = null;
@@ -22,11 +22,11 @@ class EtapeTermeneController extends BaseController
         {
             $sql = $sql . " AND epl.id_obiectiv = " . $id_obiectiv;
             $obiectiv = DB::Select("SELECT
-                id_obiectiv,
+                id,
                 numar, 
                 date_format(data_semnare, '%d-%m-%Y') AS data_semnare 
                 FROM obiectiv 
-                WHERE id_obiectiv = :id_obiectiv", array('id_obiectiv' => $id_obiectiv));
+                WHERE id = :id_obiectiv", array('id_obiectiv' => $id_obiectiv));
         }
         $etape = DB::Select($sql);
         
@@ -37,10 +37,7 @@ class EtapeTermeneController extends BaseController
 
     public function getAddEtapa($id_obiectiv)
     {        
-        $ums_timp = DB::Select("SELECT 
-            id_um, denumire 
-            FROM um_timp
-            WHERE logical_delete = 0");   
+        $ums_timp = self::getUMTimp();
       
         return View::make('etape_termene.add')
             ->with('ums_timp', $ums_timp)
@@ -50,11 +47,13 @@ class EtapeTermeneController extends BaseController
     public function postAddEtapa($id_obiectiv)
     {
         $rules = array(
-            'nr_etapa' => 'required',
+            'nr_etapa' => 'required|Integer|Max:65535',
             'termen_predare' => 'required',
             'um_timp' => 'required'
             );
-        $errors = array('required' => 'Campul este obligatoriu.');
+        $errors = array(
+            'required' => 'Campul este obligatoriu.',
+            'max' => 'Valoarea maxima este 65535');
         
         $validator = Validator::make(Input::all(), $rules, $errors);
         if ($validator->fails()) {
@@ -64,7 +63,7 @@ class EtapeTermeneController extends BaseController
                 ->withInput();
         } 
         else {
-            $data_inceperii_eu = DateTime::createFromFormat('d-m-Y', Input::get('data_inceperii'));
+            $data_inceperii_eu = DateTime::createFromFormat('d-m-Y', Input::get('data_start'));
             $data_inceperii_us = $data_inceperii_eu->format('Y-m-d');            
           
             try {
@@ -98,10 +97,7 @@ class EtapeTermeneController extends BaseController
             WHERE epl.logical_delete = 0
             AND epl.id_etapa = :id_etapa", array('id_etapa' => $id_etapa));
         
-        $ums_timp = DB::Select("SELECT 
-            id_um, denumire 
-            FROM um_timp
-            WHERE logical_delete = 0"); 
+        $ums_timp = self::getUMTimp();
 
         return View::make('etape_termene.edit')
             ->with('ums_timp', $ums_timp)
@@ -112,13 +108,13 @@ class EtapeTermeneController extends BaseController
     {
         $rules = array(
             'nr_etapa' => 'required|Integer|Max:65535',
-            'termen_predare' => 'required|Integer|Max:65535',
+            'termen_predare' => 'required',
             'um_timp' => 'required'
             );
         $errors = array(
             'required' => 'Campul este obligatoriu.',
-            'max' => 'Valoarea maxima este 65535',
-            'integer' => 'Valoarea asteptata este un numar intreg');
+            'max' => 'Valoarea maxima este 65535');
+           
         
         $validator = Validator::make(Input::all(), $rules, $errors);
         if ($validator->fails()) {
@@ -128,7 +124,7 @@ class EtapeTermeneController extends BaseController
                 ->withInput();
         } 
         else {
-            $data_inceperii_eu = DateTime::createFromFormat('d-m-Y', Input::get('data_inceperii'));
+            $data_inceperii_eu = DateTime::createFromFormat('d-m-Y', Input::get('data_start'));
             $data_inceperii_us = $data_inceperii_eu->format('Y-m-d');            
           
             try {

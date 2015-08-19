@@ -11,27 +11,16 @@
                 <fieldset>
                     @if(Session::has('message'))
                         <p class="alert @if($errors->isEmpty()) alert-success @else alert-danger @endif">{{ Session::get('message')  }}</p>
-                    @endif               
-                    <div class="form-group col-lg-12                    
-                        @if ($errors->has('denumire')) has-error 
-                        @elseif(Input::old('denumire')) has-success 
-                        @endif">
-                        <label>Denumire</label>
-                        <input class="form-control" name="denumire" type="text" value="{{ Input::old('denumire') }}" 
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('required') }}" 
-                        @endif>
-                    </div>                                                                 
-                    <div class="form-group col-lg-3                   
-                        @if ($errors->has('cif')) has-error 
-                        @elseif(Input::old('cif')) has-success 
-                        @endif">
-                        <label>CIF</label>
-                        <input class="form-control" name="cif" type="text" value="{{ Input::old('cif') }}" 
-                        @if ($errors->has('cif')) 
-                            title="{{ $errors->first('cif') }}" 
-                        @endif>
-                    </div>                                                                                                                                         
+                    @endif  
+
+                    <div class="col-md-12">
+                        {{ Form::textField('Denumire', 'denumire') }}                    
+                    </div> 
+                                                                  
+                    <div class="col-md-3">
+                        {{ Form::textField('CIF', 'cif') }}                    
+                    </div>                                                                                                                                           
+                    
                     <div class="form-group col-lg-3
                         @if($errors->has('tara')) has-error 
                         @elseif(Input::old('tara')) has-success 
@@ -83,52 +72,24 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-lg-12                   
-                        @if ($errors->has('adresa')) has-error 
-                        @elseif(Input::old('adresa')) has-success 
-                        @endif">
-                        <label>Adresa</label>
-                        <input class="form-control" name="adresa" type="text" value="{{ Input::old('adresa') }}" 
-                        @if ($errors->has('adresa')) 
-                            title="{{ $errors->first('adresa') }}" 
-                        @endif>
+                    <div class="col-md-12">
+                        {{ Form::textField('Adresa', 'adresa') }}                    
                     </div>                                                                 
-
-                    <div class="form-group col-lg-4                   
-                        @if ($errors->has('cod_postal')) has-error 
-                        @elseif(Input::old('cod_postal')) has-success 
-                        @endif">
-                        <label>Cod postal</label>
-                        <input class="form-control" name="cod_postal" type="text" id="cod_postal" value="{{ Input::old('cod_postal') }}" 
-                        @if ($errors->has('cod_postal')) 
-                            title="{{ $errors->first('cod_postal') }}" 
-                        @endif>
-                    </div>                                                                 
-
-                    <div class="form-group col-lg-4                   
-                        @if ($errors->has('telefon')) has-error 
-                        @elseif(Input::old('telefon')) has-success 
-                        @endif">
-                        <label>Telefon</label>
-                        <input class="form-control" name="telefon" type="text" value="{{ Input::old('telefon') }}" 
-                        @if ($errors->has('telefon')) 
-                            title="{{ $errors->first('telefon') }}" 
-                        @endif>
-                    </div>                                                                 
-
-                    <div class="form-group col-lg-4                   
-                        @if ($errors->has('fax')) has-error 
-                        @elseif(Input::old('fax')) has-success 
-                        @endif">
-                        <label>Fax</label>
-                        <input class="form-control" name="fax" type="text" value="{{ Input::old('fax') }}" 
-                        @if ($errors->has('fax')) 
-                            title="{{ $errors->first('fax') }}" 
-                        @endif>
+                    <div class="col-md-4">
+                        {{ Form::textField('Cod postal', 'cod_postal') }}                    
+                    </div> 
+                    <div class="col-md-4">
+                        {{ Form::textField('Telefon', 'telefon') }}                    
+                    </div>                 
+                    <div class="col-md-4">
+                        {{ Form::textField('Fax', 'fax') }}                    
                     </div>                                                                   
-                    <div class="form-group col-lg-12 text-center"> 
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza"/>                                        
-                    </div>
+                    <div class="col-md-12 center top24"> 
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" onclick="this.value='Se salveaza ..';this.disabled='disabled'; this.form.submit();" />
+                        <a href="{{ URL::route('entitati_publice_list') }}">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
+                    </div>>
                     {{ Form::token() }}
                 </fieldset>
             </form>
@@ -174,6 +135,8 @@
                         regiuni[key].denumire + '</option>');                
                 }            
             }
+            $("#judet").empty();
+            $("#localitate").empty();  
         });   
 
         $('#regiune').change(function(){
@@ -193,6 +156,7 @@
                         judete[key].denumire + '</option>');                
                 }            
             }
+            $("#localitate").empty();
         });   
 
         $('#judet').change(function(){

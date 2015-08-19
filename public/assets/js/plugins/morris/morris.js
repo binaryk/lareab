@@ -1756,14 +1756,15 @@ Licensed under the BSD-2-Clause License.
       maxHeightTop = inner / 2;
       maxHeightBottom = inner / 3;
       this.text1.attr({
-        text: label1,
-        transform: ''
+        text: label1
+		/*,
+        transform: ''*/
       });
       text1bbox = this.text1.getBBox();
       text1scale = Math.min(maxWidth / text1bbox.width, maxHeightTop / text1bbox.height);
-      this.text1.attr({
+      /*this.text1.attr({
         transform: "S" + text1scale + "," + text1scale + "," + (text1bbox.x + text1bbox.width / 2) + "," + (text1bbox.y + text1bbox.height)
-      });
+      });*/
       this.text2.attr({
         text: label2,
         transform: ''
@@ -1777,10 +1778,10 @@ Licensed under the BSD-2-Clause License.
 
     Donut.prototype.drawEmptyDonutLabel = function(xPos, yPos, color, fontSize, fontWeight) {
       var text;
-      text = this.raphael.text(xPos, yPos, '').attr('font-size', fontSize).attr('fill', color);
-      if (fontWeight != null) {
+      text = this.raphael.text(xPos, yPos, '').attr('font-size', 12).attr('fill', color);
+      /*if (fontWeight != null) {
         text.attr('font-weight', fontWeight);
-      }
+      }*/
       return text;
     };
 

@@ -1,10 +1,13 @@
 @extends('layouts.master')
 
+@section('head_scripts')
+    <!-- DataTables CSS -->
+    {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}  
+    {{ HTML::style('assets/css/plugins/jquery.dataTables.css') }}  
+@stop
+
 @section('title')
-  Reprezentanti legali
-  @if(isset($entitate))
-    {{ $entitate }}
-  @endif
+  Reprezentanti legali organizatie 
 @stop
 
 @section('content')
@@ -29,11 +32,6 @@
                                 <label class="control-label">CNP</label></td>
                             <td width="75%"><p id="_col_cnp"></p></td>
                         </tr>
-                        <tr>
-                            <td width="25%">
-                                <label class="control-label">Entitate</label></td>
-                            <td width="75%"><p id="_col_entitate"></p></td>
-                        </tr>
                     </table>
                 </div>                        
             </div>        
@@ -42,12 +40,7 @@
                   Reprezentanti legal              
                   <div class="pull-right">                      
                       <a href="{{ URL::previous() }}"><i class="fa fa-arrow-circle-left fa-fw"></i> Inapoi</a>                                     
-                      <a 
-                        @if(isset($entitate)) 
-                          href="{{ URL::route('reprezentant_legal_add_entitate', [$id_entitate, $entitate]) }}" 
-                        @else 
-                          href="{{ URL::route('reprezentant_legal_add_organizatie') }}"
-                        @endif>
+                      <a href="{{ URL::route('reprezentant_legal_add') }}">                       
                         <i class="fa fa-plus-circle fa-fw" id="nou" name="nou"></i> Nou
                       </a>                      
                   </div>
@@ -59,7 +52,6 @@
                           <tr>                                   
                             <th class="text-center">Nume si prenume</th>                   
                             <th class="text-center">CNP</th>
-                            <th class="text-center">Entitatea de care apartine</th>
                             <th class="text-center">Actiuni</th>
                           </tr>
                         </thead>
@@ -67,19 +59,17 @@
                           <tr>                                   
                             <th class="text-center">Nume si prenume</th>                   
                             <th class="text-center">CNP</th>
-                            <th class="text-center">Entitatea de care apartine</th>
                             <th class="text-center">Actiuni</th>
                           </tr>
                         </tfoot>
                         <tbody>                             
                           @foreach ($reprezentanti as $reprezentant)
-                            <tr data-id="{{ $reprezentant->id_repleg_entitate }}">         
+                            <tr data-id="{{ $reprezentant->id }}">         
                               <td class="text-center">{{ $reprezentant->nume }}</td>
                               <td class="text-center">{{ $reprezentant->cnp }}</td>
-                              <td>{{ $reprezentant->entitate }}</td>
                               <td class="center action-buttons">
-                                <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>
-                                <a href="{{ URL::route('reprezentant_legal_edit', $reprezentant->id_repleg_entitate) }}"><i class="fa fa-pencil-square-o" title="Editeaza"></i></a>
+                                <a href="{{ URL::route('reprezentant_legal_edit', $reprezentant->id) }}"><i class="fa fa-pencil-square-o" title="Editeaza"></i></a>
+                                <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>                                
                               </td>                             
                             </tr>
                           @endforeach                             
@@ -119,7 +109,6 @@
               aoColumns: [ 
                   { sSelector: "#_col_nume", type: "text" },
                   { sSelector: "#_col_cnp", type: "text" },             
-                  { sSelector: "#_col_entitate", type: "select" },             
                 ]
             }); 
             
@@ -150,7 +139,7 @@
                                 url : url_delete,
                                 data : {
                                     "_token": '<?= csrf_token() ?>',
-                                    "id_repleg_entitate": id
+                                    "id": id
                                 },
                                 success : function(data){
                                     $('tr[data-id='+id+']').fadeOut();

@@ -98,7 +98,7 @@
                                         <td>{{ $livrabil->contract }}</td>
                                         <td><a href="{{ URL::route('obiectiv_single', $livrabil->id_obiectiv) }}">{{ $livrabil->obiectiv }}</a></td>
                                         <td class="text-center">{{ $livrabil->id_etapa }}</td>                                        
-                                        <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->id_livrabil_etapa) }}">{{ $livrabil->stadiu }}</td>
+                                        <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->id_livrabil_pentru_facturat) }}">{{ $livrabil->stadiu }}</td>
                                         <td class="text-center">{{ $livrabil->data_limita }}</td>
                                         <td class="text-right">{{ $livrabil->ore_lucrate }}</td>                                    
                                     </tr>

@@ -1,5 +1,11 @@
 @extends('layouts.master')
 
+@section('head_scripts')
+    <!-- DataTables CSS -->
+    {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}  
+    {{ HTML::style('assets/css/plugins/jquery.dataTables.css') }}  
+@stop
+
 @section('title')
     Asociatii proprietari
 @stop
@@ -16,6 +22,11 @@
                                                                         
                 <div id="div_cautare" class="panel-body" style="display:none">
                     <table width="100%">
+                        <tr>
+                            <td width="25%">
+                                <label class="control-label">Denumire</label></td>
+                            <td width="75%"><p id="_col_denumire"></p></td>
+                        </tr>
                         <tr>
                             <td width="25%">
                                 <label class="control-label">Strada</label></td>
@@ -35,12 +46,7 @@
                             <td width="25%">
                                 <label class="control-label">Scara</label></td>
                             <td width="75%"><p id="_col_scara"></p></td>
-                        </tr>                                                                        
-                        <tr>
-                            <td width="25%">
-                                <label class="control-label">Denumire</label></td>
-                            <td width="75%"><p id="_col_denumire"></p></td>
-                        </tr>                                                                                                       
+                        </tr>                                                                                                                                                                        
                         <tr>
                             <td width="25%">
                                 <label class="control-label">Judet</label></td>
@@ -64,7 +70,7 @@
                </div>
                <div class="panel-body">
                    <div class="table-responsive">
-                      <table class="table table-striped table-bordered table-hover" id="dataTables-incasari">
+                      <table class="table table-striped table-bordered table-hover" id="dataTables-asociatie">
                         <thead>
                           <tr>                                   
                             <th class="text-center">Denumire</th>                      
@@ -74,6 +80,7 @@
                             <th class="text-center">Scara</th>
                             <th class="text-center">Judet</th>
                             <th class="text-center">Localitate</th>
+                            <th class="text-center">Actiuni</th>
                           </tr>
                         </thead>
                         <tfoot>
@@ -85,19 +92,28 @@
                             <th class="text-center">Scara</th>
                             <th class="text-center">Judet</th>
                             <th class="text-center">Localitate</th>
+                            <th class="text-center">Actiuni</th>
                           </tr>
                         </tfoot>
                         <tbody>                             
                           @foreach ($asociatii as $asociatie)
-                            <tr data-id="{{ $asociatie->id_asociatie }}">                              
+                            <tr data-id="{{ $asociatie->id }}">                              
                               <td class="text-left">{{ $asociatie->denumire }}</td>
                               <td class="text-left">{{ $asociatie->strada }}</td>
-                              <td class="text-left">{{ $asociatie->numar }}</td>
-                              <td class="text-left">{{ $asociatie->bloc }}</td>
-                              <td class="text-left">{{ $asociatie->scara }}</td>
+                              <td class="text-center">{{ $asociatie->numar }}</td>
+                              <td class="text-center">{{ $asociatie->bloc }}</td>
+                              <td class="text-center">{{ $asociatie->scara }}</td>
                               <td class="text-left">{{ $asociatie->judet }}</td>
                               <td class="text-left">{{ $asociatie->localitate }}</td>
-                              <td class="center action-buttons">                             
+                              <td class="center action-buttons">   
+                                <a href="{{ URL::route('asociatie_proprietari_edit', $asociatie->id) }}">
+                                  <i class="fa fa-pencil-square-o" 
+                                  title="Vizualizeaza sau modifica"></i>
+                                </a>
+                                <a href="{{ URL::route('imobile_asociatie_list', $asociatie->id) }}">
+                                  <i class="fa fa-sitemap" 
+                                  title="Imobile administrate de asociatie"></i>
+                                </a>                                
                                 <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>                                                             
                               </td>                                  
                             </tr>
@@ -124,7 +140,7 @@
 
     <script>
         $(document).ready(function() {    
-            $('#dataTables-incasari').dataTable({
+            $('#dataTables-asociatie').dataTable({
                 "aoColumnDefs": [
                     { 'bSortable': false, 'aTargets': [ 0, 1 ] }
                 ],
@@ -134,7 +150,7 @@
             $("#btn_show_hide").click(function(){
                 $("#div_cautare").toggle();             
             });   
-            var table = $('#dataTables-incasari').dataTable().columnFilter({
+            var table = $('#dataTables-asociatie').dataTable().columnFilter({
               aoColumns: [ 
                   { sSelector: "#_col_denumire", type: "text" },
                   { sSelector: "#_col_strada", type: "text" },
@@ -169,7 +185,7 @@
                                 url : url_delete,
                                 data : {
                                     "_token": '<?= csrf_token() ?>',
-                                    "id_asociatie": id
+                                    "id": id
                                 },
                                 success : function(data){
                                     $('tr[data-id='+id+']').fadeOut();

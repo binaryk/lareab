@@ -52,7 +52,7 @@
                     Lista etape
                     <div class="pull-right">                      
                         <a href="{{ URL::previous() }}"><i class="fa fa-arrow-circle-left fa-fw"></i> Inapoi</a>                      
-                        <a href="{{ URL::route('etapa_add', $obiectiv[0]->id_obiectiv) }}"><i class="fa fa-plus-circle fa-fw"></i> Nou</a>                      
+                        <a href="{{ URL::route('etapa_add', $obiectiv[0]->id) }}"><i class="fa fa-plus-circle fa-fw"></i> Nou</a>                      
                     </div>
                </div>
                <div class="panel-body">

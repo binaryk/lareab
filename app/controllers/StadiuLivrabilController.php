@@ -8,27 +8,39 @@ class StadiuLivrabilController extends BaseController {
             isl.id_livrabil_etapa,
             ifnull(users.full_name, '') AS nume_utilizator,
             sl.denumire AS stadiu,
-            sl.id_stadiu_livrabil,
+            sl.id,
             date_format(isl.created_at, '%d-%m-%Y %H:%i') AS data_stadiu        
             FROM istoric_stadii_livrabil AS isl
-            LEFT OUTER JOIN stadiu_livrabil AS sl ON sl.id_stadiu_livrabil = isl.id_stadiu AND sl.logical_delete = 0
+            LEFT OUTER JOIN stadiu_livrabil AS sl ON sl.id = isl.id_stadiu AND sl.logical_delete = 0
             LEFT OUTER JOIN users ON users.id = isl.id_user
             WHERE isl.logical_delete = 0 AND isl.id_livrabil_etapa = :id_livrabil
             ORDER BY isl.created_at DESC", array('id_livrabil' => $id_livrabil));        
 
         $stadii_livrabil = DB::select("SELECT    
-            sl.id_stadiu_livrabil,
+            sl.id,
             sl.denumire
             FROM stadiu_livrabil AS sl
             WHERE sl.logical_delete = 0
-            ORDER BY sl.id_stadiu_livrabil");
+            ORDER BY sl.id");
 
         $ore_lucrate = DB::select("SELECT
             ore_lucrate
             FROM livrabile_etapa
             WHERE livrabile_etapa.logical_delete = 0
-            AND livrabile_etapa.id_livrabil_etapa = :id_livrabil",
+            AND livrabile_etapa.id = :id_livrabil",
             array('id_livrabil' => $id_livrabil));
+        /*$ore_lucrate = DB::table('livrabile_etapa')
+            ->where('id', $id_livrabil)
+            ->where('logical_delete', 0)
+            ->lists('ore_lucrate');*/
+            //dd($id_livrabil);
+        try
+        {
+            $ore_lucrate = $ore_lucrate[0]->ore_lucrate;
+        }
+        catch(Exception $err) { 
+            $ore_lucrate = 0; 
+        }
 
         return View::make('stadii_livrabil.list')
             ->with('stadii', $stadii)
@@ -64,7 +76,7 @@ class StadiuLivrabilController extends BaseController {
         }
     }
 
-    public function postSchimbaStadiu()
+    public function postSchimbaStadiu($id_livrabil)
     {       
         $actualizare_ore = Input::get('ore_lucrate') > 0;                     
         $is_stadiu = (Input::get('stadiu_selectionat') != null) && (Input::get('stadiu_selectionat') > 0);
@@ -79,7 +91,7 @@ class StadiuLivrabilController extends BaseController {
         if ($actualizare_ore)
         {
             //Actualizeaza numarul de ore lucrate la acest livrabil
-            $array_update = array_add($array_update, 'OreLucrate', Input::get('ore_lucrate'));
+            $array_update = array_add($array_update, 'ore_lucrate', Input::get('ore_lucrate'));
         }
 
         // Start transaction!
@@ -93,7 +105,7 @@ class StadiuLivrabilController extends BaseController {
                         array(
                         'id_livrabil_etapa' => Input::get('id_livrabil_etapa'), 
                         'id_stadiu' => Input::get('stadiu_selectionat'), 
-                        'guid_user' => 'fuck_you'));            
+                        'id_user' => Entrust::user()->id));            
             } catch(Exception $e)
             {
                 DB::rollback();                    
@@ -106,7 +118,7 @@ class StadiuLivrabilController extends BaseController {
             try 
             {
                 DB::table('livrabile_etapa')
-                    ->where('id_livrabil_etapa', Input::get('id_livrabil_etapa'))
+                    ->where('id', Input::get('id_livrabil_etapa'))
                     ->update($array_update);                     
             } catch(Exception $e)
             {
@@ -115,9 +127,6 @@ class StadiuLivrabilController extends BaseController {
             }
         }                 
 
-        // If we reach here, then
-        // data is valid and working.
-        // Commit the queries!
         DB::commit();
         return Redirect::back()->with('message', 'Actualizare realizata cu succes!')->withInput();
     }

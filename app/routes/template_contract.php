@@ -9,7 +9,7 @@ Route::group(array('after' => 'auth'), function ()
     Route::post('/date_template_contract/{table}/edit', array('as' => 'date_template_contract_edit', 'uses' => 'DateTemplateContractController@postEditDateTemplateContract'));
 
     /*Template contract - tree system*/
-    Route::get('/template_contract', array('as' => 'template_contract', 'uses' => 'TemplateContractController@getTemplateContract'));
+    
     //Delete
     Route::post('/tip_contract_delete', array('as' => 'tip_contract_delete', 'uses' => 'DateTemplateContractController@postDeleteTipContract'));
     Route::post('/tip_activitate_delete', array('as' => 'tip_activitate_delete', 'uses' => 'DateTemplateContractController@postDeleteTipActivitate'));
@@ -35,8 +35,15 @@ Route::group(array('after' => 'auth'), function ()
     Route::post('/template_contract_tipizat_master_delete', array('as' => 'template_contract_tipizat_master_delete', 'uses' => 'TemplateContractController@postDeleteTemplateMaster'));
     Route::post('/template_contract_tipizat_detail_delete', array('as' => 'template_contract_tipizat_detail_delete', 'uses' => 'TemplateContractController@postDeleteTemplateDetail'));
     //Add
-    Route::post('/template_master_add', array('as' => 'template_master_add', 'uses' => 'TemplateContractController@postAddTemplateMaster'));
+    Route::post('/templates_add', array('as' => 'templates_add', 'uses' => 'TemplateContractController@postAddTemplateMaster'));
     Route::post('/template_detail_add', array('as' => 'template_detail_add', 'uses' => 'TemplateContractController@postAddTemplateDetail'));
     //Edit
     Route::post('/template_detail_edit', array('as' => 'template_detail_edit', 'uses' => 'TemplateContractController@postEditTemplateDetail'));
+
+    /*GET*/
+    Route::get('/template_contract', array('as' => 'template_contract', 'uses' => 'TemplateContractController@getTemplateContract'));
+    Route::get('/template_add', array('as' => 'template_add', 'uses' => 'TemplateContractController@getAddTemplate'));
+    Route::get('/template_add/{id}', array('as' => 'template_add/{id}', 'uses' => 'TemplateContractController@getAddTemplate'));
+	
+    Route::post('/template_delete', array('as' => 'template_delete', 'uses' => 'TemplateContractController@postDeleteTemplateMaster'));
 });     

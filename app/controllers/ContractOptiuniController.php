@@ -1,38 +1,26 @@
 <?php
 class ContractOptiuniController extends BaseController {
 
-	public function getStadiiContract($id_contract) {
-
-        $stadiu_contract = DB::select("SELECT 
-            is_s_ctr.id_istoric, 
-            is_s_ctr.id_contract, 
-            is_s_ctr.id_stadiu, 
-            s_ctr.Denumire, 
-            /*users.full_name AS Nume,*/
-            date_format(is_s_ctr.created_at, '%d-%m-%Y') AS data_stadiu
-
-        FROM istoric_stadii_contract AS is_s_ctr
-        /*LEFT OUTER JOIN users AS users ON  is_s_ctr.guid_user = users.guid  AND  users.logical_delete = 0*/
-        LEFT OUTER JOIN stadiu_contract AS s_ctr ON  is_s_ctr.id_stadiu = s_ctr.id_stadiu_contract  AND  s_ctr.logical_delete = 0
-
-        WHERE is_s_ctr.logical_delete = 0 
-        AND is_s_ctr.id_contract = :id_contract", array('id_contract' => $id_contract));
-
-        return View::make('contracte.istoric_stadii')->with('stadiu_contract', $stadiu_contract);
+    private $contract;
+    public function __construct()
+    {
+        $this->contract = new ContractController;
     }
 
     public function getAddEditGarantieExecutie($id_contract) {
 
-        $contract = self::getContract($id_contract);
+        $contract = $this->contract->getContract($id_contract);
+
         $valoare_incasari = DB::select("SELECT 
 
             SUM(valoare_virata_CG) AS valoare_incasari
             
             FROM incasare_factura 
-            INNER JOIN factura ON factura.id_factura = incasare_factura.id_factura AND factura.logical_delete = 0
+            INNER JOIN factura_client ON factura_client.id = incasare_factura.id_factura 
+            AND factura_client.logical_delete = 0
             
             WHERE incasare_factura.logical_delete = 0 
-            AND factura.id_contract = :id_contract", array('id_contract' => $id_contract));
+            AND factura_client.id_contract = :id_contract", array('id_contract' => $id_contract));
 
         $gr_executie = DB::select("SELECT
             g_exec.id_contract,
@@ -84,15 +72,17 @@ class ContractOptiuniController extends BaseController {
             $data_deschidere_eu = DateTime::createFromFormat('d-m-Y', Input::get('data_deschidere'));
             $data_deschidere_us = $data_deschidere_eu->format('Y-m-d');            
             
-            $procent_valoare = 0;                            
-            if (!empty(Input::get('procent_valoare'))) {
+            $procent_valoare = 0; 
+            if (Input::has('procent_valoare')) {                           
+            //if (!empty(Input::get('procent_valoare'))) {
                 $procent_valoare = Input::get('procent_valoare');    
                 $procent_valoare = str_replace('.', '', $procent_valoare);
                 $procent_valoare = str_replace(',', '.', $procent_valoare);
             }
 
-            $procent_initial = 0;                                       
-            if (!empty(Input::get('procent_initial'))) {
+            $procent_initial = 0;    
+            if (Input::has('procent_initial')) {                                 
+            //if (!empty(Input::get('procent_initial'))) {
                 $procent_initial = Input::get('procent_initial');    
                 $procent_initial = str_replace('.', '', $procent_initial);
                 $procent_initial = str_replace(',', '.', $procent_initial);
@@ -156,7 +146,7 @@ class ContractOptiuniController extends BaseController {
         FROM garantie_participare AS g_part
 
         WHERE g_part.logical_delete = 0
-        AND g_part.id_contract = $id_contract");
+        AND g_part.id_contract = :id_contract", array('id_contract' => $id_contract));
 
         return View::make('contracte.garantie_participare')
             ->with('gr_participare', count($gr_participare) == 1 ? $gr_participare[0] : null)
@@ -197,7 +187,8 @@ class ContractOptiuniController extends BaseController {
             $data_eliberarii_us = $data_eliberarii_eu->format('Y-m-d');            
             
             $valoare = 0;
-            if (!empty(Input::get('valoare')))
+            if (Input::has('valoare'))
+            //if (!empty(Input::get('valoare')))
             {
                 $valoare = Input::get('valoare');
                 $valoare = str_replace('.', '', $valoare);

@@ -50,17 +50,19 @@ class IncasariFacturaController extends BaseController
             $data_incasarii_us = $data_incasarii_eu->format('Y-m-d');            
             
             $valoare_incasata = 0;
-            if (!empty(Input::get('valoare_incasata')))
+            if (Input::has('valoare_incasata'))
+            //if (!empty(Input::get('valoare_incasata')))
             {
                 $valoare_incasata = Input::get('valoare_incasata');
-                $valoare_incasata = text_2_number($valoare_incasata);
+                $valoare_incasata = self::text_2_number($valoare_incasata);
             }
             
             $valoare_virata_CG = 0;
-            if (!empty(Input::get('valoare_virata_CG')))
+            if (Input::has('valoare_virata_CG'))
+            //if (!empty(Input::get('valoare_virata_CG')))
             {
                 $valoare_virata_CG = Input::get('valoare_virata_CG');
-                $valoare_virata_CG = text_2_number($valoare_virata_CG);
+                $valoare_virata_CG = self::text_2_number($valoare_virata_CG);
             }
             
             try {
@@ -93,7 +95,8 @@ class IncasariFacturaController extends BaseController
             $data_incasarii_us = $data_incasarii_eu->format('Y-m-d');            
             
             $valoare_incasata = 0;
-            if (!empty(Input::get('valoare_incasata')))
+            if (Input::has('valoare_incasata'))
+            //if (!empty(Input::get('valoare_incasata')))
             {
                 $valoare_incasata = Input::get('valoare_incasata');
                 $valoare_incasata = str_replace('.', '', $valoare_incasata);
@@ -101,7 +104,8 @@ class IncasariFacturaController extends BaseController
             }
             
             $valoare_virata_CG = 0;
-            if (!empty(Input::get('valoare_virata_CG')))
+            if (Input::has('valoare_virata_CG'))
+            //if (!empty(Input::get('valoare_virata_CG')))
             {
                 $valoare_virata_CG = Input::get('valoare_virata_CG');
                 $valoare_virata_CG = str_replace('.', '', $valoare_virata_CG);

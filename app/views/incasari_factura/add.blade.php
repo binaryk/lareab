@@ -58,10 +58,12 @@
                             title="{{ $errors->first('required') }}" 
                         @endif>
                     </div>                                                                                                                                                                                              
-                    <div class="form-group col-lg-12 text-center">               
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
-                        {{ Form::token() }}
-                    </div>                   
+                    <div class="col-md-12 center"> 
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" onclick="this.value='Se salveaza ..';this.disabled='disabled'; this.form.submit();" />
+                        <a href="{{ URL::route('incasari_factura', $factura->id) }}">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
+                    </div>                  
                 </fieldset>
             </form>
         </div>

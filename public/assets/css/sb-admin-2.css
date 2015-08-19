@@ -635,3 +635,7 @@ style.css
 }
 
 .top24 { margin-top:24px; } 
+
+.button-width {
+    width: 150px !important;
+}

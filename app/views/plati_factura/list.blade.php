@@ -47,7 +47,7 @@
                     Plati asociate facturii curente
                     <div class="pull-right">                      
                         <a href="{{ URL::previous() }}"><i class="fa fa-arrow-circle-left fa-fw"></i> Inapoi</a>                                              
-                        <a href="{{ URL::route('plata_factura_add', [$factura->id_factura]) }}"><i class="fa fa-plus-circle fa-fw"></i> Nou</a>
+                        <a href="{{ URL::route('plata_factura_add', [$factura->id]) }}"><i class="fa fa-plus-circle fa-fw"></i> Nou</a>
                     </div>
                </div>
                <div class="panel-body">

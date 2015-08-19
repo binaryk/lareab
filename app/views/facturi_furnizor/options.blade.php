@@ -64,17 +64,17 @@
                                 <tr>
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('plati_factura', $factura->id_factura) }}" class="btn btn-primary" role="button">Modifica sau vizualizeaza</a>
+                                            <a href="{{ URL::route('plati_factura', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
                                     </th> 
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('livrabile_factura', $factura->id_factura) }}" class="btn btn-primary" role="button" style="width:100%">Vizualizeaza</a>
+                                            <a href="{{ URL::route('livrabile_factura', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Vizualizeaza</a>
                                         </div>
                                     </th>
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('detalii_factura_furnizor', $factura->id_factura) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
+                                            <a href="{{ URL::route('detalii_factura_furnizor', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
                                     </th>
                                     <th class="text-center">

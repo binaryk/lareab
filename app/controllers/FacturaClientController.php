@@ -4,23 +4,23 @@ class FacturaClientController extends BaseController
     public function getFacturi() 
     {
         $facturi = DB::Select("SELECT 
-            fact.id_factura, 
+            fact.id, 
             fact.serie, 
             fact.numar,
             date_format(fact.data_facturare, '%d-%m-%Y') as data_facturare,
             fact.id_prestator, fact.id_client, fact.termen_plata,
             date_format(date_add(fact.data_facturare, interval termen_plata day), '%d-%m-%Y') AS scadenta,
             datediff(date_add(fact.data_facturare, interval termen_plata day), now()) AS zile_scadenta, fact.tva,
-            (SELECT SUM(le.pret_fara_tva) FROM livrabile_etapa le WHERE le.id_factura = fact.id_factura AND le.logical_delete = 0) AS total_desfasurator,
-            (SELECT SUM(df.pret_unitar * df.cantitate) FROM detalii_factura df WHERE df.id_factura = fact.id_factura AND df.logical_delete =0) AS total_detalii,            
-            (SELECT ifnull( SUM(valoare_incasata), 0) FROM incasare_factura incf WHERE incf.id_factura = fact.id_factura AND incf.logical_delete = 0) AS incasat,
+            (SELECT SUM(le.pret_fara_tva) FROM livrabile_etapa le WHERE le.id_factura = fact.id AND le.logical_delete = 0) AS total_desfasurator,
+            (SELECT SUM(df.pret_unitar * df.cantitate) FROM detalii_factura df WHERE df.id_factura = fact.id AND df.logical_delete =0) AS total_detalii,            
+            (SELECT ifnull( SUM(valoare_incasata), 0) FROM incasare_factura incf WHERE incf.id_factura = fact.id AND incf.logical_delete = 0) AS incasat,
             ent.denumire AS prestator, cli.denumire AS client
             FROM factura_client fact
-            LEFT OUTER JOIN entitate ent ON ent.id_entitate = fact.id_prestator AND ent.logical_delete = 0
-            LEFT OUTER JOIN entitate cli ON cli.id_entitate = fact.id_client AND ent.logical_delete = 0
+            LEFT OUTER JOIN entitate ent ON ent.id = fact.id_prestator AND ent.logical_delete = 0
+            LEFT OUTER JOIN entitate cli ON cli.id = fact.id_client AND ent.logical_delete = 0
             WHERE fact.logical_delete = 0  
             AND fact.id_organizatie = :id_organizatie
-            ORDER BY fact.data_facturare", array('id_organizatie' => $this->date_organizatie[0]->id_organizatie));        
+            ORDER BY fact.data_facturare", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));        
 
         return View::make('facturi_client.list')
             ->with('facturi', $facturi);   
@@ -34,14 +34,10 @@ class FacturaClientController extends BaseController
 
     public function getEditFactura($id_factura)
     {        
-        $prestatori = self::getEntitatiOrganizatie();
-        $clienti = self::getParteneriOrganizatie();
+        //$prestatori = self::getEntitatiOrganizatie(Confide::getDepartamenteUser());
+        //$clienti = self::getParteneriOrganizatie();
         $factura = self::getFacturaClient($id_factura);
-
-        return View::make('facturi_client.edit')
-            ->with('prestatori', $prestatori)
-            ->with('clienti', $clienti)
-            ->with('factura', $factura);
+        return View::make('facturi_client.edit', compact('factura'));
     }
 
     public function postEditFactura($id_factura)
@@ -64,12 +60,12 @@ class FacturaClientController extends BaseController
             try
             {
                 $procent_tva = Input::get('procent_tva');
-                $procent_tva = text_2_number($procent_tva);
+                $procent_tva = self::text_2_number($procent_tva);
             }
             catch(Exception $e) {}           
             try {
                 DB::table('factura_client')
-                ->where('id_factura', $id_factura)
+                ->where('id', $id_factura)
                 ->update(array(
                     'termen_plata' => Input::get('termen_plata'),
                     'id_prestator' => Input::get('prestator'),
@@ -92,7 +88,7 @@ class FacturaClientController extends BaseController
         $nr_ordine = $parametri[2];  
         $id_um = $parametri[5]; 
 
-        //die($id_um);
+        //dd($parametri);
 
         if ($denumire !== "")
         {
@@ -113,7 +109,7 @@ class FacturaClientController extends BaseController
                 $cantitate = str_replace(',', '.', $cantitate);
             }
             catch(Exception $e) {}
-            
+            //die("pret=".$pret_unitar . "  canti=".$cantitate);
             try {                
                 DB::table('detalii_factura')
                     ->insertGetId(array(
@@ -154,11 +150,11 @@ class FacturaClientController extends BaseController
             um.denumire AS um,
             df.pret_unitar        
             FROM detalii_factura df
-            LEFT OUTER JOIN um ON um.id_um = df.id_um AND um.logical_delete = 0            
+            LEFT OUTER JOIN um ON um.id = df.id_um AND um.logical_delete = 0            
             WHERE df.logical_delete = 0
             AND df.id_factura = :id_factura", array('id_factura' => $id_factura));        
         $factura = self::getFacturaClient($id_factura);       
-        $ums = self::getUM();
+        $ums = self::object_to_array(self::getUM());
         return View::make('facturi_client.list_detalii')
             ->with('factura', $factura)
             ->with('detalii', $detalii)
@@ -168,7 +164,7 @@ class FacturaClientController extends BaseController
 
     public function postDeleteDetaliuFactura() {
         if (Request::ajax()) {
-            if (Session::token() !== Input::get('_token')) {
+            if (Session::token() === Input::get('_token')) {
                 $id = Input::get('id_det_fact');
                 DB::table('detalii_factura')->where('id_det_fact', $id)->update(array('logical_delete' => 1));
                 return $id;

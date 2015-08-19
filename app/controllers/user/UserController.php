@@ -1,7 +1,45 @@
 <?php
+trait LoginAttemptsTrait
+{
+    function getClientIP() 
+    {
+        $ip_address = '';
+        //dd($_SERVER);
+        if (in_array('HTTP_CLIENT_IP', $_SERVER) && isset($_SERVER['HTTP_CLIENT_IP']))
+            $ip_address = $_SERVER['HTTP_CLIENT_IP'];
+        else if(in_array('HTTP_X_FORWARDED_FOR', $_SERVER) && isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(in_array('HTTP_X_FORWARDED', $_SERVER) && isset($_SERVER['HTTP_X_FORWARDED']))
+            $ip_address = $_SERVER['HTTP_X_FORWARDED'];
+        else if(in_array('HTTP_FORWARDED_FOR', $_SERVER) && isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ip_address = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(in_array('HTTP_FORWARDED', $_SERVER) && isset($_SERVER['HTTP_FORWARDED']))
+            $ip_address = $_SERVER['HTTP_FORWARDED'];
+        else if(in_array('REMOTE_ADDR', $_SERVER) && isset($_SERVER['REMOTE_ADDR']))
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+        else
+            $ip_address = 'Necunoscuta';
+     
+        return $ip_address;
+    }
+
+    public function registerLogin($username, $password, $action)
+    {
+        //Inregistreaza incercarea de logare indiferent daca a fost reusita sau nu
+        DB::table('login_attempts')
+            ->insertGetId(array(
+                "username" => $username,
+                "password" => base64_encode($password),
+                "ip" => self::getClientIP(),
+                "browser" => $_SERVER['HTTP_USER_AGENT'],
+                "action" => $action));
+
+    }
+}
 
 class UserController extends BaseController {
 
+    use LoginAttemptsTrait;
     /**
      * User Model
      * @var User
@@ -148,23 +186,43 @@ class UserController extends BaseController {
             'password'              =>Input::get('password'),            
         );*/
 
+        $err_msg = "";
         if ($this->userRepo->login($input)) {
             //return Redirect::intended('/');
-			return Redirect::intended('/dashboard');
+            //Administratorul platformei si utilizatorii care au acces la aplicatia vor putea continua
+            if (Entrust::can('administrare_platforma') || $this->userRepo->hasAccessApp(1))
+            {
+                if (Entrust::can('hostinger'))
+                {
+                    return Redirect::intended('/proba');
+                }
+                else
+                {
+                    self::registerLogin(Input::get('username'), Input::get('password'), 'Login OK');
+                    Confide::getDepartamente();
+        			return Redirect::intended('/dashboard');
+                }
+            }
+            else
+            {
+                //altfel se afiseaza mesajul de eroare si sunt redirectionati la pagina de login
+                $err_msg = Lang::get('confide::confide.alerts.access_denied');               
+            }
         } else {
             if ($this->userRepo->isThrottled($input)) {
                 $err_msg = Lang::get('confide::confide.alerts.too_many_attempts');
             } elseif ($this->userRepo->existsButNotConfirmed($input)) {
                 $err_msg = Lang::get('confide::confide.alerts.not_confirmed');
+            } elseif ($this->userRepo->isUserBlocked($input)) {  
+                $err_msg = Lang::get('confide::confide.alerts.user_blocked');            
             } else {
                 $err_msg = Lang::get('confide::confide.alerts.wrong_credentials');
             }
-
-            return Redirect::to('user/login')
-                ->withInput(Input::except('password'))
-                ->with('error', $err_msg);
         }
-
+        self::registerLogin(Input::get('username'), Input::get('password'), $err_msg);
+        return Redirect::to('user/login')
+            ->withInput(Input::except('password'))
+            ->with('error', $err_msg);        
     }
 
     /**
@@ -307,5 +365,32 @@ class UserController extends BaseController {
             $redirect .= (empty($url3)? '' : '/' . $url3);
         }
         return $redirect;
+    }
+
+    public function postChangeSessionUser()
+    {
+        if(Request::ajax()) {
+            $id = Input::get('id');
+            Session::forget("organizatie_noua");
+            Session::put('session_changed', '1');
+            Auth::loginUsingId($id);
+            Confide::getDepartamente();
+            return $id;
+        }
+    }
+
+    public function postChangeSessionAdmin()
+    {
+        if(Request::ajax()) {
+            Session::forget("organizatie_noua");
+            if(Session::has('session_changed')) {
+                Session::forget('session_changed');
+                Auth::loginUsingId(1);
+                Confide::getDepartamente();
+                return 1;
+            }
+            return 0;
+        }
+        return 0;
     }
 }

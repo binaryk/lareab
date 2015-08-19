@@ -83,7 +83,7 @@
                         @endif>
                     </div>
 
-                    <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                    <input type="submit" name="btn_submit" class="btn btn-primary btn-lg" value="Salveaza" />
                     {{ Form::token() }}
                 </fieldset>
             </form>

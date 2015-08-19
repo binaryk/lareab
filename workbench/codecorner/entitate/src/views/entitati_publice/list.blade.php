@@ -1,5 +1,11 @@
 @extends('layouts.master')
 
+@section('head_scripts')
+    <!-- DataTables CSS -->
+    {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}  
+    {{ HTML::style('assets/css/plugins/jquery.dataTables.css') }}  
+@stop
+
 @section('title')
     Entitati publice
 @stop
@@ -51,11 +57,6 @@
                                 <label class="control-label">Fax</label></td>
                             <td width="75%"><p id="_col_fax"></p></td>
                         </tr>
-                        <tr>
-                            <td width="25%">
-                                <label class="control-label">Tip entitate</label></td>
-                            <td width="75%"><p id="_col_tip_entitate"></p></td>
-                        </tr>
                     </table>
                 </div>                        
             </div>        
@@ -96,7 +97,7 @@
                         </tfoot>
                         <tbody>                             
                           @foreach ($entitati as $entitate)
-                            <tr data-id="{{ $entitate->id_entitate }}">
+                            <tr data-id="{{ $entitate->id }}">
                               <td class="text-center">{{ $entitate->denumire }}</td>
                               <td class="text-center">{{ $entitate->cif }}</td>
                               <td>{{ $entitate->localitate }}</td>
@@ -105,15 +106,15 @@
                               <td>{{ $entitate->telefon }}</td>
                               <td>{{ $entitate->fax }}</td>
                               <td class="center action-buttons">
-                                <a href="{{ URL::route('entitati_publice_edit', $entitate->id_entitate) }}">
+                                <a href="{{ URL::route('entitati_publice_edit', $entitate->id) }}">
                                   <i class="fa fa-pencil-square-o" 
                                   title="Vizualizeaza sau modifica"></i>
                                 </a>
                                 <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>
-                                <a href="{{ URL::route('reprezentant_legal_list_entitate', [$entitate->id_entitate, $entitate->denumire]) }}">
+                                <a href="{{ URL::route('reprezentant_legal_list_entitate', [$entitate->id, $entitate->denumire]) }}">
                                   <i class="fa fa-male" title="Reprezentanti legali"></i>
                                 </a>
-                                <a href="{{ URL::route('personal_entitate_list', [$entitate->id_entitate, $entitate->denumire]) }}"><i class="fa fa-users" title="Personal"></i></a>
+                                
                               </td>                                  
                             </tr>
                           @endforeach                             
@@ -165,8 +166,8 @@
                 var id = $(this).closest('tr').data('id');    
                 var url_delete = "{{ URL::route('entitati_publice_delete') }}";            
                 bootbox.confirm({
-                    title: "Sunteti sigur de stergerea inregistrarii?",
-                    message: ' ',
+                    title: "Sterge ...",
+                    message: "Sunteti sigur de stergerea inregistrarii?",
                     buttons: {
                         'confirm': {
                             label: "Da, sterge!",
@@ -184,7 +185,7 @@
                                 url : url_delete,
                                 data : {
                                     "_token": '<?= csrf_token() ?>',
-                                    "id_entitate": id
+                                    "id": id
                                 },
                                 success : function(data){
                                     $('tr[data-id='+id+']').fadeOut();

@@ -40,17 +40,58 @@ class AdminUsersController extends AdminController {
      *
      * @return Response
      */
-    public function getIndex()
+    /*public function getIndex()
     {
         // Title
         $title = Lang::get('admin/users/title.user_management');
 
         // Grab all the users
         $users = $this->user;
-
         // Show the page
         return View::make('admin/users/index', compact('users', 'title'));
+        //return View::make('admin/users/list', compact('users', 'title'));
+    }*/
+
+    public function getUsers($id_departament = null)
+    {        
+        $sql = "SELECT
+            u.id,
+            u.username,
+            u.email,
+            CASE
+                WHEN u.confirmed = 1 THEN 'DA'
+                ELSE 'NU'
+            END AS confirmed_da_nu,
+            u.confirmed,
+            CASE
+                WHEN u.blocked = 1 THEN 'DA'
+                ELSE 'NU'
+            END AS blocked_da_nu,
+            u.blocked,
+            date_format(u.created_at,'%d-%m-%Y %H:%i') AS created_at,
+            u.full_name,
+            (SELECT group_concat(denumire) 
+                FROM departament
+                INNER JOIN users_departament ud2 ON ud2.id_departament = departament.id AND ud2.logical_delete = 0
+                INNER JOIN users u2 ON u2.id =  ud2.id_user
+                WHERE departament.logical_delete = 0
+                AND u2.id = u.id) AS departamente,
+            (SELECT group_concat(roles.name)
+                FROM assigned_roles ar
+                INNER JOIN roles ON roles.id = ar.role_id
+                WHERE ar.user_id = u.id) AS grupuri
+            FROM users u";       
+        $users = null;
+        if ($id_departament)
+        {
+            $sql = $sql .  " INNER JOIN users_departament ud ON ud.id_user = users.id AND ud.logical_delete = 0 AND ud.id_departament = :id_departament";
+            $users = DB::select($sql, array('id_departament' => $id_departament));
+        }
+        else $users = DB::select($sql);
+        return View::make('admin/users/list', compact('users'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -58,7 +99,7 @@ class AdminUsersController extends AdminController {
      * @return Response
      */
     public function getCreate()
-    {
+    {  
         // All roles
         $roles = $this->role->all();
 
@@ -79,6 +120,7 @@ class AdminUsersController extends AdminController {
 
 		// Show the page
 		return View::make('admin/users/create_edit', compact('roles', 'permissions', 'selectedRoles', 'selectedPermissions', 'title', 'mode'));
+        //return View::make('admin/users/add', compact('roles', 'permissions', 'selectedRoles', 'selectedPermissions', 'title', 'mode'));
     }
 
     /**
@@ -91,7 +133,8 @@ class AdminUsersController extends AdminController {
         $this->user->username = Input::get( 'username' );
         $this->user->email = Input::get( 'email' );
         $this->user->password = Input::get( 'password' );
-
+        $this->user->full_name = Input::get( 'full_name' );
+        
         // The password confirmation will be removed from model
         // before saving. This field will be used in Ardent's
         // auto validation.
@@ -108,13 +151,15 @@ class AdminUsersController extends AdminController {
         //$user->permissions = $user->roles()->preparePermissionsForSave(Input::get( 'permissions' ));
 
         // Save if valid. Password field will be hashed before save
-        $this->user->save();
+        $this->user->save();        
+        $errors = $this->user->errors();
 
         if ( $this->user->id ) {
             // Save roles. Handles updating.
             $this->user->saveRoles(Input::get( 'roles' ));
 
-            if (Config::get('confide::signup_email')) {
+            //Dezactivat temporar la cererea Ralucai Giurgiu
+            /*if (Config::get('confide::signup_email')) {
                 $user = $this->user;
                 Mail::queueOn(
                     Config::get('confide::email_queue'),
@@ -126,20 +171,25 @@ class AdminUsersController extends AdminController {
                             ->subject(Lang::get('confide::confide.email.account_confirmation.subject'));
                     }
                 );
-            }
+            }*/
 
             // Redirect to the new user page
             return Redirect::to('admin/users/' . $this->user->id . '/edit')
+            //return Redirect::back()->withInput()
+            //return Redirect::to('admin/users/list')
                 ->with('success', Lang::get('admin/users/messages.create.success'));
 
         } else {
 
             // Get validation errors (see Ardent package)
-            $error = $this->user->errors()->all();
-
+            //$error = $this->user->errors()->all();
+            $errors = $this->user->errors();
+            //dd($errors);
             return Redirect::to('admin/users/create')
+            //return Redirect::back()
                 ->withInput(Input::except('password'))
-                ->with( 'error', $error );
+                ->with('error', Lang::get('admin/users/messages.create.error'))
+                ->with( 'errors', $errors );
         }
     }
 
@@ -160,6 +210,30 @@ class AdminUsersController extends AdminController {
      * @param $user
      * @return Response
      */
+
+    /*public function getEdit($id_user)
+    {
+        $userModel = new User;
+        $user = $userModel->getUserByID($id_user);
+
+        if ( $user->id )
+        {
+            $roles = $this->role->all();
+            $permissions = $this->permission->all();
+
+            // Title
+            $title = Lang::get('admin/users/title.user_update');
+            // mode
+            $mode = 'edit';
+
+            return View::make('admin/users/create_edit', compact('user', 'roles', 'permissions', 'title', 'mode'));
+        }
+        else
+        {
+            return Redirect::to('admin/users')->with('error', Lang::get('admin/users/messages.does_not_exist'));
+        }
+    }*/
+
     public function getEdit($user)
     {
         if ( $user->id )
@@ -176,7 +250,7 @@ class AdminUsersController extends AdminController {
         }
         else
         {
-            return Redirect::to('admin/users')->with('error', Lang::get('admin/users/messages.does_not_exist'));
+            return Redirect::to('admin/users/list')->with('error', Lang::get('admin/users/messages.does_not_exist'));
         }
     }
 
@@ -192,6 +266,7 @@ class AdminUsersController extends AdminController {
         $user->username = Input::get( 'username' );
         $user->email = Input::get( 'email' );
         $user->confirmed = Input::get( 'confirm' );
+        $user->full_name = Input::get( 'full_name' );
 
         $password = Input::get( 'password' );
         $passwordConfirmation = Input::get( 'password_confirmation' );
@@ -204,8 +279,9 @@ class AdminUsersController extends AdminController {
                 // auto validation.
                 $user->password_confirmation = $passwordConfirmation;
             } else {
-                // Redirect to the new user page
-                return Redirect::to('admin/users/' . $user->id . '/edit')->with('error', Lang::get('admin/users/messages.password_does_not_match'));
+                // Redirect to the new user page                
+                return Redirect::to('admin/users/' . $user->id . '/edit')
+                    ->with('error', Lang::get('admin/users/messages.password_does_not_match'));                    
             }
         }
             
@@ -217,18 +293,23 @@ class AdminUsersController extends AdminController {
             // Save roles. Handles updating.
             $user->saveRoles(Input::get( 'roles' ));
         } else {
+            $errors = $user->errors();
             return Redirect::to('admin/users/' . $user->id . '/edit')
-                ->with('error', Lang::get('admin/users/messages.edit.error'));
+                ->with('error', Lang::get('admin/users/messages.edit.error'))
+                ->with( 'errors', $errors );
         }
 
         // Get validation errors (see Ardent package)
-        $error = $user->errors()->all();
-
-        if(empty($error)) {
+        //$errors = $user->errors()->all();
+        $errors = $user->errors();
+        if($errors->count() == 0) {
             // Redirect to the new user page
-            return Redirect::to('admin/users/' . $user->id . '/edit')->with('success', Lang::get('admin/users/messages.edit.success'));
+            return Redirect::to('admin/users/' . $user->id . '/edit')
+                ->with('success', Lang::get('admin/users/messages.edit.success'));
         } else {
-            return Redirect::to('admin/users/' . $user->id . '/edit')->with('error', Lang::get('admin/users/messages.edit.error'));
+            return Redirect::to('admin/users/' . $user->id . '/edit')
+                ->with('error', Lang::get('admin/users/messages.edit.error'))
+                ->with( 'errors', $errors );
         }
     }
 
@@ -280,6 +361,22 @@ class AdminUsersController extends AdminController {
             return Redirect::to('admin/users')->with('error', Lang::get('admin/users/messages.delete.error'));
         }
     }
+
+    public function postLockUser() {        
+        if (Request::ajax()) {
+            if (Session::token() === Input::get('_token')) {
+                //dd('token ok');
+                $id = Input::get('id');
+
+                $affected = DB::table('users')
+                    ->where('id', $id)
+                    ->update(array('blocked' => DB::raw('not blocked')));
+                    dd($affected);
+                return $id;
+            }
+            else dd('token ko');
+        }
+    }    
 
     /**
      * Show a list of all the users formatted for Datatables.

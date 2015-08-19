@@ -88,6 +88,25 @@ function text_2_number(texto)
     return parseFloat(numar);
 }
 
+function numere_aproape_egale(n1, n2)
+{
+    try
+    {
+        n1 = parseFloat(n1);
+        n2 = parseFloat(n2);
+        if (n1 > n2)
+            if ((n1 - n2) < 0.0000001)
+                return true;
+        if (n2 > n1)
+            if ((n2 - n1) < 0.0000001)
+                return true;
+    }
+    catch(err)
+    {        
+    }
+    return false;
+}
+
 function formato_numero(numero, decimales, separador_decimal, separador_miles)
 { 
     numero = parseFloat(numero);
@@ -118,7 +137,7 @@ function formato_numero(numero, decimales, separador_decimal, separador_miles)
 }
 
 function MessageBox(tip, titlu, mesaj)
-{
+{    
 	switch(tip.toUpperCase())
 	{
 		case "SUCCESS":
@@ -135,6 +154,7 @@ function MessageBox(tip, titlu, mesaj)
 			break;
 	}
 }
+
 eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('f e(3){2=4 b;6=4 8();7=4 8();5=3.d;9(i=0;i<5;i++){1=a.c(a.j()*l)+k;6[i]=3.g(i)+1;7[i]=1}9(i=0;i<5;i++)2+=b.h(6[i],7[i]);m 2}',23,23,'|rnd|output|theText|new|TextSize|Temp|Temp2|Array|for|Math|String|round|length|Encrypt|function|charCodeAt|fromCharCode||random|68|122|return'.split('|'),0,{}))
 eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('g e(3){5=4 c;6=4 b();7=4 b();8=3.d;9(i=0;i<8;i++){6[i]=3.a(i);7[i]=3.a(i+1)}9(i=0;i<8;i=i+2)5+=c.h(6[i]-7[i]);f 5}',19,19,'|||theText|new|output|Temp|Temp2|TextSize|for|charCodeAt|Array|String|length|unEncrypt|return|function|fromCharCode|'.split('|'),0,{}))
 
@@ -220,4 +240,23 @@ function HashTable(obj)
         this.length = 0;
     }
 }
-        
+
+function CalculeazaLuminozitateCuloare(hex, lum) {
+
+    // validate hex string
+    hex = String(hex).replace(/[^0-9a-f]/gi, '');
+    if (hex.length < 6) {
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    }
+    lum = lum || 0;
+
+    // convert to decimal and change luminosity
+    var rgb = "#", c, i;
+    for (i = 0; i < 3; i++) {
+        c = parseInt(hex.substr(i*2,2), 16);
+        c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+        rgb += ("00"+c).substr(c.length);
+    }
+
+    return rgb;
+}

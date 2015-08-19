@@ -117,9 +117,12 @@ return array(
         /* Uncomment for use in development */
 //        'Way\Generators\GeneratorsServiceProvider', // Generators
 //        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // IDE Helpers
+		
 		'Codecorner\Registruintrareiesire\RegistruintrareiesireServiceProvider',
 		'Codecorner\Entitate\EntitatateServiceProvider',
-
+		'Codecorner\Imobil\ImobilServiceProvider',
+		'Codecorner\UpDownGallery\UpDownGalleryServiceProvider',
+		'Codecorner\Banca\BancaServiceProvider',
     ),
 
     /*

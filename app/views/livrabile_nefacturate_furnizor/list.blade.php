@@ -97,6 +97,7 @@
                 <th class="hidden"></th>
                 <th class="hidden"></th>
                 <th class="hidden"></th>                
+                <th class="hidden"></th>
               </tr>
             </thead>
             <tfoot>
@@ -111,21 +112,23 @@
                 <th class="hidden"></th>
                 <th class="hidden"></th>
                 <th class="hidden"></th>
+                <th class="hidden"></th>
               </tr>
             </tfoot>
             <tbody>
               @foreach ($livrabile as $livrabil)
-              <tr data-id="{{ $livrabil->id_livrabil_etapa }}">                
+              <tr data-id="{{ $livrabil->id_livrabil_pentru_facturat }}">                
                 <td>{{ $livrabil->livrabil }}</td>
                 <td>{{ $livrabil->contract }}</td>
                 <td><a href="{{ URL::route('obiectiv_single', $livrabil->id_obiectiv) }}">{{ $livrabil->obiectiv }}</a></td>
                 <td class="text-center">{{ $livrabil->nr_etapa }}</td>
-                <td class="text-center"><a href="{{ URL::to('stadiu_livrabil/'.$livrabil->id_livrabil_etapa) }}">{{ $livrabil->stadiu }}</td>
+                <td class="text-center"><a href="{{ URL::to('stadiu_livrabil/'.$livrabil->id_livrabil_pentru_facturat) }}">{{ $livrabil->stadiu }}</td>
                 <td class="text-center">{{ $livrabil->data_limita }}</td>
                 <td class="text-right">{{ number_format($livrabil->pret_fara_tva, 2, ',', '.') }}</td>
                 <td class="hidden">{{ $livrabil->tva }}</td>
                 <td class="hidden">{{ $livrabil->id_entitatea_mea }}</td>
                 <td class="hidden">{{ $livrabil->id_partener }}</td>
+                <td class="hidden">{{ $livrabil->id_contract }}</td>
               </tr>
               @endforeach
             </tbody>
@@ -211,6 +214,7 @@
       var serie_fac = "";
       var numar_fac = 0;
       var contract = "";
+      var id_contract = 0;
 
       $('#dataTables-livrabile').dataTable({          
           "language": {                
@@ -237,6 +241,7 @@
                       tva = $(this).find('td:nth-child(8)').text().replace('.', '').replace(',','.');
                       id_beneficiar = $(this).find('td:nth-child(9)').text();
                       id_furnizor = $(this).find('td:nth-child(10)').text();
+                      id_contract = $(this).find('td:nth-child(11)').text();
 
                       contract = $(this).find('td:nth-child(2)').text();
                       //$(this).loadSerii(1);
@@ -256,6 +261,7 @@
                   id_beneficiar = 0;
                   id_furnizor = 0;
                   tva = 0;
+                  id_contract = 0;
               }
           }
           total_cu_tva_factura =  total_fara_tva + valoare_tva_factura;
@@ -294,6 +300,7 @@
           date_facturare.push($('#serie_facturare').val());
           date_facturare.push($('#numar_facturare').val());
           date_facturare.push(tva);  
+          date_facturare.push(id_contract);
           
           var stringed = JSON.stringify(date_facturare);
           console.error(stringed);

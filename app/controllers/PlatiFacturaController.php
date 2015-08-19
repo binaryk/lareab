@@ -51,17 +51,19 @@ class PlatiFacturaController extends BaseController
             $data_platii_us = $data_platii_eu->format('Y-m-d');            
             
             $valoare_platita = 0;
-            if (!empty(Input::get('valoare_platita')))
+            if (Input::has('valoare_platita'))
+            //if (!empty(Input::get('valoare_platita')))
             {
                 $valoare_platita = Input::get('valoare_platita');
-                $valoare_platita = text_2_number($valoare_platita);
+                $valoare_platita = self::text_2_number($valoare_platita);
             }
 
             $valoare_virata_CG = 0;
-            if (!empty(Input::get('valoare_virata_CG')))
+            if (Input::has('valoare_virata_CG'))
+            //if (!empty(Input::get('valoare_virata_CG')))
             {
                 $valoare_virata_CG = Input::get('valoare_virata_CG');
-                $valoare_virata_CG = text_2_number($valoare_virata_CG);
+                $valoare_virata_CG = self::text_2_number($valoare_virata_CG);
             }
                       
             try {
@@ -94,14 +96,16 @@ class PlatiFacturaController extends BaseController
             $data_platii_us = $data_platii_eu->format('Y-m-d');            
             
             $valoare_platita = 0;
-            if (!empty(Input::get('valoare_platita')))
+            if (Input::has('valoare_platita'))
+            //if (!empty(Input::get('valoare_platita')))
             {
                 $valoare_platita = Input::get('valoare_platita');
                 $valoare_platita = text_2_number($valoare_platita);
             }
 
             $valoare_virata_CG = 0;
-            if (!empty(Input::get('valoare_virata_CG')))
+            if (Input::has('valoare_virata_CG'))
+            //if (!empty(Input::get('valoare_virata_CG')))
             {
                 $valoare_virata_CG = Input::get('valoare_virata_CG');
                 $valoare_virata_CG = text_2_number($valoare_virata_CG);

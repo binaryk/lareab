@@ -12,7 +12,7 @@ class EntitatiPubliceController extends \BaseController
 {
     public function getEntitatiPublice() {
         $entitati = DB::select("SELECT
-            ent.id_entitate,
+            ent.id,
             ent.denumire,
             ent.cif,
             ent.adresa,
@@ -27,15 +27,15 @@ class EntitatiPubliceController extends \BaseController
             FROM entitate ent
             LEFT OUTER JOIN judet ON ent.id_judet = judet.id_judet AND judet.logical_delete = 0
             LEFT OUTER JOIN localitate loc ON ent.id_localitate = loc.id_localitate AND loc.logical_delete = 0
-            INNER JOIN tip_entitate te ON te.id_tip_entitate = ent.id_tip_entitate AND te.logical_delete = 0
+            INNER JOIN tip_entitate te ON te.id = ent.id_tip_entitate AND te.logical_delete = 0
             WHERE ent.logical_delete = 0
-            AND ent.gestionata_org = false
-            AND ent.id_organizatie IS null
-            ORDER BY te.id_tip_entitate, ent.denumire");        
+            AND ent.id_tip_entitate = 3
+            -- AND ent.id_organizatie IS null
+            ORDER BY te.id, ent.denumire");        
         return View::make('entitate::entitati_publice.list')->with('entitati', $entitati);
     }
     public function getAddEntitate() {
-        $tip_entitati = DB::select("SELECT id_tip_entitate, denumire FROM tip_entitate WHERE logical_delete = 0");
+        $tip_entitati = DB::select("SELECT id, denumire FROM tip_entitate WHERE logical_delete = 0");
         return View::make('entitate::entitati_publice.add')->with('tip_entitati', $tip_entitati);
     }
     public function postAddEntitate() {
@@ -53,17 +53,16 @@ class EntitatiPubliceController extends \BaseController
                 ->insertGetId(array(
                     'denumire' => Input::get('denumire'), 
                     'cif' => Input::get('cif'), 
-                    'id_tara' => Input::get('tara'), 
-                    'id_regiune' => Input::get('regiune'), 
-                    'id_judet' => Input::get('judet'), 
-                    'id_localitate' => Input::get('localitate'), 
+                    'id_tara' => intval(Input::get('tara')), 
+                    'id_regiune' => intval(Input::get('regiune')), 
+                    'id_judet' => intval(Input::get('judet')), 
+                    'id_localitate' => intval(Input::get('localitate')), 
                     'adresa' => Input::get('adresa'), 
                     'cod_postal' => Input::get('cod_postal'), 
                     'telefon' => Input::get('telefon'), 
                     'fax' => Input::get('fax'), 
-                    'gestionata_org' => false, 
                     'id_organizatie' => null, 
-                    'id_tip_entitate' => 2));
+                    'id_tip_entitate' => 3));
             }
             catch(Exception $e) {
                 return Redirect::back()->with('message', 'Eroare salvare date: ' . $e)->withInput();
@@ -74,7 +73,7 @@ class EntitatiPubliceController extends \BaseController
 
     public function getEditEntitate($id) {        
         $entitate = DB::select("SELECT
-            ent.id_entitate,
+            ent.id,
             ent.denumire,
             ent.cif,
             ent.norc,
@@ -100,11 +99,11 @@ class EntitatiPubliceController extends \BaseController
             LEFT OUTER JOIN judet ON ent.id_judet = judet.id_judet AND judet.logical_delete = 0
             LEFT OUTER JOIN localitate loc ON ent.id_localitate = loc.id_localitate AND loc.logical_delete = 0
                 WHERE ent.logical_delete = 0                  
-                AND ent.id_entitate = :id", array('id' => $id));
+                AND ent.id = :id", array('id' => $id));
         
         return View::make('entitate::entitati_publice.edit')->with('entitate', $entitate[0]);
     }
-    public function postEditEntitate($id_entitate) {
+    public function postEditEntitate($id) {
         $rules = array('denumire' => 'required');
         $errors = array('required' => 'Campul este obligatoriu.');
         
@@ -115,20 +114,19 @@ class EntitatiPubliceController extends \BaseController
         try {
             //Debugbar::info('CP=' . Input::get('cod_postal'));
             DB::table('entitate')
-                ->where('id_entitate', $id_entitate)
+                ->where('id', $id)
                 ->update(array(
                     'denumire' => Input::get('denumire'), 
                     'cif' => Input::get('cif'), 
-                    'id_tara' => Input::get('tara'), 
-                    'id_regiune' => Input::get('regiune'), 
-                    'id_judet' => Input::get('judet'), 
-                    'id_localitate' => Input::get('localitate'), 
+                    'id_tara' => intval(Input::get('tara')), 
+                    'id_regiune' => intval(Input::get('regiune')), 
+                    'id_judet' => intval(Input::get('judet')), 
+                    'id_localitate' => intval(Input::get('localitate')), 
                     'adresa' => Input::get('adresa'), 
                     'cod_postal' => Input::get('cod_postal'), 
                     'telefon' => Input::get('telefon'), 
                     'fax' => Input::get('fax'), 
-                    'gestionata_org' => false, 
-                    'id_tip_entitate' => 2));
+                    'id_tip_entitate' => 3));
         }
         catch(Exception $e) {
             return Redirect::back()->with('message', 'Eroare salvare date: ' . $e)->withInput();
@@ -139,8 +137,8 @@ class EntitatiPubliceController extends \BaseController
     public function postDeleteEntitate() {
         if (Request::ajax()) {
             if (Session::token() === Input::get('_token')) {
-                $id = Input::get('id_entitate');
-                DB::table('entitate')->where('id_entitate', $id)->update(array('logical_delete' => 1));
+                $id = Input::get('id');
+                DB::table('entitate')->where('id', $id)->update(array('logical_delete' => 1));
                 return $id;
             }
         }

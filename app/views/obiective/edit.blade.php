@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title')       
+@section('title') 
     <p>Modifica obiectiv
         @if(isset($obiectiv->numar)) {{ $obiectiv->numar }} din data {{ $obiectiv->data_semnare_obiectiv }} @endif
     </p>    
@@ -13,92 +13,44 @@
                 <fieldset>
                     @if(Session::has('message'))
                         <p class="alert @if($errors->isEmpty()) alert-success @else alert-danger @endif">{{ Session::get('message')  }}</p>
-                    @endif               
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('numar')) has-error 
-                        @elseif(Input::old('numar')) has-success 
-                        @endif">
-                        <label>Numar obiectiv</label>
-                        <input class="form-control" name="numar" type="text"
-                        @if(Input::old('numar')) 
-                            value="{{ Input::old('numar') }}" 
-                        @else 
-                            value="{{ $obiectiv->numar }}" 
-                        @endif
-                        @if ($errors->has('numar')) 
-                            title="{{ $errors->first('numar') }}" 
-                        @endif>
+                    @endif
+
+                    <div class="col-md-6">
+                        {{ Form::selectField('Al carui departament este obiectivul?', 'departament', $departamente, $obiectiv->id_departament) }}                    
+                    </div>                     
+                    
+                    <div class="col-md-2">
+                        {{ Form::textField('Numar inregistrare proiect', 'nr_reg_proiect', $obiectiv->nr_reg_proiect, ['title'=>'Numarul de inregistrare dat proiectului in registrul de proiecte']) }}                    
+                    </div> 
+                    
+                    <div class="col-md-2">  
+                        {{ Form::textField('Numar obiectiv','numar', $obiectiv->numar) }}
                     </div>
-                    <div class="col-lg-6 margin-bottom">
-                        <label>Data semnarii</label>
-                        <div class="input-group 
-                        @if ($errors->has('data_semnare')) has-error 
-                        @elseif(Input::old('data_semnare')) has-success 
-                        @endif">
-                            <input 
-                                class="form-control date1" 
-                                name="data_semnare" 
-                                data-placement="top" 
-                                placeholder="Data semnarii" 
-                                type="text" 
-                                @if(Input::old('data_semnare')) 
-                                    value="{{ Input::old('data_semnare') }}" 
-                                @else 
-                                    value="{{ $obiectiv->data_semnare_obiectiv }}" 
-                                @endif                                
-                                @if ($errors->has('data_semnare')) 
-                                title="{{ $errors->first('data_semnare') }}" 
-                                @endif />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
+                    
+                    <div class="col-md-2">
+                        {{ Form::textField('Data semnarii', 'data_semnare', $obiectiv->data_semnare_obiectiv, ['class'=>'form-control date1'], '<i class="fa fa-calendar"></i>') }}                    
                     </div>
-                    <div class="form-group col-lg-12                    
-                        @if ($errors->has('denumire')) has-error 
-                        @elseif(Input::old('denumire')) has-success 
-                        @endif">
-                        <label>Denumire</label>
-                        <input class="form-control" name="denumire" type="text" 
-                        @if(Input::old('denumire')) 
-                            value="{{ Input::old('denumire') }}" 
-                        @else 
-                            value="{{ $obiectiv->denumire }}" 
-                        @endif 
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('required') }}" 
-                        @endif>
-                    </div>                                                                 
-                    <div class="form-group col-lg-12
-                        @if($errors->has('entitate_organizatie')) has-error 
-                        @elseif(Input::old('entitate_organizatie')) has-success 
-                        @endif ">
-                        <label for = "">Tempate</label>
-                        <select name="template" id="template" 
-                        class="selectpicker form-control" data-live-search="true">
-                            <option value="0">Selectioneaza template-ul pe baza caruia se creeaza obiectivul</option>
-                            @foreach ($templates as $template) 
-                                <option value="{{ $template->id_template }}" 
-                                    @if ($template->IdTemplate == $obiectiv->id_template) selected 
-                                    @endif>
-                                    {{ $template->denumire }}
-                                </option>
-                            @endforeach                            
-                        </select>
-                    </div>                                                                                
-                    <div class="form-group col-lg-12
-                        @if($errors->has('obiecti')) has-error 
-                        @elseif(Input::old('contract')) has-success 
-                        @endif ">
-                        <label for = "">Contractul de care apatine acest obiectiv</label>
-                        <select name="contract" id="contract" 
-                        class="selectpicker form-control" data-live-search="true">
-                            <option value="0">Selectioneaza contractul de care apartine acest obiectiv</option>
-                            @foreach ($contracte as $contract) 
-                                <option value="{{ $contract->id_contract }}" 
-                                @if ($contract->id_contract == $contract->id_contract) selected @endif>{{ $contract->denumire }}</option>
-                            @endforeach                            
-                        </select>
-                    </div>                      
-                                                      
+
+                    <div class="col-md-8">  
+                        {{ Form::textField('Denumire','denumire_obj', $obiectiv->denumire_obj) }}
+                    </div>                                             
+                    
+                    <div class="col-md-4">
+                        {{ Form::selectField('Stadiu obiectiv', 'stadiu_obiectiv', ['' => 'Selectioneaza stadiul'] + $stadii_obiectiv, $obiectiv->id_stadiu) }}                    
+                    </div>
+
+                    <div class="col-md-12">
+                        {{ Form::selectField('Tempate', 'template', 
+                        ['' => 'Selectioneaza template-ul pe baza caruia se creeaza obiectivul'] + $templates, 
+                        $obiectiv->id_template) }}                    
+                    </div>                                                                                                    
+                     
+                    <div class="col-md-12">
+                        {{ Form::selectField('Contractul de care apatine acest obiectiv', 'contract', 
+                        ['' => 'Selectioneaza contractul de care apartine acest obiectiv'] + $contracte, 
+                        $obiectiv->id_contract) }}                    
+                    </div>                                                               
+
                     <div class="form-group col-lg-4
                         @if($errors->has('tara')) has-error 
                         @elseif(Input::old('tara')) has-success 
@@ -178,73 +130,31 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('adresa')) has-error 
-                        @elseif(Input::old('adresa')) has-success 
-                        @endif">
-                        <label>Adresa</label>
-                        <input class="form-control" name="adresa" type="text" 
-                        @if(Input::old('adresa')) 
-                            value="{{ Input::old('adresa') }}" 
-                        @else 
-                            value="{{ $obiectiv->adresa }}" 
-                        @endif   
-                        @if ($errors->has('adresa')) 
-                            title="{{ $errors->first('adresa') }}" 
-                        @endif>
-                    </div>                                                                 
+                    <div class="col-md-12">
+                        {{ Form::textField('Adresa', 'adresa', $obiectiv->adresa) }}                    
+                    </div>
+
+                    <div class="col-md-4">
+                        {{ Form::textField('Cod postal', 'cod_postal', $obiectiv->cod_postal) }}                    
+                    </div> 
                     
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('cod_postal')) has-error 
-                        @elseif(Input::old('cod_postal')) has-success 
-                        @endif">
-                        <label>Cod postal</label>
-                        <input class="form-control" name="cod_postal" type="number" 
-                        @if(Input::old('cod_postal')) 
-                            value="{{ Input::old('cod_postal') }}" 
-                        @else 
-                            value="{{ $obiectiv->cod_postal }}" 
-                        @endif   
-                        @if ($errors->has('cod_postal')) 
-                            title="{{ $errors->first('cod_postal') }}" 
-                        @endif>
-                    </div>        
+                    @if (Entrust::can('manage_finance'))
+                        <div class="col-md-4">
+                            {{ Form::textNumericField('Valoare fara TVA', 'valoare_obiectiv', $obiectiv->valoare) }}                    
+                        </div>
 
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('valoare_obiectiv')) has-error 
-                        @elseif(Input::old('valoare_obiectiv')) has-success 
-                        @endif">
-                        <label>Valoare fara TVA</label>
-                        <input class="form-control auto text-right" name="valoare_obiectiv" type="text" data-a-dec="," data-a-sep="." 
-                        @if(Input::old('valoare_obiectiv')) 
-                            value="{{ Input::old('valoare_obiectiv') }}" 
-                        @else 
-                            value="{{ $obiectiv->valoare }}" 
-                        @endif   
-                        @if ($errors->has('valoare_obiectiv')) 
-                            title="{{ $errors->first('valoare_obiectiv') }}" 
-                        @endif>
-                    </div>                                                                 
-
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('procent_tva')) has-error 
-                        @elseif(Input::old('procent_tva')) has-success 
-                        @endif">
-                        <label>Procent TVA(%)</label>
-                        <input class="form-control auto text-right" name="procent_tva" type="text" data-a-dec="," data-a-sep="."
-                        @if(Input::old('procent_tva')) 
-                            value="{{ Input::old('procent_tva') }}" 
-                        @else 
-                            value="{{ $obiectiv->tva }}" 
-                        @endif   
-                        @if ($errors->has('procent_tva')) 
-                            title="{{ $errors->first('procent_tva') }}" 
-                        @endif>
-                    </div>                                                                   
-                    <div class="form-group col-lg-12">               
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
-                        {{ Form::token() }}
-                    </div>                   
+                        <div class="col-md-4">
+                            {{ Form::textNumericField('Procent TVA(%)', 'procent_tva', $obiectiv->tva) }}                    
+                        </div>              
+                    @endif                                                                  
+                    
+                    <div class="col-md-12 center"> 
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" onclick="this.value='Se salveaza ..';this.disabled='disabled'; this.form.submit();" />
+                        <a href="{{ URL::route('obiectiv_list_contract', $obiectiv->id_contract) }}">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
+                    </div>
+                    {{ Form::token() }} 
                 </fieldset>
             </form>
         </div>
@@ -260,7 +170,7 @@
             tari = JSON.parse(tari);
             console.log(tari);
             var valoare_anterioara = $('#tara').val();
-            $("#tara").empty().append('<option value="0">Selecteaza o tara</option>');                
+            $("#tara").empty().append('<option value="0">Selecteaza o tarisoara</option>');                
             for (var key in tari) {
                 if (tari.hasOwnProperty(key)) {
                     if (tari[key].id_tara.toString() === valoare_anterioara)
@@ -277,6 +187,7 @@
                     }                    
                 }            
             }
+            $("#tara").change();
         })
           
         $('#tara').change(function(){            
@@ -290,14 +201,27 @@
             //console.log(regiuni);            
             regiuni = JSON.parse(regiuni);
             //console.log(regiuni);
+            var id_regiune = $("#regiune").val(); 
+            //alert(id_regiune);
             $("#regiune").empty().append('<option value="0">Selecteaza o regiune</option>');                
             for (var key in regiuni) {
                 if (regiuni.hasOwnProperty(key)) {                
-                    $("#regiune").append('<option value="' + 
+                    /*$("#regiune").append('<option value="' + 
                         regiuni[key].id_regiune+'">' + 
-                        regiuni[key].denumire + '</option>');                
+                        regiuni[key].denumire + '</option>'); */               
+                    if (regiuni[key].id_regiune.toString() == id_regiune)
+                    {                
+                        $("#regiune").append('<option selected value="' + 
+                            regiuni[key].id_regiune+'">' + 
+                            regiuni[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#regiune").append('<option value="' + 
+                            regiuni[key].id_regiune+'">' + 
+                            regiuni[key].denumire + '</option>');                            
                 }            
             }
+            $('#regiune').change();
         });   
 
         $('#regiune').change(function(){
@@ -309,14 +233,26 @@
                 judete = fn();            
    
             judete = JSON.parse(judete);
+            var id_judet = $("#judet").val();
             $("#judet").empty().append('<option value="0">Selecteaza un judet</option>');                
             for (var key in judete) {
                 if (judete.hasOwnProperty(key)) {                
-                    $("#judet").append('<option value="' + 
+                    /*$("#judet").append('<option value="' + 
                         judete[key].id_judet+'">' + 
-                        judete[key].denumire + '</option>');              
+                        judete[key].denumire + '</option>');*/
+                    if (judete[key].id_judet.toString() == id_judet)
+                    {                
+                        $("#judet").append('<option selected value="' + 
+                            judete[key].id_judet+'">' + 
+                            judete[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#judet").append('<option value="' + 
+                            judete[key].id_judet+'">' + 
+                            judete[key].denumire + '</option>');                                      
                 }            
             }
+            $('#judet').change();
         });   
 
         $('#judet').change(function(){
@@ -328,18 +264,29 @@
                 localitati = fn();            
 
             localitati = JSON.parse(localitati);
+            var id_localitate = $("#localitate").val();
             $("#localitate").empty().append('<option value="0">Selecteaza o localitate</option>');                
             for (var key in localitati) {
                 if (localitati.hasOwnProperty(key)) {                
-                    $("#localitate").append('<option value="' + 
+                    /*$("#localitate").append('<option value="' + 
                         localitati[key].id_localitate + '">' + 
-                        localitati[key].denumire + '</option>');                 
+                        localitati[key].denumire + '</option>'); */
+                    if (localitati[key].id_localitate.toString() == id_localitate)
+                    {                
+                        $("#localitate").append('<option selected value="' + 
+                            localitati[key].id_localitate+'">' + 
+                            localitati[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#localitate").append('<option value="' + 
+                            localitati[key].id_localitate+'">' + 
+                            localitati[key].denumire + '</option>');                                           
                 }            
             }
         });
 
         $(function() {
-            $(".date1").datepicker({ minDate: 0, dateFormat: "dd-mm-yy" });         
+            $(".date1").datepicker({ minDate: new Date(2010, 1, 1), dateFormat: "dd-mm-yy" });         
         });
     </script>
 @stop

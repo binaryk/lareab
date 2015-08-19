@@ -62,17 +62,17 @@
                                 <tr>
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('incasari_factura', $factura->id_factura) }}" class="btn btn-primary" role="button">Modifica sau vizualizeaza</a>
+                                            <a href="{{ URL::route('incasari_factura', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
                                     </th>                
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('livrabile_factura', $factura->id_factura) }}" class="btn btn-primary" role="button" style="width:100%">Vizualizeaza</a>
+                                            <a href="{{ URL::route('livrabile_factura', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Vizualizeaza</a>
                                         </div>
                                     </th>
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('detalii_factura_client', $factura->id_factura) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
+                                            <a href="{{ URL::route('detalii_factura_client', $factura->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
                                     </th>
                                     <th class="text-center">
@@ -93,7 +93,7 @@
                                     <td class="text-center">
                                         <div style="width:100%" class="panel-body">
                                             <div class="col-lg-10">
-                                                <h4><u><b>Incasari</b></u></h4>
+                                                <h4><u><b>&nbspIncasari&nbsp</b></u></h4>
                                             </div>
                                         </div>
                                     </td>

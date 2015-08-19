@@ -55,6 +55,10 @@ class UserRepository
 	 */
 	public function login($input)
 	{
+		//In caz ca Sesiunea anterioara s-a inchis cu supralogare
+		Log::info(" <<<< LOGIN >>>>>");
+		Session::forget("organizatie_noua");
+		if (Session::has('session_changed')) Session::forget('session_changed');
 		if (! isset($input['password'])) {
 			$input['password'] = null;
 		}
@@ -73,6 +77,18 @@ class UserRepository
 	public function isThrottled($input)
 	{
 		return Confide::isThrottled($input);
+	}
+
+	public function isUserBlocked($input)
+	{
+		$user = Confide::getUserByEmailOrUsername($input);
+		if ($user) 
+			return $user->blocked;
+	}
+
+	public function hasAccessApp($id_aplicatie)
+	{
+		return Confide::hasAccessApp($id_aplicatie);
 	}
 
 	/**

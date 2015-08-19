@@ -7,6 +7,7 @@
       }
     </style>
     {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}
+    {{ HTML::style('assets/css/plugins/jquery.dataTables.css') }}
 @stop
 
 @section('title')
@@ -89,13 +90,15 @@
                 <th>Denumire livrabil</th>
                 <th>Contract</th>
                 <th>Obiectiv</th>
+                <th>Beneficiar/Prestator</th>
                 <th>Etapa</th>
                 <th>Stadiu</th>
                 <th>Data limita predare</th>
                 <th>Pret fara TVA</th>
                 <th class="hidden"></th>
                 <th class="hidden"></th>
-                <th class="hidden"></th>                
+                <th class="hidden"></th> 
+                <th class="hidden"></th>               
               </tr>
             </thead>
             <tfoot>
@@ -103,6 +106,7 @@
                 <th>Denumire livrabil</th>
                 <th>Contract</th>
                 <th>Obiectiv</th>
+                <th>Beneficiar/Prestator</th>
                 <th>Etapa</th>
                 <th>Stadiu</th>
                 <th>Data limita predare</th>
@@ -110,21 +114,24 @@
                 <th class="hidden"></th>
                 <th class="hidden"></th>
                 <th class="hidden"></th>
+                <th class="hidden"></th>
               </tr>
             </tfoot>
             <tbody>
               @foreach ($livrabile as $livrabil)
-              <tr data-id="{{ $livrabil->id_livrabil_etapa }}">                
+              <tr data-id="{{ $livrabil->id_livrabil_pentru_facturat }}">                
                 <td>{{ $livrabil->livrabil }}</td>
                 <td>{{ $livrabil->contract }}</td>
                 <td><a href="{{ URL::route('obiectiv_single', $livrabil->id_obiectiv) }}">{{ $livrabil->obiectiv }}</a></td>
+                <td class="">{{ $livrabil->beneficiar_prestator }}</td>
                 <td class="text-center">{{ $livrabil->nr_etapa }}</td>
-                <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->id_livrabil_etapa) }}">{{ $livrabil->stadiu }}</td>
+                <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->id_livrabil_pentru_facturat) }}">{{ $livrabil->stadiu }}</td>
                 <td class="text-center">{{ $livrabil->data_limita }}</td>
                 <td class="text-right">{{ number_format($livrabil->pret_fara_tva, 2, ',', '.') }}</td>
                 <td class="hidden">{{ $livrabil->tva }}</td>
                 <td class="hidden">{{ $livrabil->id_entitatea_mea }}</td>
                 <td class="hidden">{{ $livrabil->id_partener }}</td>
+                <td class="hidden">{{ $livrabil->id_contract }}</td>
               </tr>
               @endforeach
             </tbody>
@@ -157,13 +164,15 @@
                   </tr>
                   <tr>
                   <td align="right">
-                    <h5 style="font-weight:bold;margin-top:6px;" class="media-heading">Serie/Numar:&nbsp&nbsp</h5>
+                    <a href="{{ URL::route('serii_facturare') }}">
+                      <h5 style="font-weight:bold;margin-top:6px;" class="media-heading">Serie/Numar:&nbsp&nbsp</h5>
+                    </a>
                   </td>                                          
                   <td align="left">
                     <select name="serie_facturare" id="serie_facturare" 
                       class="selectpicker form-control col-lg-2">
                           @foreach ($serii_facturare as $serie) 
-                              <option value="{{ $serie->id_serie_factura }}" @if (Input::old('serie_facturare')) selected @endif>{{ $serie->serie . '/' . $serie->numar }}</option>
+                              <option value="{{ $serie->id }}" @if (Input::old('serie_facturare')) selected @endif>{{ $serie->serie . '/' . $serie->numar . ' (' . $serie->entitate . ')' }}</option>
                           @endforeach                                                     
                     </select>
                   </td>
@@ -174,8 +183,7 @@
             </table>
           </div>
           <div class="form-group col-lg-12 text-center">               
-            <input type="button" name="genereaza_desfasurator" id="genereaza_desfasurator" class="btn btn-primary btn-lg disabled" value="Genereaza desfasurator" />              
-            
+            <input type="button" name="genereaza_desfasurator" id="genereaza_desfasurator" class="btn btn-primary btn-lg disabled" value="Genereaza desfasurator" onclick="this.disabled='disabled';" />            
           </div>           
         </div>
         <!-- /.table-responsive -->
@@ -209,6 +217,7 @@
       var serie_fac = "";
       var numar_fac = 0;
       var contract = "";
+      var id_contract = 0;
 
       $('#dataTables-livrabile').dataTable({          
           "language": {                
@@ -235,7 +244,7 @@
                       tva = $(this).find('td:nth-child(8)').text().replace('.', '').replace(',','.');
                       id_prestator = $(this).find('td:nth-child(9)').text();
                       id_client = $(this).find('td:nth-child(10)').text();
-
+                      id_contract = $(this).find('td:nth-child(11)').text();
                       contract = $(this).find('td:nth-child(2)').text();
                       //$(this).loadSerii(1);
                   }
@@ -254,6 +263,7 @@
                   id_prestator = 0;
                   id_client = 0;
                   tva = 0;
+                  id_contract = 0;
               }
           }
           total_cu_tva_factura =  total_fara_tva + valoare_tva_factura;
@@ -276,7 +286,10 @@
           if (_text.indexOf('/') > -1) {
               serie_fac = _text.split('/')[0];
               numar_fac = _text.split('/')[1];
-          }
+              var pos_space = numar_fac.indexOf(' ');
+              if (pos_space > 0)
+                numar_fac = numar_fac.substring(0, pos_space);
+          }          
       });
       $("#serie_facturare").trigger("change"); 
 
@@ -298,72 +311,77 @@
       var local_token = '<?= csrf_token() ?>';
       console.log('lt=' + local_token);
       $('#genereaza_desfasurator').click(function(){          
-          var url_generare = "{{ URL::route('genereaza_desfasurator_client') }}";
-          var date_facturare = [];
-          date_facturare.push(selected);
-          date_facturare.push(id_prestator);
-          date_facturare.push(id_client);
-          date_facturare.push(id_serie_facturare);
-          date_facturare.push(serie_fac);
-          date_facturare.push(numar_fac);
-          date_facturare.push(tva);  
-          
-          var stringed = JSON.stringify(date_facturare);
-          console.log(stringed);
-       
-          bootbox.confirm({
-              title: "Desfasurator ...",
-              message: "Doriti sa generati desfasuratorul facturii?",
-              buttons: {
-                  'confirm': {
-                      label: "Da, genereaza!",
-                      className: "btn-success"
-                    },
-                  'cancel': {
-                      label: "Nu, renunta!",
-                      className: "btn-danger"
-                  }
-              },
-              callback: function(result){
-                  if(result) {
-                      $.ajax({                        
-                          type: "POST",
-                          url : url_generare,
-                          data : {
-                              "_token": local_token,
-                              "date_facturare": stringed
-                          },
-                          success : function(data){
-                              console.log(data);
-                              if (typeof data === 'object')
-                              {
-                                  if (data.status === "OK")
-                                  {
-                                      MessageBox("SUCCESS", "Facturare", data.message);                        
-                                      window.location.href = "{{ URL::route('livrabile_nefacturate_client') }}";
-                                  }
-                                  else
-                                      MessageBox("ERROR", "Facturare", data.message);
-                              }
-                              else
-                                  MessageBox("ERROR", "Server", "Eroare de server");
-                          },
-                          error: function(par1, par2, par3){
-                              console.log('Error: ');
-                              console.log(par1);
-                              console.log('Error: ');
-                              console.log(par2);
-                              console.log('Error: ');
-                              console.log(par3);
-                          },
-                          fail: function(data){
-                              console.log('fail');
-                              console.log(data);
-                          }                            
-                      });
-                  }
-              }
-          });
+          if (id_serie_facturare > 0)
+          {
+            var url_generare = "{{ URL::route('genereaza_desfasurator_client') }}";
+            var date_facturare = [];
+            date_facturare.push(selected);
+            date_facturare.push(id_prestator);
+            date_facturare.push(id_client);
+            date_facturare.push(id_serie_facturare);
+            date_facturare.push(serie_fac);
+            date_facturare.push(numar_fac);
+            date_facturare.push(tva);  
+            date_facturare.push(id_contract);
+            
+            var stringed = JSON.stringify(date_facturare);
+            console.log(stringed);
+         
+            bootbox.confirm({
+                title: "Desfasurator ...",
+                message: "Doriti sa generati desfasuratorul facturii?",
+                buttons: {
+                    'confirm': {
+                        label: "Da, genereaza!",
+                        className: "btn-success"
+                      },
+                    'cancel': {
+                        label: "Nu, renunta!",
+                        className: "btn-danger"
+                    }
+                },
+                callback: function(result){
+                    if(result) {
+                        $.ajax({                        
+                            type: "POST",
+                            url : url_generare,
+                            data : {
+                                "_token": local_token,
+                                "date_facturare": stringed
+                            },
+                            success : function(data){
+                                console.log(data);
+                                if (typeof data === 'object')
+                                {
+                                    if (data.status === "OK")
+                                    {
+                                        MessageBox("SUCCESS", "Facturare", data.message);                        
+                                        window.location.href = "{{ URL::route('livrabile_nefacturate_client') }}";
+                                    }
+                                    else
+                                        MessageBox("ERROR", "Facturare", data.message);
+                                }
+                                else
+                                    MessageBox("ERROR", "Server", "Eroare de server");
+                            },
+                            error: function(par1, par2, par3){
+                                console.log('Error: ');
+                                console.log(par1);
+                                console.log('Error: ');
+                                console.log(par2);
+                                console.log('Error: ');
+                                console.log(par3);
+                            },
+                            fail: function(data){
+                                console.log('fail');
+                                console.log(data);
+                            }                            
+                        });
+                    }
+                }
+            });
+          }
+          else MessageBox("ERROR", "Facturare", "Selectionati seria si numarul facturii");
       });
   });
 

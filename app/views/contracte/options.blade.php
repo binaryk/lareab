@@ -7,7 +7,7 @@
 
 @section('title')
     <p>Date contract
-        @if(isset($contract[0]->id_contract)) {{ $contract[0]->numar }} din data {{ $contract[0]->data_semnarii }} @endif
+        @if(isset($contract[0]->id)) {{ $contract[0]->numar }} din data {{ $contract[0]->data_semnarii }} @endif
     </p>
 @stop
 
@@ -19,7 +19,6 @@
                <div class="panel-body">
                    <div class="table-responsive">
                         <table class="table table-striped table-bordered" style="table-layout:fixed">
-
                             <thead>
                                 <tr>
                                     <th class="text-center">
@@ -46,13 +45,6 @@
                                     <th class="text-center">
                                         <div class="panel-heading">
                                             <div class="col-lg-10">
-                                                <i class="fa fa-history fa-2x"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center">
-                                        <div class="panel-heading">
-                                            <div class="col-lg-10">
                                                 <i class="fa fa-folder-open fa-2x"></i>
                                             </div>
                                         </div>
@@ -63,23 +55,22 @@
                             <tfoot>
                                 <tr>
                                     <th class="text-center">
+                                    @if (Entrust::can('manage_finance'))
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('garantie_executie', $contract[0]->id_contract) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
+                                            <a href="{{ URL::route('garantie_executie', $contract[0]->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
+                                    @endif                                        
+                                    </th>
+                                    <th class="text-center">
+                                    @if (Entrust::can('manage_finance'))
+                                        <div class="panel-footer">
+                                            <a href="{{ URL::route('garantie_participare', $contract[0]->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
+                                        </div>
+                                    @endif                                        
                                     </th>
                                     <th class="text-center">
                                         <div class="panel-footer">
-                                            <a href="{{ URL::route('garantie_participare', $contract[0]->id_contract) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
-                                        </div>
-                                    </th>
-                                    <th class="text-center">
-                                        <div class="panel-footer">
-                                            <a href="{{ URL::route('obiectiv_list_contract', $contract[0]->id_contract) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
-                                        </div>
-                                    </th>
-                                    <th class="text-center">
-                                        <div class="panel-footer">
-                                            <a href="{{ URL::route('stadii_contract', $contract[0]->id_contract) }}" class="btn btn-primary" role="button" style="width:100%">Vizualizeaza</a>
+                                            <a href="{{ URL::route('obiectiv_list_contract', $contract[0]->id) }}" class="btn btn-primary" role="button" style="width:100%">Modifica sau vizualizeaza</a>
                                         </div>
                                     </th>
                                     <th class="text-center">
@@ -116,13 +107,6 @@
                                     <td class="text-center">
                                         <div style="width:100%" class="panel-body">
                                             <div class="col-lg-10">
-                                                <h4><u><b>Istoric stadii</b></u></h4>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div style="width:100%" class="panel-body">
-                                            <div class="col-lg-10">
                                                 <h4><u><b>Dosar contract</b></u></h4>
                                             </div>
                                         </div>
@@ -147,13 +131,6 @@
                                         <div style="display:inline-block" class="panel-body">
                                             <div class="col-lg-10">
                                                 <p>Lista obiectivelor ce apartin contractului actual.</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-left">
-                                        <div style="display:inline-block" class="panel-body">
-                                            <div class="col-lg-10">
-                                                <p>Lista stadiilor prin care a trecut proiectul, data la care s-a produs schimbarea de stadiu precum si utilizatorul care a realizat operatia.</p>
                                             </div>
                                         </div>
                                     </td>

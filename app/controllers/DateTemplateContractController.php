@@ -7,7 +7,7 @@ class DateTemplateContractController extends BaseController {
         /* Main */
         $tip_contract = DB::select("SELECT
 
-            t_ctr.id_tip_contract,
+            t_ctr.id,
             t_ctr.logical_delete,
             t_ctr.denumire
 
@@ -16,36 +16,39 @@ class DateTemplateContractController extends BaseController {
 
         $tip_activitate = DB::select("SELECT
 
-            t_act.id_tip_activitate,
+            t_act.id,
             t_act.id_organizatie,
             t_act.id_tip_contract,
             t_act.logical_delete,
             t_act.denumire
 
         FROM tip_activitate AS t_act
-        WHERE t_act.logical_delete = 0");
+        WHERE t_act.logical_delete = 0
+        AND t_act.id_organizatie = :id_organizatie", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
 
         $tip_activitate_tipizata = DB::select("SELECT
 
-            tip_act_tip.id_tip_activitate_tipizata,
+            tip_act_tip.id,
             tip_act_tip.id_tip_activitate,
             tip_act_tip.id_organizatie,
             tip_act_tip.logical_delete,
             tip_act_tip.denumire
 
         FROM tip_activitate_tipizata AS tip_act_tip
-        WHERE tip_act_tip.logical_delete =0");
+        WHERE tip_act_tip.logical_delete = 0
+        AND tip_act_tip.id_organizatie = :id_organizatie", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
 
         $tip_livrabile = DB::select("SELECT
 
-            tip_liv.id_tip_livrabile,
+            tip_liv.id,
             tip_liv.id_tip_activitate_tipizata,
             tip_liv.id_organizatie,
             tip_liv.logical_delete,
             tip_liv.denumire
 
         FROM tip_livrabile AS tip_liv
-        WHERE tip_liv.logical_delete = 0");
+        WHERE tip_liv.logical_delete = 0
+        AND tip_liv.id_organizatie = :id_organizatie", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
 
         $tip_obligatii_sarcini = DB::select("SELECT
 
@@ -60,7 +63,8 @@ class DateTemplateContractController extends BaseController {
         FROM tip_obligatii_sarcini AS tip_ob_sar
         LEFT OUTER JOIN tip_responsabil_obligatii_sarcini AS tip_resp_ob_sar ON tip_resp_ob_sar.id_tip_responsabil = tip_ob_sar.id_tip_responsabil 
         AND tip_resp_ob_sar.logical_delete = 0
-        WHERE tip_ob_sar.logical_delete = 0");
+        WHERE tip_ob_sar.logical_delete = 0
+        AND tip_ob_sar.id_organizatie = :id_organizatie", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
 
         $responsabilitate_act_tip = DB::select("SELECT
 
@@ -78,7 +82,8 @@ class DateTemplateContractController extends BaseController {
         INNER JOIN subcategorie_personal_proiect spp ON  spp.id_scp = rspp.id_scp  AND  spp.logical_delete = 0 
         INNER JOIN categorie_personal_proiect cpp ON  cpp.id_cp = spp.id_cp  AND  cpp.logical_delete = 0
 
-        WHERE resp_act_tip.logical_delete = 0");
+        WHERE resp_act_tip.logical_delete = 0
+        AND resp_act_tip.id_organizatie = :id_organizatie", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
 
         /* Dropdown objects */
         $tip_resp_ob_sar = DB::select("SELECT 
@@ -127,6 +132,10 @@ class DateTemplateContractController extends BaseController {
 
     /*** Add Date Template Contract ***/
 
+ 	/* Mevoro edit */
+	/* A fost adaugat in return id-ul fiecarei resurse adaugate la toate functiile de tip postAdd* */
+	
+	
     public function postAddTipContract() {     
         
         $parametrii = json_decode(Input::get('parametrii'));
@@ -136,7 +145,7 @@ class DateTemplateContractController extends BaseController {
             
             try {                
                 
-                DB::table('tip_contract')
+                $new_id = DB::table('tip_contract')
                     ->insertGetId(array(
                     'denumire' => $denumire));
             }
@@ -146,7 +155,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK', 'new_id' => $new_id,'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -163,12 +172,13 @@ class DateTemplateContractController extends BaseController {
 
         if($denumire !== "") {
             
-            try {                
-                
-                DB::table('tip_activitate')
+            try {
+
+                $new_id = DB::table('tip_activitate')
                     ->insertGetId(array(
                     'denumire' => $denumire,
-                    'id_tip_contract' => $id_tip_contract));
+                    'id_tip_contract' => $id_tip_contract,
+                    'id_organizatie' => self::organizatie()[0]->id_organizatie));
             }
             catch(Exception $e) {
                 
@@ -176,7 +186,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK','new_id' => $new_id, 'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -194,12 +204,13 @@ class DateTemplateContractController extends BaseController {
 
         if($denumire !== "") {
             
-            try {                
-                
-                DB::table('tip_activitate_tipizata')
+            try {
+
+                $new_id = DB::table('tip_activitate_tipizata')
                     ->insertGetId(array(
                     'denumire' => $denumire,
-                    'id_tip_activitate' => $id_tip_activitate));
+                    'id_tip_activitate' => $id_tip_activitate,
+                    'id_organizatie' => self::organizatie()[0]->id_organizatie));
             }
             catch(Exception $e) {
                 
@@ -207,7 +218,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK', 'new_id' => $new_id,'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -224,12 +235,13 @@ class DateTemplateContractController extends BaseController {
 
         if($denumire !== "") {
             
-            try {                
-                
-                DB::table('tip_livrabile')
+            try {
+
+                $new_id = DB::table('tip_livrabile')
                     ->insertGetId(array(
                     'denumire' => $denumire,
-                    'id_tip_activitate_tipizata' => $id_tip_activitate_tipizata));
+                    'id_tip_activitate_tipizata' => $id_tip_activitate_tipizata,
+                    'id_organizatie' => self::organizatie()[0]->id_organizatie));
             }
             catch(Exception $e) {
                 
@@ -237,7 +249,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK', 'new_id' => $new_id, 'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -255,13 +267,14 @@ class DateTemplateContractController extends BaseController {
 
         if($denumire !== "") {
             
-            try {                
-                
-                DB::table('tip_obligatii_sarcini')
+            try {
+
+                $new_id = DB::table('tip_obligatii_sarcini')
                     ->insertGetId(array(
                     'denumire' => $denumire,
                     'id_tip_activitate_tipizata' => $id_tip_activitate_tipizata,
-                    'id_tip_responsabil' => $id_tip_responsabil));
+                    'id_tip_responsabil' => $id_tip_responsabil,
+                    'id_organizatie' => self::organizatie()[0]->id_organizatie));
             }
             catch(Exception $e) {
                 
@@ -269,7 +282,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK', 'new_id' => $new_id, 'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -287,12 +300,13 @@ class DateTemplateContractController extends BaseController {
 
         if($id_responsabilitate > 0) {
             
-            try {                
-                
-                DB::table('responsabilitate_act_tip')
+            try {
+
+                $new_id = DB::table('responsabilitate_act_tip')
                     ->insertGetId(array(
                     'id_activitate_tipizata' => $id_tip_activitate_tipizata,
-                    'id_responsabilitate' => $id_responsabilitate));
+                    'id_responsabilitate' => $id_responsabilitate,
+                    'id_organizatie' => self::organizatie()[0]->id_organizatie));
             }
             catch(Exception $e) {
                 
@@ -300,7 +314,7 @@ class DateTemplateContractController extends BaseController {
                 return Response::json(array('status' => 'KO', 'message' => 'Eroare salvare date ' . $e));
             }   
             ob_clean();     
-            return Response::json(array('status' => 'OK', 'message' => 'Salvare realizata cu succes!'));                          
+            return Response::json(array('status' => 'OK', 'new_id' => $new_id, 'message' => 'Salvare realizata cu succes!'));
         }
         else {
             
@@ -317,7 +331,7 @@ class DateTemplateContractController extends BaseController {
         if (Request::ajax()) {
             if (Session::token() !== Input::get('_token')) {
                 $id = Input::get('id_name');
-                DB::table('tip_contract')->where('id_tip_contract', $id)->update(array('logical_delete' => 1));
+                DB::table('tip_contract')->where('id', $id)->update(array('logical_delete' => 1));
                 return $id;
             }
         }
@@ -339,7 +353,7 @@ class DateTemplateContractController extends BaseController {
         if (Request::ajax()) {
             if (Session::token() !== Input::get('_token')) {
                 $id = Input::get('id_name');
-                DB::table('tip_activitate_tipizata')->where('id_tip_activitate_tipizata', $id)->update(array('logical_delete' => 1));
+                DB::table('tip_activitate_tipizata')->where('id', $id)->update(array('logical_delete' => 1));
                 return $id;
             }
         }

@@ -13,7 +13,7 @@
     <p>Detalii factura
         @if(isset($factura->serie)) {{ $factura->serie . '/' . $factura->numar }} din data {{ $factura->data_facturare }} @endif
     </p>
-    <input type="hidden" id="id_factura" name="id_factura" value="{{ $factura->id_factura }}" />   
+    <input type="hidden" id="id_factura" name="id_factura" value="{{ $factura->id }}" />   
 @stop
 
 @section('content')
@@ -110,9 +110,17 @@
                                       data-url="{{ URL::route('factura_furnizor_detaliu_edit') }}">{{ $detaliu->denumire_produs }}                                      
                                   </span>
                               </td>                                                            
-                              <td class="text-center">{{ $detaliu->um }}</td>
+                              <td class="text-center">
+                                  <span class="xedit-um"                                                                             
+                                      id="um"
+                                      data-pk="{{ $detaliu->id_det_fact }}"
+                                      data-name="id_um"
+                                      
+                                      data-url="{{ URL::route('factura_furnizor_detaliu_edit') }}">{{ $detaliu->um }}
+                                  </span>
+                              </td>                              
                               <td class="text-right">
-                                  <span class="xedit-cantitate" 
+                                  <span class="xedit-cantitate___" 
                                       data-a-dec="," data-a-sep="."                                      
                                       id="cantitate"
                                       data-pk="{{ $detaliu->id_det_fact }}"
@@ -122,7 +130,7 @@
                                   </span>
                               </td>                                                            
                               <td class="text-right">
-                                  <span class="xedit-pret_unitar" 
+                                  <span class="xedit-pret_unitar___" 
                                       data-a-dec="," data-a-sep="."                                      
                                       id="pret_unitar"
                                       data-pk="{{ $detaliu->pret_unitar }}"
@@ -149,7 +157,7 @@
                             </tr>
                             <tr>
                               <td width="90%" align="right">
-                                <h5 style="margin-top:6px;" class="media-heading">Procent TVA:</h5>
+                                <h5 style="margin-top:6px;" class="media-heading">(%) Procent TVA:</h5>
                               </td>
                               <td width="10%" align="right"><span class="media-heading" id="procent_tva">{{ number_format($factura->tva, 2, ',', '.') }}</span></td>
                             </tr>
@@ -174,70 +182,36 @@
                           <div class="modal-content">
                             <div class="modal-header modal-info">
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <h4 class="modal-title" id="myModalLabel">Adauda linie factura {{$factura->serie . '/' . $factura->numar . ' din data ' . $factura->data_facturare }}</h4>
+                              <h4 class="modal-title" id="myModalLabel">Adauga linie factura {{$factura->serie . '/' . $factura->numar . ' din data ' . $factura->data_facturare }}</h4>
                             </div>
                             <div class="modal-body">
                                <form role="form" action="{{ URL::current() }}" method="post">
                                   <fieldset> 
-                                      <div class="form-group col-lg-4                    
-                                          @if ($errors->has('nr_ordine')) has-error 
-                                          @elseif(Input::old('nr_ordine')) has-success 
-                                          @endif">
-                                          <label class="text-center">Numar de ordine</label>
-                                          <input class="form-control" name="nr_ordine" id="nr_ordine" type="text" value="{{ Input::old('nr_ordine') }}" 
-                                          @if ($errors->has('required')) 
-                                              title="{{ $errors->first('required') }}" 
-                                          @endif>
-                                      </div>     
-                                      <div class="form-group col-lg-8                   
-                                          @if ($errors->has('denumire')) has-error 
-                                          @elseif(Input::old('denumire')) has-success 
-                                          @endif">
-                                          <label>Denumire</label>
-                                          <input class="form-control" name="denumire" id="denumire" type="text" value="{{ Input::old('denumire') }}" 
-                                          @if ($errors->has('required')) 
-                                              title="{{ $errors->first('required') }}" 
-                                          @endif>
-                                      </div>                                                                 
-                                      <div class="form-group col-lg-4                    
-                                          @if ($errors->has('cantitate')) has-error 
-                                          @elseif(Input::old('cantitate')) has-success 
-                                          @endif">
-                                          <label>Cantitate</label>
-                                          <input id="cantitate" class="form-control auto text-right" type="text" data-a-dec="," data-a-sep="." value="{{ Input::old('cantitate') }}" 
-                                          @if ($errors->has('required')) 
-                                              title="{{ $errors->first('required') }}" 
-                                          @endif>
-                                      </div>       
-                                      <div class="form-group col-lg-4
-                                          @if($errors->has('um')) has-error 
-                                          @elseif(Input::old('um')) has-success 
-                                          @endif ">
-                                          <label for = "">UM</label>
-                                          <select name="um" id="um" 
-                                          class="selectpicker form-control" data-live-search="true">
-                                              @foreach ($ums as $um) 
-                                                  <option value="{{ $um->id_um }}">{{ $um->denumire }}
-                                                  </option>
-                                              @endforeach                            
-                                          </select>
-                                      </div>                                                                                                                                                                                                                                                                    
-                                      <div class="form-group col-lg-4                    
-                                          @if ($errors->has('pret_unitar')) has-error 
-                                          @elseif(Input::old('pret_unitar')) has-success 
-                                          @endif">
-                                          <label>Pret unitar</label>
-                                          <input id="pret_unitar" class="form-control auto text-right" type="text" data-a-dec="," data-a-sep="." value="{{ Input::old('pret_unitar') }}"
-                                          @if ($errors->has('required')) 
-                                              title="{{ $errors->first('required') }}" 
-                                          @endif>
+                                      <div class="col-md-4">
+                                          {{ Form::textField('Numar de ordine', '_nr_ordine') }}                    
+                                      </div>                                                                                           
+
+                                      <div class="col-md-8">
+                                          {{ Form::textField('Denumire', '_denumire') }}                    
+                                      </div>  
+
+                                      <div class="col-md-4">
+                                        {{ Form::textNumericField('Cantitate', '_cantitate', 0) }}                    
+                                      </div>              
+
+                                      <div class="col-md-4">
+                                        {{ Form::selectField('UM', '_um', $ums) }}                    
                                       </div>                                                                                                                                                                                                                                                                         
-                                  </fieldset>
+
+                                      <div class="col-md-4">
+                                        {{ Form::textNumericField('Pret unitar', '_pret_unitar', 0) }}                    
+                                      </div>
+                                   </fieldset>
                                </form>
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-default" data-dismiss="modal" onclick="btn_click('CANCEL')">Renunta</button>
-                              <input type="submit" name="submit" id="submit" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
+                              <input type="submit" name="btn_submit" id="btn_submit" class="btn btn-primary" value="Salveaza" onclick="btn_click('SAVE')"/>
                             </div>
                           </div>
                         </div>
@@ -266,12 +240,16 @@
         {
             btnModal = msg;
         }
-        $("#submit").click(function() {
+        $("#btn_submit").click(function() {
           $("#myModal").modal("hide");  
         });
 
         $('#myModal').on('shown.bs.modal', function () {
-          $('#nr_ordine').focus()
+            $('#_nr_ordine').val("");
+            $('#_denumire').val("");
+            $('#_cantitate').val("0,00");
+            $('#_pret_unitar').val("0,00");         
+            $('#_nr_ordine').focus();
         })
         $("#myModal").on('hide.bs.modal', function(e) {
             console.error(e.target);
@@ -279,11 +257,11 @@
             if (btnModal === 'SAVE')
             {
                 var id_factura = $('#id_factura').val(); 
-                var denumire = $('#denumire').val();   
-                var nr_ordine = $('#nr_ordine').val();
-                var cantitate = $('#cantitate').val();
-                var pret_unitar = $('#pret_unitar').val(); 
-                var um = $('#um').val();
+                var denumire = $('#_denumire').val();   
+                var nr_ordine = $('#_nr_ordine').val();
+                var cantitate = $('#_cantitate').val();
+                var pret_unitar = $('#_pret_unitar').val(); 
+                var um = $('#_um').val();
                 var url_add = "{{ URL::route('factura_furnizor_detaliu_add') }}";
 
                 var parametri = [];
@@ -293,6 +271,8 @@
                 parametri.push(cantitate);
                 parametri.push(pret_unitar);
                 parametri.push(um);
+
+                console.log(parametri);
 
                 var stringed = JSON.stringify(parametri);
                 var id = $(this).closest('tr').data('id');
@@ -312,10 +292,12 @@
                               ruta = ruta.replace("'_idf_'", parseInt(id_factura));
                               MessageBox("SUCCESS", "Facturare", data.message);
                               $('tr[data-id='+id+']').fadeOut();
-                                  //window.location.href = ruta;
+                              //window.location = ruta;
                           }
                           else
-                              MessageBox("ERROR", "Facturare", data.message);
+                          {
+                              MessageBox("ERROR", "Facturare", data.message);                              
+                          }
                       }
                       else
                           MessageBox("ERROR", "Server", "Eroare de server SCS");
@@ -357,6 +339,22 @@
         $(document).ready(function() { 
             //
             $.fn.editable.defaults.mode = 'inline';
+
+            var unitati_masura = [];            
+            $('#_um option').each(function(k,v) { 
+                var obj = {};               
+                obj.value = v.value;
+                obj.text = v.text;
+                unitati_masura.push(obj);
+            });
+
+            //console.log(unitati_masura);
+            $('span.xedit-um').css('cursor','pointer').editable({
+                type: 'select',
+                title: 'Unitatea de masura',
+                placement: 'right',
+                source: unitati_masura
+            });
 
             $('span.xedit-nr_ordine').css('cursor','pointer').editable('option', 'validate', function(v) {
                 if (v !== parseInt(v, 10)) return 'Doar valoare intreaga.';

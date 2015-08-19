@@ -132,6 +132,10 @@ return array(
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // IDE Helpers
 		'Codecorner\Registruintrareiesire\RegistruintrareiesireServiceProvider',
 		'Codecorner\Entitate\EntitateServiceProvider',
+		'Codecorner\Imobil\ImobilServiceProvider',
+		'Codecorner\UpDownGallery\UpDownGalleryServiceProvider',
+		'Codecorner\Banca\BancaServiceProvider',
+		'Way\Generators\GeneratorsServiceProvider'
     ),
 
     /*

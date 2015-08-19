@@ -69,7 +69,7 @@
                         @endif>
                     </div> 
                     <div class="form-group col-lg-12">               
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg" value="Salveaza" />
                         {{ Form::token() }}
                     </div>                   
                 </fieldset>

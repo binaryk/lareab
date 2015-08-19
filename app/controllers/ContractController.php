@@ -1,26 +1,28 @@
 <?php
 class ContractController extends BaseController
 {
-    public function getOptiuniContract($id_contract) 
+    public function getOptiuniContract($id) 
     {
         $contract = DB::select("SELECT 
-            ctr.id_contract, 
+            ctr.id, 
             ctr.numar,             
             date_format(ctr.data_semnarii, '%d-%m-%Y') as data_semnarii
             
         FROM contract ctr
-        WHERE ctr.id_contract = :id_contract", array('id_contract' => $id_contract));
+        WHERE ctr.id = :id", array('id' => $id));
 
         //Debugbar::info($contract);
         return View::make('contracte.options')->with('contract', $contract);
     }
-
+	
     public function getContracte() 
     {
-        $contracte = DB::select("SELECT 
-            ctr.id_contract, 
+        $ids = self::getIDsDepartamente(Confide::getDepartamenteUser());        
+        $sql = "SELECT 
+            ctr.id, 
             ctr.numar, 
             ctr.id_tip_contract, 
+            date_format(data_semnarii,'%Y%m%d') AS ord_data_semnarii,
             date_format(ctr.data_semnarii, '%d-%m-%Y') as data_semnarii,
             ctr.id_tip_nivel_contractare, 
             ctr.id_entitatea_mea, 
@@ -29,71 +31,191 @@ class ContractController extends BaseController
             ctr.valoare, 
             ctr.tva AS procent_tva,
             ctr.valoare * ctr.tva / 100.0 AS valoare_tva,
-            tnc.id_tip_nivel, 
             tnc.denumire AS parte_in_contract, 
             tip_c.denumire AS tip_contract, 
-            entitate.denumire AS entitatea_mea, 
-            v_localitate_descriere.denumire AS localitate,
-            sc.denumire as stadiu_contract
+            case 
+                when id_tip_nivel_contractare = 1 then
+                    concat('B=', ifnull(entitate.denumire,''), '<br>', 'P=', ifnull(partener.denumire,''))
+                when id_tip_nivel_contractare = 2 then
+                    concat('B=', ifnull(partener.denumire,''), '<br>', 'P=', ifnull(entitate.denumire,''))
+                else '?????'
+            end as beneficiar_prestator,
+
+            entitate.denumire AS entitatea_mea,
+            partener.denumire AS partener, 
+            /*v_localitate_descriere.denumire AS localitate,*/
+            (SELECT SUM(so.grad_realizare) / COUNT(*) 
+                FROM obiectiv
+                LEFT OUTER JOIN stadiu_obiectiv so ON so.id = obiectiv.id_stadiu AND so.logical_delete = 0 
+                WHERE obiectiv.logical_delete = 0 
+                AND obiectiv.id_contract = ctr.id) AS stadiu_contract
+
         FROM contract ctr
-        LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id_tip_nivel  AND  tnc.logical_delete = 0 
-        LEFT OUTER JOIN v_localitate_descriere v_localitate_descriere ON  ctr.id_localitate = v_localitate_descriere.id_localitate 
-        LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id_tip_contract  AND  tip_c.logical_delete = 0 
-        LEFT OUTER JOIN entitate entitate ON  ctr.id_entitatea_mea = entitate.id_entitate  AND  entitate.logical_delete = 0
-        LEFT OUTER JOIN stadiu_contract sc ON sc.id_stadiu_contract = ctr.id_stadiu AND sc.logical_delete = 0 
-        WHERE ctr.logical_delete = 0 
-        AND ctr.id_organizatie = :id_organizatie", array('id_organizatie' => $this->date_organizatie[0]->id_organizatie));
-
-        if (count($contracte) > 0) {
-            return View::make('contracte.list')->with('contracte', $contracte);
-        }
+        LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id AND  tnc.logical_delete = 0 
+        /*LEFT OUTER JOIN v_localitate_descriere v_localitate_descriere ON  ctr.id_localitate = v_localitate_descriere.id_localitate */
+        LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id  AND  tip_c.logical_delete = 0 
+        LEFT OUTER JOIN entitate entitate ON  ctr.id_entitatea_mea = entitate.id  AND  entitate.logical_delete = 0
+        LEFT OUTER JOIN entitate partener ON  ctr.id_partener = partener.id  AND  partener.logical_delete = 0
+        WHERE ctr.logical_delete = 0"; 
+        $sql = $sql . " AND ctr.id_departament IN (" . $ids . ")";
+        $contracte = DB::select($sql); 
+        /*AND ctr.id_departament IN (:departamente)", array('departamente' => $ids));      */
+        /*AND ctr.id_organizatie = :id_organizatie", array('id_organizatie' => self::organizatie()[0]->id_organizatie));*/
+//dd($sql);
+        return View::make('contracte.list')
+            ->with('contracte', $contracte);            
     }
+	
+	
+	/* Mevoro edit */	
 
-    /** getStadiiContract() se afla acum si in ContractOptiuniController.php **/
-    public function getStadiiContract()
+    public function getCentralizatorContracteClient() 
     {
-        $stadii_contract = DB::select("SELECT 
-            id_stadiu_contract, denumire 
-            FROM stadiu_contract
-            WHERE logical_delete = 0");
-        return $stadii_contract;        
-    }
+		/*
+		Afiseaza:
+		- numar, data semnarii, denumire contract, total livrabile, total garantie, total facturat (desfasurator), total incasat, rest de incasat, total virat CG, rest de virat in CG
+		- informatii afisate au trimiteri catre resursele caracteristice
+		*/
+		
+        $ids = self::getIDsDepartamente(Confide::getDepartamenteUser());        
+        $sql = "
+		SELECT 
+			ctr.id AS id, 
+			ctr.id_tip_nivel_contractare AS id_tip_nivel_contractare,
+			ctr.numar AS numar, 
+			ctr.data_semnarii AS data_semnarii,
+			ctr.denumire AS denumire,
+			SUM(IFNULL(le.pret_fara_tva, 0)) AS total_livrabile,
+			IFNULL((ctr.valoare * ge.procent_valoare / 100), 0) AS total_garantie,
+			IFNULL((SELECT SUM(pret_unitar*cantitate) FROM detalii_factura WHERE id_factura = fc.id GROUP BY id_factura), 0) AS total_facturat,
+			IFNULL((SELECT SUM(valoare_incasata) FROM incasare_factura WHERE id_factura = fc.id GROUP BY id_factura), 0) AS total_incasat
+		
+		FROM contract ctr
+		
+		LEFT JOIN 
+			obiectiv ob 
+			ON 
+			ctr.id = ob.id_contract AND ob.logical_delete = 0
+			
+		LEFT JOIN 
+			etape_predare_livrabile epl 
+			ON 
+			ob.id = epl.id_etapa
+		
+		LEFT JOIN 
+			livrabile_etapa le 
+			ON 
+			epl.id_etapa = le.id_etapa
+			
+					
+		#Total garantie
+		LEFT JOIN 
+			garantie_executie ge 
+			ON 
+			ctr.id = ge.id_contract    
+			
+				
+		LEFT JOIN 
+			factura_client fc 
+			ON 
+			ctr.id = fc.id_contract
+			
+		LEFT JOIN 
+			detalii_factura dfc 
+			ON 
+			fc.id = dfc.id_factura
+					
+		WHERE 
+			ctr.logical_delete = 0
+			AND ctr.id_departament IN (" . $ids . ")
+			
+		GROUP BY 
+			ctr.id,
+			le.id_etapa
+		"; 
+		//dd($sql);
+		$centralizator_contracte = DB::select($sql); 		
+		/*
+			Preferam calculul pentru Total livrabile in PHP pt ca este mult mai rapid
+		*/
+		/*
+		Afiseaza:
+		- numar, data semnarii, denumire contract, total livrabile, total garantie, total facturat (desfasurator), total incasat, rest de incasat, total virat CG, rest de virat in CG
+		- informatii afisate au trimiteri catre resursele caracteristice
+		*/
+		$contracte = array();
+		foreach($centralizator_contracte as $cc) {
+			if(!isset($contracte[$cc -> id])) {
+				$contracte[$cc -> id] = array(
+				'numar' => $cc -> numar,
+				'id_tip_nivel_contractare' => $cc -> id_tip_nivel_contractare,
+				'ord_data_semnarii' => date('Ymd', strtotime($cc -> data_semnarii)),
+				'data_semnarii' => date('d-m-Y', strtotime($cc -> data_semnarii)),
+				'denumire' => $cc -> denumire,
+				'total_livrabile' => $cc -> total_livrabile,
+				'total_garantie' => $cc -> total_garantie,
+				'total_facturat' => $cc -> total_facturat,
+				'total_incasat' => $cc -> total_incasat,
+				'rest_de_incasat' => ($cc -> total_facturat - $cc -> total_incasat),
+				'total_virat_cg' => '!0',
+				'rest_de_virat_cg' => '!0'
+				);
+			}
+			else {
+				$contracte[$cc -> id]['total_livrabile'] += $cc -> total_livrabile;	
+			}
+		}
+		
+		//echo '<pre>'; print_r($contracte); die('</pre>');
+		
+        return View::make('contracte.centralizator_list')
+            ->with('contracte', $contracte);            
+    } //sfarsit getCentralizatorContracte()
+	
+	
+	/* End of Mevoro edit */
+	
+	 
 
     public function getAddContract() 
     {
-        $entitati_organizatie = self::getEntitatiOrganizatie();
-        $parteneri_organizatie = self::getParteneriOrganizatie();
-        $entitati_publice = self::getEntitatiPublice();
+        $departamente = Confide::getDepartamenteUser();
+        $entitati_organizatie = self::getEntitatiOrganizatie($departamente);
+        $parteneri = self::getParteneri();
         $parti_contract = self::getPartiContract();
-        $stadii_contract = self::getStadiiContract();
         $tipuri_contract = self::getTipuriContract();
         $ums_timp = self::getUMTimp();
+        
 
         return View::make('contracte.add')
             ->with('entitati_organizatie', $entitati_organizatie)
-            ->with('parteneri_organizatie', $parteneri_organizatie)
-            ->with('entitati_publice', $entitati_publice)
-            ->with('parti_contract', $parti_contract)
-            ->with('stadii_contract', $stadii_contract)
+            ->with('parteneri', $parteneri)            
+            ->with('parti_contract', $parti_contract)            
             ->with('tipuri_contract', $tipuri_contract)
-            ->with('ums_timp', $ums_timp);
+            ->with('ums_timp', $ums_timp)
+            ->with('departamente', self::object_to_array($departamente)); 
     }
 
     public function postAddContract()
     {
-        $rules = array(
+        $rules = array(         
+            'departament' => 'required',
             'numar' => 'required',
             'data_semnare' => 'required',
-            'entitate_organizatie' => 'required',
+            'denumire' => 'required',
+            //'entitate_organizatie' => 'required',
             'parte_in_contract' => 'required',
-            'partener_organizatie' => 'required',
-            'stadiu_contract' => 'required',
+            'partener_organizatie' => 'required',            
             'durata_contract' => 'required',
-            'um_timp' => 'required'
+            'um_timp' => 'required',
+            'tip_contract' => 'required'
             );
-        $errors = array('required' => 'Campul este obligatoriu.');
+        $errors = array(
+            'required' => 'Campul este obligatoriu.',
+            );
         
         $validator = Validator::make(Input::all(), $rules, $errors);
+
         if ($validator->fails()) {
             return Redirect::back()->with('message', 'Eroare validare formular!')->withErrors($validator)->withInput();
         } 
@@ -116,31 +238,48 @@ class ContractController extends BaseController
                 $tva = str_replace('.', '', $tva);
                 $tva = str_replace(',', '.', $tva);
             }
+            $durata_contract = 0;                            
+            if (!empty(Input::get('durata_contract')))
+            {
+                $durata_contract = Input::get('durata_contract');    
+                $durata_contract = str_replace('.', '', $durata_contract);
+                $durata_contract = str_replace(',', '.', $durata_contract);
+            }
+            
+            $id_entitate = 0;
+            foreach (Confide::getDepartamenteUser() as $departament) {
+                if ($departament->id == intval(Input::get('departament')))
+                {
+                    $id_entitate = $departament->id_entitate;
+                    break;
+                }
+            }
+
             try {
                 DB::table('contract')
                 ->insertGetId(array(
                     'numar' => Input::get('numar'),
-                    'id_tip_contract' => Input::get('tip_contract'),
-                    'id_stadiu' => Input::get('stadiu_contract'),
+                    'id_tip_contract' => intval(Input::get('tip_contract')),
                     'data_semnarii' => $data_semnarii_us,
-                    'id_tip_nivel_contractare' => Input::get('parte_in_contract'),
-                    'id_entitatea_mea' => Input::get('entitate_organizatie'),
-                    'id_partener' => Input::get('partener_organizatie'),
+                    'id_tip_nivel_contractare' => intval(Input::get('parte_in_contract')),
+                    'id_entitatea_mea' => $id_entitate,
+                    'id_partener' => intval(Input::get('partener_organizatie')),
                     'denumire' => Input::get('denumire'),
                     'valoare' => $valoare,
                     'tva' => $tva,
-                    'durata_contract' => Input::get('durata_contract'),
-                    'id_um_timp' => Input::get('um_timp'),
-                    'id_tara' => Input::get('tara'), 
-                    'id_regiune' => Input::get('regiune'), 
-                    'id_judet' => Input::get('judet'), 
-                    'id_localitate' => Input::get('localitate'),
-                    'id_organizatie' => $this->date_organizatie[0]->id_organizatie));
+                    'durata_contract' => $durata_contract,
+                    'id_um_timp' => intval(Input::get('um_timp')),
+                    'id_tara' => intval(Input::get('tara')), 
+                    'id_regiune' => intval(Input::get('regiune')), 
+                    'id_judet' => intval(Input::get('judet')), 
+                    'id_localitate' => intval(Input::get('localitate')),
+                    'id_departament' => intval(Input::get('departament'))));
             }
             catch(Exception $e) {
                 return Redirect::back()->with('message', 'Eroare salvare date: ' . $e)->withInput();
             }
-            return Redirect::back()->with('message', 'Salvare realizata cu succes!')->withInput();
+            //return Redirect::back()->with('message', 'Salvare realizata cu succes!')->withInput();
+            return Redirect::route('contract_list');
         }
     }
 
@@ -148,64 +287,54 @@ class ContractController extends BaseController
     public function getPartiContract()
     {
        $parti_contract = DB::select("SELECT 
-            id_tip_nivel, denumire 
+            id, denumire 
             FROM tip_nivel_contractare
             WHERE logical_delete = 0");
-        return $parti_contract;        
+        return self::object_to_array($parti_contract);        
     }
     
-
     public function getTipuriContract()
     {
         $tipuri_contract = DB::select("SELECT 
-            id_tip_contract, denumire 
+            id, denumire 
             FROM tip_contract
             WHERE logical_delete = 0");
-        return $tipuri_contract;
-    }
-
-    /** getUMTimp() se afla acum si in ContractOptiuniController.php **/
-    public function getUMTimp()
-    {
-        $ums_timp = DB::select("SELECT 
-            id_um, denumire 
-            FROM um_timp
-            WHERE logical_delete = 0");
-        return $ums_timp;
+        return self::object_to_array($tipuri_contract);
     }
 
     public function getEditContract($id) 
     {
-        $entitati_organizatie = self::getEntitatiOrganizatie();
-        $parteneri_organizatie = self::getParteneriOrganizatie();
+        $departamente = Confide::getDepartamenteUser();
+        $entitati_organizatie = self::getEntitatiOrganizatie($departamente);
+        $parteneri = self::getParteneri();
         $parti_contract = self::getPartiContract();
-        $stadii_contract = self::getStadiiContract();
         $tipuri_contract = self::getTipuriContract();
         $ums_timp = self::getUMTimp();
-        $contract = self::getContract($id);
+        $contract = self::getContract($id);        
 
         return View::make('contracte.edit')
-            ->with('contract', $contract[0])
-            ->with('entitati_organizatie', $entitati_organizatie)
-            ->with('parteneri_organizatie', $parteneri_organizatie)
+            ->with('contract', $contract[0])            
+            ->with('parteneri', $parteneri)            
+            ->with('entitati_organizatie', $entitati_organizatie)                        
             ->with('parti_contract', $parti_contract)
-            ->with('stadii_contract', $stadii_contract)
             ->with('tipuri_contract', $tipuri_contract)
-            ->with('ums_timp', $ums_timp);
+            ->with('ums_timp', $ums_timp)
+            ->with('departamente', self::object_to_array($departamente));
     }
     
     public function postEditContract($id)
     {
         $rules = array(
+            'departament' => 'required',
             'numar' => 'required',
             'data_semnare' => 'required',
-            'entitate_organizatie' => 'required|integer|min:1',
-            'parte_in_contract' => 'required|integer|min:1',
-            'partener_organizatie' => 'required|integer|min:1',
-            'stadiu_contract' => 'required|integer|min:1',
-            'durata_contract' => 'required|integer|min:1',
-            'um_timp' => 'required|integer|min:1',
-            'tip_contract' => 'required|integer|min:1'
+            'denumire' => 'required',
+            //'entitate_organizatie' => 'required',
+            'parte_in_contract' => 'required',
+            'partener_organizatie' => 'required',
+            'durata_contract' => 'required',
+            'um_timp' => 'required',
+            'tip_contract' => 'required'
             );
         $errors = array('required' => 'Campul este obligatoriu.');
         
@@ -233,33 +362,43 @@ class ContractController extends BaseController
                 $tva = str_replace(',', '.', $tva);
             }
    
-            /*$id_regiune = 0;
-            if (!empty(Input::get('regiune') !== null))
+            $durata_contract = 0;                            
+            if (!empty(Input::get('durata_contract')))
             {
-                $id_regiune = Input::get('regiune');
-            }*/
+                $durata_contract = Input::get('durata_contract');    
+                $durata_contract = str_replace('.', '', $durata_contract);
+                $durata_contract = str_replace(',', '.', $durata_contract);
+            } 
+
+            $id_entitate = 0;
+            foreach (Confide::getDepartamenteUser() as $departament) {
+                if ($departament->id == intval(Input::get('departament')))
+                {
+                    $id_entitate = $departament->id_entitate;
+                    break;
+                }
+            }
 
             try {
                 DB::table('contract')
-                ->where('id_contract', $id)
+                ->where('id', $id)
                 ->update(array(
                     'numar' => Input::get('numar'),
-                    'id_tip_contract' => Input::get('tip_contract'),
-                    'id_stadiu' => Input::get('stadiu_contract'),
+                    'id_tip_contract' => intval(Input::get('tip_contract')),                    
                     'data_semnarii' => $data_semnarii_us,
-                    'id_tip_nivel_contractare' => Input::get('parte_in_contract'),
-                    'id_entitatea_mea' => Input::get('entitate_organizatie'),
-                    'id_partener' => Input::get('partener_organizatie'),
+                    'id_tip_nivel_contractare' => intval(Input::get('parte_in_contract')),
+                    'id_entitatea_mea' => $id_entitate,
+                    'id_partener' => intval(Input::get('partener_organizatie')),
                     'denumire' => Input::get('denumire'),
                     'valoare' => $valoare,
                     'tva' => $tva,
-                    'durata_contract' => Input::get('durata_contract'),
-                    'id_um_timp' => Input::get('um_timp'),
-                    'id_tara' => Input::get('tara'), 
-                    'id_regiune' => Input::get('regiune'), 
-                    'id_judet' => Input::get('judet'), 
-                    'id_localitate' => Input::get('localitate'),
-                    'id_organizatie' => $this->date_organizatie[0]->id_organizatie));
+                    'durata_contract' => $durata_contract,
+                    'id_um_timp' => intval(Input::get('um_timp')),
+                    'id_tara' => intval(Input::get('tara')), 
+                    'id_regiune' => intval(Input::get('regiune')), 
+                    'id_judet' => intval(Input::get('judet')), 
+                    'id_localitate' => intval(Input::get('localitate')),
+                    'id_departament' => intval(Input::get('departament'))));
             }
             catch(Exception $e) {
                 return Redirect::back()->with('message', 'Eroare salvare date: ' . $e)->withInput();
@@ -271,10 +410,9 @@ class ContractController extends BaseController
     public function getContract($id) 
     {
         $contract = DB::select("SELECT 
-            ctr.id_contract, 
+            ctr.id, 
             ctr.numar, 
             ctr.id_tip_contract, 
-            ctr.id_stadiu,
             date_format(ctr.data_semnarii, '%d-%m-%Y') as data_semnarii,
             ctr.id_tip_nivel_contractare, 
             ctr.id_entitatea_mea, 
@@ -291,22 +429,27 @@ class ContractController extends BaseController
             tara.denumire AS tara,
             regiune.denumire AS regiune,
             judet.denumire AS judet,
-            v_localitate_descriere.denumire AS localitate,            
-            tnc.id_tip_nivel, 
+            localitate.denumire AS localitate,            
+            tnc.id, 
             tnc.denumire AS parte_in_contract, 
             tip_c.denumire AS tip_contract, 
-            entitate.denumire AS entitatea_mea          
+            entitate.denumire AS entitatea_mea,
+            ctr.id_departament,
+            (SELECT COUNT(*) FROM obiectiv
+                WHERE obiectiv.logical_delete = 0 
+                AND obiectiv.id_contract = ctr.id) AS num_obiective                    
         FROM contract ctr
-        LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id_tip_nivel  AND  tnc.logical_delete = 0 
+        LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id AND tnc.logical_delete = 0 
         LEFT OUTER JOIN tara ON tara.id_tara = ctr.id_tara AND tara.logical_delete = 0
         LEFT OUTER JOIN regiune ON regiune.id_regiune = ctr.id_regiune AND regiune.logical_delete = 0
         LEFT OUTER JOIN judet ON judet.id_judet = ctr.id_judet AND judet.logical_delete = 0        
-        LEFT OUTER JOIN v_localitate_descriere v_localitate_descriere ON  ctr.id_localitate = v_localitate_descriere.id_localitate 
-        LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id_tip_contract  AND  tip_c.logical_delete = 0 
-        LEFT OUTER JOIN entitate ON ctr.id_entitatea_mea = entitate.id_entitate  AND  entitate.logical_delete = 0
+        /*LEFT OUTER JOIN v_localitate_descriere v_localitate_descriere ON  ctr.id_localitate = v_localitate_descriere.id_localitate */
+        LEFT OUTER JOIN localitate ON  ctr.id_localitate = localitate.id_localitate 
+        LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id  AND  tip_c.logical_delete = 0 
+        LEFT OUTER JOIN entitate ON ctr.id_entitatea_mea = entitate.id  AND  entitate.logical_delete = 0
         WHERE ctr.logical_delete = 0  
-        AND ctr.id_contract = :id_contract        
-        ORDER BY ctr.id_contract DESC LIMIT 1", array('id_contract' => $id));
+        AND ctr.id = :id        
+        ORDER BY ctr.id DESC LIMIT 1", array('id' => $id));
         return $contract;               
     }
 
@@ -320,7 +463,7 @@ class ContractController extends BaseController
     
     public function getObiectivSingle($id) {
         $contract = DB::Select("SELECT 
-            oc.id_obiectiv, 
+            oc.id, 
             oc.numar AS numar_obiectiv, 
             date_format(oc.data_semnare, '%d-%m-%Y') AS data_semnare_obiectiv, 
             oc.denumire AS denumire_obiectiv, 
@@ -334,7 +477,7 @@ class ContractController extends BaseController
             regiune.denumire AS regiune_obiectiv, 
             judet.denumire AS judet_obiectiv, 
             localitate_obj.denumire AS localitate_obiectiv,
-            ctr.id_contract,
+            ctr.id,
             ctr.numar AS numar_contract,
             ctr.id_tip_contract,
             date_format(ctr.data_semnarii, '%d-%m-%Y') as data_semnare_contract,
@@ -344,26 +487,27 @@ class ContractController extends BaseController
             ctr.denumire AS denumire_contract,
             ctr.valoare,
             ctr.tva,
-            tnc.id_tip_nivel,
+            tnc.id,
             tnc.denumire AS parte_in_contract,
             tip_c.denumire AS tip_contract,
             entitate.denumire AS entitatea_mea,
             localitate_ctr.denumire AS localitate_contract
 
             FROM obiectiv oc
-            INNER JOIN contract ctr ON ctr.id_contract = oc.id_contract AND ctr.logical_delete = 0
-            LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id_tip_nivel  AND  tnc.logical_delete = 0
-            LEFT OUTER JOIN v_localitate_descriere localitate_ctr ON  ctr.id_localitate = localitate_ctr.id_localitate
-            LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id_tip_contract  AND  tip_c.logical_delete = 0
-            LEFT OUTER JOIN entitate entitate ON  ctr.id_entitatea_mea = entitate.id_entitate  AND  entitate.logical_delete = 0
+            INNER JOIN contract ctr ON ctr.id = oc.id_contract AND ctr.logical_delete = 0
+            LEFT OUTER JOIN tip_nivel_contractare tnc ON  ctr.id_tip_nivel_contractare = tnc.id AND tnc.logical_delete = 0
+            /*LEFT OUTER JOIN v_localitate_descriere v_localitate_descriere ON  ctr.id_localitate = v_localitate_descriere.id_localitate */
+            LEFT OUTER JOIN localitate localitate_ctr ON  ctr.id_localitate = localitate_ctr.id_localitate 
+            LEFT OUTER JOIN tip_contract tip_c ON  ctr.id_tip_contract = tip_c.id AND tip_c.logical_delete = 0
+            LEFT OUTER JOIN entitate entitate ON  ctr.id_entitatea_mea = entitate.id  AND  entitate.logical_delete = 0
 
             LEFT OUTER JOIN tara tara ON  oc.id_tara = tara.id_tara  AND  tara.logical_delete = 0
             LEFT OUTER JOIN regiune regiune ON  oc.id_regiune = regiune.id_regiune  AND  regiune.logical_delete = 0
             LEFT OUTER JOIN judet judet ON  oc.id_judet = judet.id_judet  AND  judet.logical_delete = 0
-            LEFT OUTER JOIN v_localitate_descriere localitate_obj ON  oc.id_localitate = localitate_obj.id_localitate
+            LEFT OUTER JOIN localitate localitate_obj ON  oc.id_localitate = localitate_obj.id_localitate
             WHERE oc.logical_delete = 0
-            AND oc.id_obiectiv = :id_obiectiv
-            ORDER BY ctr.id_contract DESC LIMIT 1", array('id_obiectiv' => $id));
+            AND oc.id = :id_obiectiv
+            ORDER BY ctr.id DESC LIMIT 1", array('id_obiectiv' => $id));
         
         if (count($contract) > 0) {
             return View::make('contracte.single')->with('contract', $contract);
@@ -373,8 +517,8 @@ class ContractController extends BaseController
     public function postDeleteContract() {
         if (Request::ajax()) {
             if (Session::token() === Input::get('_token')) {
-                $id = Input::get('id_contract');
-                DB::table('contract')->where('id_contract', $id)->update(array('logical_delete' => 1));
+                $id = Input::get('id');
+                DB::table('contract')->where('id', $id)->update(array('logical_delete' => 1));
                 return $id;
             }
         }

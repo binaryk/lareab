@@ -12,59 +12,19 @@
                     @if(Session::has('message'))
                         <p class="alert @if($errors->isEmpty()) alert-success @else alert-danger @endif">{{ Session::get('message')  }}</p>
                     @endif               
-                    <div class="form-group col-lg-6                    
-                        @if ($errors->has('nr_etapa')) has-error 
-                        @elseif(Input::old('nr_etapa')) has-success 
-                        @endif">
-                        <label>Numar etapa</label>
-                        <input class="form-control" name="nr_etapa" type="text" value="{{ Input::old('nr_etapa') }}" 
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('required') }}" 
-                        @endif>
+                    <div class="col-md-6">
+                        {{ Form::textField('Numar etapa', 'nr_etapa') }}                    
+                    </div>                    
+                    <div class="col-md-6">
+                        {{ Form::textField('Data inceperii', 'data_start', null, ['class'=>'form-control date1'], '<i class="fa fa-calendar"></i>') }}                    
                     </div>  
-                    <div class="form-group col-lg-6 margin-bottom">
-                        <label>Data inceperii</label>
-                        <div class="input-group 
-                        @if ($errors->has('data_inceperii')) has-error 
-                        @elseif(Input::old('data_inceperii')) has-success 
-                        @endif">
-                            <input 
-                                class="form-control date1" 
-                                name="data_inceperii" 
-                                data-placement="top" 
-                                placeholder="Data inceperii" 
-                                type="text" 
-                                value="{{ Input::old('data_inceperii') }}" 
-                                @if ($errors->has('data_inceperii')) 
-                                title="{{ $errors->first('data_inceperii') }}" 
-                                @endif />
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        </div>
+                    <div class="col-md-6">
+                        {{ Form::textNumericField('Termen predare', 'termen_predare') }}                    
+                    </div>                  
+                    <div class="col-md-6">
+                        {{ Form::selectField('Unitate de masura de timp', 'um_timp', $ums_timp) }}                    
                     </div>
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('termen_predare')) has-error 
-                        @elseif(Input::old('termen_predare')) has-success 
-                        @endif">
-                        <label>Termen predare</label>
-                        <input class="form-control" name="termen_predare" id="termen_predare" type="text" value="{{ Input::old('termen_predare') }}" 
-                        @if ($errors->has('termen_predare')) 
-                            title="{{ $errors->first('termen_predare') }}" 
-                        @endif>                                            
-                    </div>    
-                    <div class="form-group col-lg-6
-                        @if($errors->has('um_timp')) has-error 
-                        @elseif(Input::old('um_timp')) has-success 
-                        @endif ">
-                        <label for = "">Unitatea de masura</label>
-                        <select class="form-control" name="um_timp" id="um_timp">
-                            <option value="0">Selectioneaza unitatea de masura</option>
-                            @foreach($ums_timp as $um_timp)
-                                <option value="{{ $um_timp->id_um }}">
-                                    {{ $um_timp->denumire }}
-                                </option>
-                            @endforeach                             
-                        </select>  
-                    </div>                                                                                                                                                   
+                                                                                                                                               
                     <div class="form-group col-lg-12                   
                         @if ($errors->has('instiintare')) has-error 
                         @elseif(Input::old('instiintare')) has-success 
@@ -76,9 +36,9 @@
                     </div>                                                
                        
                     <div class="row col-lg-12 text-center">
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" />
                         <a href="{{ URL::route('etapa_list', $id_obiectiv) }}">
-                            <input type="button" id="back" class="btn btn-warning btn-lg" value="Inapoi" />
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
                         </a>                                                
                     </div>
                     {{ Form::token() }}
@@ -94,13 +54,13 @@
             $("#back").click(function(){
                 //window.history.go(-1);
             });            
-            $('#submit').click(function(){        
-                $('#submit').attr("disabled", "disabled");                            
-                setTimeout(function(){ $('#submit').removeAttr("disabled"); }, 3000);
+            $('#btn_submit').click(function(){        
+                $('#btn_submit').attr("disabled", "disabled");                            
+                setTimeout(function(){ $('#btn_submit').removeAttr("disabled"); }, 3000);
             });
         });  
         $(function() {
-            $( ".date1" ).datepicker({ minDate: 0, dateFormat: "dd-mm-yy"
+            $( ".date1" ).datepicker({ minDate: new Date(2010, 1, 1), dateFormat: "dd-mm-yy"
             });         
         });
     </script>

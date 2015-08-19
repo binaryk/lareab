@@ -6,55 +6,26 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <form role="form" action="{{ URL::current() }}" method="post">
                 <fieldset>
                     @if(Session::has('message'))
                         <p class="alert @if($errors->isEmpty()) alert-success @else alert-danger @endif">{{ Session::get('message')  }}</p>
                     @endif                  
-                    <div class="form-group                         
-                        @if ($errors->has('nume')) has-error 
-                        @elseif(Input::old('nume')) has-success 
-                        @endif">
-                        <label>Nume si prenume *</label>
-                        <input class="form-control" name="nume" id="nume" type="text"
-                        value="{{ Input::old('nume') }}" 
-                        @if ($errors->has('nume')) 
-                            title="{{ $errors->first('nume') }}" 
-                        @endif autofocus/>
-                    </div>                                                           
-                    <div class="form-group                         
-                        @if ($errors->has('cnp')) has-error 
-                        @elseif(Input::old('cnp')) has-success 
-                        @endif">
-                        <label>CNP *</label>
-                        <input class="form-control" name="cnp" id="cnp" type="text" 
-                        value="{{ Input::old('cnp') }}"
-                        @if ($errors->has('required')) title="{{ $errors->first('required') }}" 
-                        @endif/>
+  
+                    <div class="col-md-6">
+                        {{ Form::textField('Nume si prenume', 'nume') }}                    
+                    </div>                                                         
+                    <div class="col-md-6">
+                        {{ Form::textField('CNP', 'cnp') }}                    
+                    </div>                                                         
+                                        
+                    <div class="col-md-12 center"> 
+                        <input type="submit" id="submit" class="btn btn-primary btn-lg button-width" value="Salveaza" onclick="this.value='Se salveaza ..';this.disabled='disabled'; this.form.submit();" disabled="disabled"/>
+                        <a href="{{ URL::route('reprezentant_legal_list') }}">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
                     </div>
-
-                    <div class="form-group                         
-                        @if ($errors->has('entitate')) has-error 
-                        @elseif(Input::old('entitate')) has-success 
-                        @endif">
-                        <label>Entitatea de care apartine *</label>
-                        <select class="form-control" name="entitate" id="entitate">
-                            @if(isset($id_entitate) && isset($denumire))
-                                <option value="{{ $id_entitate }}">{{ $denumire }}</option>
-                            @else
-                                <option value="0">Selectioneaza o entitate</option>
-                                @if(isset($entitati))
-                                    @foreach($entitati as $entitate)
-                                        <option value="{{ $entitate->id_entitate }}">
-                                            {{ $entitate->denumire }}
-                                        </option>
-                                    @endforeach          
-                                @endif                         
-                            @endif
-                        </select>                                           
-                    </div>                                        
-                    <input type="submit" name="submit" id="submit" disabled class="btn btn-primary btn-lg" value="Salveaza" />
                     {{ Form::token() }}
                 </fieldset>
             </form>

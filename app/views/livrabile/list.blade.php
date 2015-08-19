@@ -2,7 +2,7 @@
 
 @section('head_scripts')
     <!-- DataTables CSS -->
-    {{ HTML::style('css/plugins/dataTables.bootstrap.css') }}
+    {{ HTML::style('assets/css/plugins/dataTables.bootstrap.css') }}
 @stop
 
 @section('title')
@@ -75,7 +75,7 @@
                                    <th>Ore lucrate</th>
                                </tr>
                            </thead>
-                           <tfoot style="display: none">
+                           <tfoot>
                                <tr>                                   
                                    <th>Denumire livrabil</th>
                                    <th>Contract</th>
@@ -89,13 +89,13 @@
                            <tbody>
                                 @foreach ($livrabile as $livrabil)
                                     <tr>
-                                        <td>{{ $livrabil->Livrabil }}</td>   
-                                        <td>{{ $livrabil->Contract }}</td>
-                                        <td><a href="{{ URL::route('obiectiv_single', $livrabil->IdObiectiv) }}">{{ $livrabil->Obiectiv }}</a></td>
-                                        <td>{{ $livrabil->IdEtapa }}</td>                                        
-                                        <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->IdLivrabilEtapa) }}">{{ $livrabil->Stadiu }}</td>
-                                        <td class="text-center">{{ $livrabil->DataLimita }}</td>
-                                        <td class="text-right">{{ $livrabil->OreLucrate }}</td>                                    
+                                        <td>{{ $livrabil->livrabil }}</td>   
+                                        <td>{{ $livrabil->contract }}</td>
+                                        <td><a href="{{ URL::route('obiectiv_single', $livrabil->id_obiectiv) }}">{{ $livrabil->obiectiv }}</a></td>
+                                        <td>{{ $livrabil->id_etapa }}</td>                                        
+                                        <td class="text-center"><a href="{{ URL::route('stadiu_livrabil', $livrabil->id_livrabil_pentru_facturat) }}">{{ $livrabil->stadiu }}</td>
+                                        <td class="text-center">{{ $livrabil->data_limita }}</td>
+                                        <td class="text-right">{{ $livrabil->ore_lucrate }}</td>                                    
                                     </tr>
                                 @endforeach
                            </tbody>
@@ -114,17 +114,17 @@
 
 @section('footer_scripts')
     <!-- DataTables JavaScript -->    
-    {{ HTML::script('js/plugins/dataTables/jquery.dataTables.js') }}
-    {{ HTML::script('js/plugins/dataTables/dataTables.bootstrap.js') }}
-    {{ HTML::script('js/plugins/dataTables/jquery.dataTables.columnFilter.js') }}
-    {{ HTML::script('js/plugins/bootbox.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/dataTables.bootstrap.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.columnFilter.js') }}
+    {{ HTML::script('assets/js/plugins/bootbox.js') }}
     
     <script>
         $(document).ready(function() 
         {         
             $('#dataTables-livrabile').dataTable({          
                 "language": {                
-                    "url": '{{ URL::to("js/plugins/dataTables/lang_json/romanian.json") }}'}
+                    "url": '{{ URL::to("assets/js/plugins/dataTables/lang_json/romanian.json") }}'}
               });
    
             $("#btn_show_hide").click(function(){

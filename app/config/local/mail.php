@@ -54,7 +54,7 @@ return array(
     |
     */
 
-    'from' => array('address' => 'lunguc@hotmail.com', 'name' => 'Starter'),
+    'from' => array('address' => 'lunguc@hotmail.com', 'name' => 'Klever Admin'),
 
     /*
     |--------------------------------------------------------------------------

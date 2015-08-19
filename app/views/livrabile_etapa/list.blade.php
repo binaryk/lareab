@@ -28,11 +28,6 @@
                         </tr>
                         <tr>
                             <td width="20%">
-                                <label class="control-label">Pret fara TVA</label></td>
-                            <td width="80%"><p id="_col_pret"></p></td>
-                        </tr>
-                        <tr>
-                            <td width="20%">
                                 <label class="control-label">Stadiu</label></td>
                             <td width="80%"><p id="_col_stadiu"></p></td>
                         </tr>                      
@@ -55,28 +50,38 @@
                        <table class="table table-striped table-bordered table-hover" id="dataTables-livrabile">
                            <thead>                                                       
                                <tr>                                   
-                                   <th>Denumire livrabil</th>
-                                   <th>Pret</th>
-                                   <th>Stadiu</th>
+                                   <th class="text-center">Denumire livrabil</th>
+                                   @if (Entrust::can('manage_finance')) <th class="text-center">Pret fara TVA</th>@endif
+                                   <th class="text-center">Stadiu</th>
+                                   <th class="text-center">Actiuni</th>
                                </tr>
                            </thead>
                            <tfoot>
                                <tr>                                   
-                                   <th>Denumire livrabil</th>
-                                   <th>Pret</th>
-                                   <th>Stadiu</th>
+                                   <th class="text-center">Denumire livrabil</th>
+                                   @if (Entrust::can('manage_finance'))<th class="text-center">Pret fara TVA</th>@endif
+                                   <th class="text-center">Stadiu</th>
+                                   <th class="text-center">Actiuni</th>
                                </tr>
                            </tfoot>
                            <tbody>
                                 @foreach ($livrabile as $livrabil)
-                                    <tr data-id="{{ $livrabil->id_livrabil_etapa }}">
-                                        <td>{{ $livrabil->livrabil }}</td>                                                                                  
-                                        <td class="text-right">{{ number_format($livrabil->pret_fara_tva, 2, ',', '.') }}</td>                                                                                
+                                    <tr data-id="{{ $livrabil->id }}">
+                                        <td>{{ $livrabil->livrabil }}</td> 
+                                        @if (Entrust::can('manage_finance'))                                                                                 
+                                          <td class="text-right">{{ number_format($livrabil->pret_fara_tva, 2, ',', '.') }}</td>
+                                        @endif
                                         <td class="text-center">{{ $livrabil->stadiu }}</td>
+                                        <td class="center action-buttons">                                                            
+                                          @if (intval($livrabil->id_factura) == 0)
+                                            <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>
+                                          @endif                                            
+                                        </td>                                         
                                     </tr>
                                 @endforeach
                            </tbody>
                        </table>
+                       <label class="label label-danger">*Un livrabil facturat nu se mai poate sterge</label>
                    </div>
                    <!-- /.table-responsive -->
                </div>
@@ -93,7 +98,7 @@
     <!-- DataTables JavaScript -->    
     {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.js') }}
     {{ HTML::script('assets/js/plugins/dataTables/dataTables.bootstrap.js') }}
-    {{ HTML::script('assets/assets/js/plugins/dataTables/jquery.dataTables.columnFilter.js') }}
+    {{ HTML::script('assets/js/plugins/dataTables/jquery.dataTables.columnFilter.js') }}
     {{ HTML::script('assets/js/plugins/bootbox.js') }}
     
     <script>
@@ -101,7 +106,7 @@
         {         
             $('#dataTables-livrabile').dataTable({
                 "aoColumnDefs": [
-                    { 'bSortable': false, 'aTargets': [ 0, 2 ] }
+                    { 'bSortable': false, 'aTargets': [ 0, 1 ] }
                 ],                                
                 "language": {                
                     "url": '{{ URL::to("assets/js/plugins/dataTables/lang_json/romanian.json") }}'},
@@ -110,14 +115,48 @@
             
             $("#btn_show_hide").click(function(){
                 $("#div_cautare").toggle();             
-              });
+            });
+
             var table = $('#dataTables-livrabile').dataTable().columnFilter({
               aoColumns: [ 
-                  { sSelector: "#_col_denumire_livrabil", type: "text" },             
-                  { sSelector: "#_col_pret", type: "text" },             
-                  { sSelector: "#_col_stadiu", type: "select" },             
+                  { sSelector: "#_col_denumire_livrabil", type: "text" },                      
+                  { sSelector: "#_col_stadiu", type: "select" },           
                 ]
-            });        
+            });                  
+
+            $('.fa-trash-o').click(function(){
+                var id = $(this).closest('tr').data('id');                  
+                var url_delete = "{{ URL::route('livrabile_etapa_delete') }}";              
+                bootbox.confirm({
+                    title: "Sunteti sigur de stergerea inregistrarii?",
+                    message: ' ',
+                    buttons: {
+                        'confirm': {
+                            label: "Da, sterge!",
+                            className: "btn-success"
+                        },
+                        'cancel': {
+                            label: "Nu, renunta!",
+                            className: "btn-danger"
+                        }
+                    },
+                    callback: function(result){
+                        if(result) {
+                            $.ajax({
+                                type: "POST",
+                                url : url_delete,
+                                data : {
+                                    "_token": '<?= csrf_token() ?>',
+                                    "id": id
+                                },
+                                success : function(data){
+                                    $('tr[data-id='+id+']').fadeOut();
+                                }
+                            });
+                        }
+                    }
+                });
+            });
         });
     </script>
 @stop

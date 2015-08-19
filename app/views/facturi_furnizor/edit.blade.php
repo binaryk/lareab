@@ -14,83 +14,32 @@
                     @if(Session::has('message'))
                         <p class="alert @if($errors->isEmpty()) alert-success @else alert-danger @endif">{{ Session::get('message')  }}</p>
                     @endif               
-                    <div class="form-group col-lg-12
-                        @if($errors->has('beneficiar')) has-error 
-                        @elseif(Input::old('beneficiar')) has-success 
-                        @endif ">
-                        <label for = "">Beneficiar</label>
-                        <select disabled name="beneficiar" id="beneficiar" 
-                        class="selectpicker form-control" data-live-search="true">
-                            @foreach ($beneficiari as $beneficiar) 
-                                <option value="{{ $beneficiar->id_entitate }}" 
-                                    @if ($beneficiar->id_entitate == $factura->id_beneficiar) selected @endif>
-                                    {{ $beneficiar->denumire }}
-                                </option>
-                            @endforeach                            
-                        </select>
-                    </div>                                                                                                                                                              
-                    <div class="form-group col-lg-12
-                        @if($errors->has('furnizor')) has-error 
-                        @elseif(Input::old('furnizor')) has-success 
-                        @endif ">
-                        <label for = "">Furnizor</label>
-                        <select disabled name="furnizor" id="furnizor" 
-                        class="selectpicker form-control" data-live-search="true">
-                            @foreach ($furnizori as $furnizor) 
-                                <option value="{{ $furnizor->id_entitate }}" 
-                                @if ($furnizor->id_entitate == $factura->id_furnizor) selected @endif>{{ $furnizor->denumire }}</option>
-                            @endforeach                            
-                        </select>
-                    </div>                                                   
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('procent_tva')) has-error 
-                        @elseif(Input::old('procent_tva')) has-success 
-                        @endif">
-                        <label>Procent TVA(%)</label>
-                        <input class="form-control auto text-right" name="procent_tva" type="text" data-a-dec="," data-a-sep=".",
-                        @if(Input::old('procent_tva')) 
-                            value="{{ Input::old('procent_tva') }}" 
-                        @else 
-                            value="{{ $factura->tva }}" 
-                        @endif
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('procent_tva') }}" 
-                        @endif>
-                    </div>    
-                    <div class="form-group col-lg-6                   
-                        @if ($errors->has('termen_plata')) has-error 
-                        @elseif(Input::old('termen_plata')) has-success 
-                        @endif">
-                        <label>Termen de plata (zile)</label>
-                        <input class="form-control text-right" name="termen_plata" type="text"
-                        @if(Input::old('termen_plata')) 
-                            value="{{ Input::old('termen_plata') }}" 
-                        @else 
-                            value="{{ $factura->termen_plata }}" 
-                        @endif
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('termen_plata') }}" 
-                        @endif>
+                    
+                    <!--div class="col-md-12">
+                        {{ Form::selectField('Beneficiar', 'beneficiar', $beneficiari, $factura->id_beneficiar) }}                    
                     </div> 
-                    <div class="form-group col-lg-12                    
-                        @if ($errors->has('observatii')) has-error 
-                        @elseif(Input::old('observatii')) has-success 
-                        @endif">
-                        <label>Observatii</label>
-                        <input class="form-control" name="observatii" id="observatii" rows="4" 
-                        @if(Input::old('observatii')) 
-                            value="{{ Input::old('observatii') }}" 
-                        @else 
-                            value="{{ $factura->observatii }}" 
-                        @endif 
-                        @if ($errors->has('required')) 
-                            title="{{ $errors->first('required') }}" 
-                        @endif>
-                        </input>
-                    </div>  
-                    <div class="form-group col-lg-12">               
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />                        
-                    </div>                   
+
+                    <div class="col-md-12">
+                        {{ Form::selectField('Furnizor', 'furnizor', $furnizori, $factura->id_furnizor) }}                    
+                    </div--> 
+   
+                    <div class="col-md-6">  
+                        {{ Form::textNumericField('Procent TVA(%)','procent_tva', $factura->tva) }}
+                    </div> 
+                    <div class="col-md-6">  
+                        {{ Form::textField('Termen de plata (zile)','termen_plata', $factura->termen_plata) }}
+                    </div> 
+                    
+                    <div class="col-md-12">  
+                        {{ Form::textField('Observatii','observatii', $factura->observatii) }}
+                    </div>   
+                    
+                    <div class="col-md-12 center"> 
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" />
+                        <a href="{{ URL::route('facturi_furnizor') }}">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
+                    </div>                  
                     {{ Form::token() }}
                 </fieldset>
             </form>

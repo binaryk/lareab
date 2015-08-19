@@ -52,6 +52,18 @@ class AdminRolesController extends AdminController {
         return View::make('admin/roles/index', compact('roles', 'title'));
     }
 
+    public function getRoles()
+    {
+        $grupuri = DB::select("SELECT
+            roles.id,
+            roles.name,
+            roles.descriere,
+            date_format(roles.created_at,'%d-%m-%Y %H:%i') AS created_at,
+            (SELECT COUNT(*) FROM assigned_roles ar WHERE ar.role_id = roles.id) as num_users
+            FROM roles");
+        return View::make('admin/roles/list')->with('grupuri', $grupuri);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -94,6 +106,7 @@ class AdminRolesController extends AdminController {
             $inputs = Input::except('csrf_token');
 
             $this->role->name = $inputs['name'];
+            $this->role->descriere = $inputs['descriere'];
             $this->role->save();
 
             // Save permissions
@@ -174,6 +187,7 @@ class AdminRolesController extends AdminController {
         {
             // Update the role data
             $role->name        = Input::get('name');
+            $role->descriere   = Input::get('descriere');
             $role->perms()->sync($this->permission->preparePermissionsForSave(Input::get('permissions')));
 
             // Was the role updated?

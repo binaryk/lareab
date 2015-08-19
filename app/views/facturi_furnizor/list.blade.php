@@ -6,7 +6,7 @@
 @stop
 
 @section('title')
-    Facturi furnizor
+    Facturi primite de firmele din grup
 @stop
 
 @section('content')
@@ -79,7 +79,6 @@
                     Lista facturi furnizori
                     <div class="pull-right">                      
                         <a href="{{ URL::previous() }}"><i class="fa fa-arrow-circle-left fa-fw"></i> Inapoi</a>                      
-                        <a href="{{ URL::route('factura_furnizor_add') }}"><i class="fa fa-plus-circle fa-fw"></i> Nou</a>                      
                     </div>
                </div>
                <div class="panel-body">
@@ -117,24 +116,24 @@
                         </tfoot>
                         <tbody>                             
                           @foreach ($facturi as $factura)
-                            <tr data-id="{{ $factura->id_factura }}">                                                          
+                            <tr data-id="{{ $factura->id }}">                                                          
                               <td class="text-center">{{ $factura->serie . '/' . $factura->numar }}</td>
                               <td class="text-center">{{ $factura->data_facturare }}</td>
                               <td class="text-center">{{ $factura->scadenta }}</td>
                               <td class="text-center">{{ $factura->zile_scadenta }}</td>
                               <td class="text-right">{{ number_format($factura->total_desfasurator, 2, ',', '.') }}</td>
-                              <td class="text-right"><a href="{{ URL::route('detalii_factura_furnizor', $factura->id_factura) }}">{{ number_format($factura->total_detalii, 2, ',', '.') }}</a></td>
-                              <td class="text-right"><a href="{{ URL::route('plati_factura', $factura->id_factura) }}">{{ number_format($factura->platit, 2, ',', '.') }}</td>
+                              <td class="text-right"><a href="{{ URL::route('detalii_factura_furnizor', $factura->id) }}">{{ number_format($factura->total_detalii, 2, ',', '.') }}</a></td>
+                              <td class="text-right"><a href="{{ URL::route('plati_factura', $factura->id) }}">{{ number_format($factura->platit, 2, ',', '.') }}</td>
                               <td>{{ $factura->beneficiar }}</td>
                               <td>{{ $factura->furnizor }}</td>
                               <td class="text-center">{{ $factura->contract }}</td>
                               <td class="center action-buttons">
-                                <a href="{{ URL::to('factura_furnizor_edit/'. $factura->id_factura) }}">
+                                <a href="{{ URL::to('factura_furnizor_edit/'. $factura->id) }}">
                                   <i class="fa fa-pencil-square-o" 
                                   title="Vizualizeaza sau modifica"></i>
                                 </a>
                                 <a href="#"><i class="fa fa-trash-o" title="Sterge"></i></a>                                                             
-                                <a href="{{ URL::route('factura_furnizor_optiuni', $factura->id_factura) }}">
+                                <a href="{{ URL::route('factura_furnizor_optiuni', $factura->id) }}">
                                   <i class="fa fa-arrows-alt" title="Detalii factura"></i>
                                 </a>                                
                               </td>                                  
@@ -209,7 +208,7 @@
                                 url : "factura_furnizor_delete",
                                 data : {
                                     "_token": '<?= csrf_token() ?>',
-                                    "id_factura": id
+                                    "id": id
                                 },
                                 success : function(data){
                                     $('tr[data-id='+id+']').fadeOut();

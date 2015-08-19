@@ -27,6 +27,7 @@ function routesInDirectory($app = '') {
     }
 }
 
+require "macros.php";
 
 
 /** ------------------------------------------
@@ -69,20 +70,34 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth'), function()
     Route::post('blogs/{post}/delete', 'AdminBlogsController@postDelete');
     Route::controller('blogs', 'AdminBlogsController');
 
-    # User Management
+    # User Management 
+    Route::get('users/list', 'AdminUsersController@getUsers');
+    /*Route::get('users/edit/{id}', array('as' => 'user_edit','uses' => 'AdminUsersController@getEdit'));
+    Route::get('users/add', array('as' => 'user_add','uses' => 'AdminUsersController@getAddUser'));
+    Route::post('users/add', array('as' => 'user_add','uses' => 'AdminUsersController@postAddUser'));
+    */
+    
+    Route::get('/departamente_utilizator/{id}', array('as' => 'departamente_utilizator/{id}', 'uses' => 'AdminDepartamenteController@AdaugaDepartamente')); 
+    
+    Route::post('user_lock', array('as' => 'user_lock','uses' => 'AdminUsersController@postLockUser'));
+
+    Route::get('users/create', 'AdminUsersController@getCreate');
+    Route::post('users/create', 'AdminUsersController@postCreate');
     Route::get('users/{user}/show', 'AdminUsersController@getShow');
     Route::get('users/{user}/edit', 'AdminUsersController@getEdit');
     Route::post('users/{user}/edit', 'AdminUsersController@postEdit');
-    Route::get('users/{user}/delete', 'AdminUsersController@getDelete');
-    Route::post('users/{user}/delete', 'AdminUsersController@postDelete');
+  
     Route::controller('users', 'AdminUsersController');
 
     # User Role Management
+    Route::get('roles/list', 'AdminRolesController@getRoles');
+    Route::get('roles/create', 'AdminRolesController@getCreate');
     Route::get('roles/{role}/show', 'AdminRolesController@getShow');
     Route::get('roles/{role}/edit', 'AdminRolesController@getEdit');
     Route::post('roles/{role}/edit', 'AdminRolesController@postEdit');
     Route::get('roles/{role}/delete', 'AdminRolesController@getDelete');
     Route::post('roles/{role}/delete', 'AdminRolesController@postDelete');
+
     Route::controller('roles', 'AdminRolesController');
 
     # Admin Dashboard
@@ -107,189 +122,48 @@ Route::get('contact-us', function()
 });
 
 Route::filter('auth', function()
-{
+{  
   if (Auth::check() == false)
   {
   // Notice that im using Redirect::guest instead of Redirect::to, 
   // this is to make the Redirect::intendeed work later on.
-    return Redirect::guest('user/login');
+    return Redirect::guest('user/login');    
   }
 });
+
+  
+
 
 # Index Page - Last route, no matches
 Route::get('/', array('before' => 'detectLang','uses' => 'UserController@getLogin'));
 Route::get('/create', array('before' => 'detectLang','uses' => 'UserController@getCreate'));
 Route::get('/forgot', array('before' => 'detectLang','uses' => 'UserController@getForgot'));
+Route::get('/proba', array('before' => 'detectLang','uses' => 'UserController@getError'));
 
 Route::group(array('after' => 'auth'), function () {
-    
-    Route::group(array('after' => 'csrf'), function () {
-       
-        /* Organizations */
-        Route::post('/organization/add', array('uses' => 'OrganizationController@postAddOrganization'));
-        Route::post('/organization/edit/{id}', array('uses' => 'OrganizationController@postEditOrganization'));
-        Route::post('/organization/delete', array('uses' => 'OrganizationController@postDeleteOrganization'));
-               
-        /*Stadii livrabile*/
-        Route::post('/stadiu_livrabil_add', array('as' => 'stadiu_livrabil_add', 'uses' => 'StadiuLivrabilController@postSchimbaStadiu'));
-
-        /*Financiar*/
-        Route::post('/livrabile_nefacturate_client', array('as' => 'genereaza_desfasurator_client', 'uses' => 'LivrabileController@postGenereazaDesfasuratorClient'));
-        Route::post('/livrabile_nefacturate_furnizor', array('as' => 'genereaza_desfasurator_furnizor', 'uses' => 'LivrabileController@postGenereazaDesfasuratorFurnizor'));
         
-        /*Facturi client*/
-        Route::post('/factura_client_edit/{id}', array('as'=>'factura_client_edit', 'uses' => 'FacturaClientController@postEditFactura'));
-        Route::post('/factura_client_delete', array('as'=>'factura_client_delete', 'uses' => 'FacturaClientController@postDeleteFactura'));
-        Route::post('/factura_client_detaliu_add', array('as'=>'factura_client_detaliu_add', 'uses' => 'FacturaClientController@postAddDetaliuFactura'));
-        Route::post('/factura_client_detaliu_delete', array('as'=>'factura_client_detaliu_delete', 'uses' => 'FacturaClientController@postDeleteDetaliuFactura'));
-        Route::post('/factura_client_detaliu_edit', array('as'=>'factura_client_detaliu_edit', 'uses' => 'FacturaClientController@postEditDetalii'));
-
-        /*Facturi furnizor*/
-        Route::post('/factura_furnizor_add', array('as'=>'factura_furnizor_add', 'uses' => 'FacturaFurnizorController@postAddFactura'));
-        Route::post('/factura_furnizor_edit/{id}', array('as'=>'factura_furnizor_edit', 'uses' => 'FacturaFurnizorController@postEditFactura'));
-        Route::post('/factura_furnizor_delete', array('as'=>'factura_furnizor_delete', 'uses' => 'FacturaFurnizorController@postDeleteFactura'));
-        Route::post('/factura_furnizor_detaliu_add', array('as'=>'factura_furnizor_detaliu_add', 'uses' => 'FacturaFurnizorController@postAddDetaliuFactura'));
-        Route::post('/factura_furnizor_detaliu_delete', array('as'=>'factura_furnizor_detaliu_delete', 'uses' => 'FacturaFurnizorController@postDeleteDetaliuFactura'));
-        Route::post('/factura_furnizor_detaliu_edit', array('as'=>'factura_furnizor_detaliu_edit', 'uses' => 'FacturaFurnizorController@postEditDetalii'));
-
-        /*Incasari facturi*/
-        Route::post('/incasare_factura_add/{id}', array('as'=>'incasare_factura_add', 'uses' => 'IncasariFacturaController@postAddIncasareFactura'));
-        Route::post('/incasare_factura_edit/{id}', array('as'=>'incasare_factura_edit', 'uses' => 'IncasariFacturaController@postEditIncasareFactura'));
-        Route::post('/incasare_factura_delete', array('as'=>'incasare_factura_delete', 'uses' => 'IncasariFacturaController@postDeleteIncasare'));
-
-        /*Plati facturi*/
-        Route::post('/plata_factura_add/{id}', array('as'=>'plata_factura_add', 'uses' => 'PlatiFacturaController@postAddPlataFactura'));
-        Route::post('/plata_factura_edit/{id}', array('as'=>'plata_factura_edit', 'uses' => 'PlatiFacturaController@postEditPlataFactura'));
-        Route::post('/plata_factura_delete', array('as'=>'plata_factura_delete', 'uses' => 'PlatiFacturaController@postDeletePlata'));
-
-        /*Livrabile etapa*/
-        Route::post('/livrabile_etapa_add/{id}', array('as'=>'livrabile_etapa_add', 'uses' => 'LivrabileEtapaController@postAddLivrabilEtapa'));
-        
-
- 
-        /*Contracte - optiuni*/
-        Route::post('/garantie_executie/{id}', array('as' => 'garantie_executie', 'uses' => 'ContractOptiuniController@postAddEditGarantieExecutie'));
-        Route::post('/garantie_participare/{id}', array('as' => 'garantie_participare', 'uses' => 'ContractOptiuniController@postAddEditGarantieParticipare'));
-
-
-    
- 
-        /*Etape si termene*/        
-        Route::post('/etapa_add/{id}', array('as'=>'etapa_add', 'uses' => 'EtapeTermeneController@postAddEtapa'));
-        Route::post('/etapa_edit/{id}', array('as'=>'etapa_edit', 'uses' => 'EtapeTermeneController@postEditEtapa'));
-        Route::post('/etapa_delete', array('as'=>'etapa_delete', 'uses' => 'EtapeTermeneController@postDeleteEtapa'));        
-
- 
-        /*Dosar contract*/        
-        Route::post('/document_upload/{id}', array('as' => 'document_upload', 'uses' => 'DosarContractController@postUploadDocument'));
-        Route::post('/document_delete', array('as' => 'document_delete', 'uses' => 'DosarContractController@postDeleteDocument'));
-    });
-    
     Route::get('/dashboard', array('uses' => 'HomeController@home'));
     
     /*Livrabile*/
     Route::get('/livrabile', array('uses' => 'LivrabileController@getLivrabile'));
-    Route::get('/livrabile_factura/{id}', array('as' => 'livrabile_factura','uses' => 'LivrabileController@getLivrabileFactura'));
-
-    /*Livrabile nefacturate*/
-    Route::get('/livrabile_nefacturate_client', array('as' => 'livrabile_nefacturate_client', 'uses' => 'LivrabileController@getLivrabileNefacturateClient'));
-    Route::get('/livrabile_nefacturate_furnizor', array('as' => 'livrabile_nefacturate_furnizor', 'uses' => 'LivrabileController@getLivrabileNefacturateFurnizor'));
+    Route::get('/livrabile_factura/{id}', array('as' => 'livrabile_factura','uses' => 'LivrabileController@getLivrabileFactura'));  
     
-    /*Stadii livrabile*/
-    Route::get('/stadiu_livrabil/{id}', array('as' => 'stadiu_livrabil', 'uses' => 'StadiuLivrabilController@getStadii'));
-    
-    /*Livrabile etapa*/
-    Route::get('/livrabile_etapa_list/{id}', array('as'=>'livrabile_etapa_list', 'uses' => 'LivrabileEtapaController@getLivrabile'));
-    Route::get('/livrabile_etapa_add/{id}', array('as'=>'livrabile_etapa_add', 'uses' => 'LivrabileEtapaController@getAddLivrabilEtapa'));
-	       
-    /*Contracte*/
-    Route::get('/contract/{id}', array('as' => 'contract_single', 'uses' => 'ContractController@getContractSingle'));
-    Route::get('/contract_list', array('as'=>'contract_list', 'uses' => 'ContractController@getContracte'));
-    Route::get('/contract_add', array('as'=>'contract_add', 'uses' => 'ContractController@getAddContract'));
-    Route::get('/contract_edit/{id}', array('as'=>'contract_edit', 'uses' => 'ContractController@getEditContract'));
-    Route::get('/contract_optiuni/{id}', array('as'=>'contract_optiuni', 'uses' => 'ContractController@getOptiuniContract'));
+	Route::post('/salveaza_departamente_utilizator', array('as' => 'salveaza_departamente_utilizator', 'uses' => 'AdminDepartamenteController@SalveazaAdaugaDepartamente'));
 
-    /*Contracte - optiuni*/
-    Route::get('/stadii_contract/{id}', array('as'=>'stadii_contract', 'uses' => 'ContractOptiuniController@getStadiiContract'));
-    Route::get('/garantie_executie/{id}', array('as' => 'garantie_executie', 'uses' => 'ContractOptiuniController@getAddEditGarantieExecutie'));
-    Route::get('/garantie_participare/{id}', array('as' => 'garantie_participare', 'uses' => 'ContractOptiuniController@getAddEditGarantieParticipare'));
-    /*ruta catre obiectivele contractului este deja creata in partea de Obiective*/
-
- 
-
-
- 
-    /*Etape si termene*/
-    Route::get('/etapa_list/{id}', array('as'=>'etapa_list', 'uses' => 'EtapeTermeneController@getEtape'));
-    Route::get('/etapa_add/{id}', array('as'=>'etapa_add', 'uses' => 'EtapeTermeneController@getAddEtapa'));
-    Route::get('/etapa_edit/{id}', array('as'=>'etapa_edit', 'uses' => 'EtapeTermeneController@getEditEtapa'));
-
-    /*Facturi furnizor*/
-    Route::get('/facturi_furnizor_list', array('as'=>'facturi_furnizor', 'uses' => 'FacturaFurnizorController@getFacturi'));
-    Route::get('/factura_furnizor_add', array('as'=>'factura_furnizor_add', 'uses' => 'FacturaFurnizorController@getAddFactura'));
-    
-    /*Facturi client*/
-    Route::get('/facturi_client_list', array('as'=>'facturi_client', 'uses' => 'FacturaClientController@getFacturi'));
-    Route::get('/factura_client_optiuni/{id}', array('as'=>'factura_client_optiuni', 'uses' => 'FacturaClientController@getOptiuniFactura'));
-    Route::get('/factura_client_edit/{id}', array('as'=>'factura_client_edit', 'uses' => 'FacturaClientController@getEditFactura'));
-    Route::get('/detalii_factura_client/{id}', array('as'=>'detalii_factura_client', 'uses' => 'FacturaClientController@getDetaliiFactura'));
-
-    /*Facturi furnizor*/
-    Route::get('/facturi_furnizor_list', array('as'=>'facturi_furnizor', 'uses' => 'FacturaFurnizorController@getFacturi'));
-    Route::get('/factura_furnizor_optiuni/{id}', array('as'=>'factura_furnizor_optiuni', 'uses' => 'FacturaFurnizorController@getOptiuniFactura'));
-    Route::get('/factura_furnizor_edit/{id}', array('as'=>'factura_furnizor_edit', 'uses' => 'FacturaFurnizorController@getEditFactura'));
-    Route::get('/detalii_factura_furnizor/{id}', array('as'=>'detalii_factura_furnizor', 'uses' => 'FacturaFurnizorController@getDetaliiFactura'));
-
-    /*Incasari facturi*/
-    Route::get('/incasari_factura/{id}', array('as'=>'incasari_factura', 'uses' => 'IncasariFacturaController@getIncasariFactura'));
-    Route::get('/incasare_factura_add/{id}', array('as'=>'incasare_factura_add', 'uses' => 'IncasariFacturaController@getAddIncasareFactura'));
-    Route::get('/incasare_factura_edit/{id}', array('as'=>'incasare_factura_edit', 'uses' => 'IncasariFacturaController@getEditIncasareFactura'));
-    
-    /*Plati facturi*/
-    Route::get('/plati_factura/{id}', array('as'=>'plati_factura', 'uses' => 'PlatiFacturaController@getPlatiFactura'));
-    Route::get('/plata_factura_add/{id}', array('as'=>'plata_factura_add', 'uses' => 'PlatiFacturaController@getAddPlataFactura'));
-    Route::get('/plata_factura_edit/{id}', array('as'=>'plata_factura_edit', 'uses' => 'PlatiFacturaController@getEditPlataFactura'));
-
-
-
-   
-    /* Users */
-    Route::get('/users', array('uses' => 'UserController@getUsers'));
-    Route::get('/user/add', array('uses' => 'UserController@getAddUser'));
-    Route::get('/user/edit/{id}', array('uses' => 'UserController@getEditUser'));
-    Route::get('/user/{id}', array('uses' => 'UserController@getUser'));
-    
-    /* Projects */
-    Route::get('/projects', array('uses' => 'ProjectController@getProjects'));
-    Route::get('/project/add', array('uses' => 'ProjectController@getAddProject'));
-    Route::get('/project/edit/{id}', array('uses' => 'ProjectController@getEditProject'));
-    Route::get('/project/{id}', array('uses' => 'ProjectController@getProject'));
-    
-    /* Organizations */
-    Route::get('/organizations', array('uses' => 'OrganizationController@getOrganizations'));
-    Route::get('/organization/add', array('uses' => 'OrganizationController@getAddOrganization'));
-    Route::get('/organization/edit/{id}', array('uses' => 'OrganizationController@getEditOrganization'));
-    Route::get('/organization/{id}', array('uses' => 'OrganizationController@getOrganization'));
-    
-    /* Teams */
-    Route::get('/teams', array('uses' => 'TeamController@getTeams'));
-    Route::get('/team/add', array('uses' => 'TeamController@getAddTeam'));
-    Route::get('/team/edit/{id}', array('uses' => 'TeamController@getEditTeam'));
-    Route::get('/team/{id}', array('uses' => 'TeamController@getTeam'));
-
-
-    /*Imobile-asociatii*/
-    Route::get('/imobile_asociatii_list', array('as' => 'imobile_asociatii', 'uses' => 'ImobileAsociatiiController@getImobile'));
-    
-    /*Dosar contract*/
-    Route::get('/document_list/{id}', array('as' => 'document_list', 'uses' => 'DosarContractController@getDocumente'));
-    Route::get('/document_upload/{id}', array('as' => 'document_upload', 'uses' => 'DosarContractController@getUploadDocument'));
-    Route::get('/document_download/{filename}/{guid}/{id}', array('as' => 'document_download', 'uses' => 'DosarContractController@postDownloadDocument'));
-
-    Route::get('/logins', array('uses' => 'LoginsController@getLogins'));
+    Route::get('/logins', array('uses' => 'LoginsController@getLogins'));    
 
     /*Utils*/
-    Route::get('/genereaza_segmentare', array('uses' => 'UtilController@genereazaSegmentareGeografica'));
-    //Route::get('/admin/genereaza_serii', array('uses' => 'UtilController@genereazaSeriiFacturare'));
+    Route::get('/genereaza_segmentare', array('uses' => 'UtilController@genereazaSegmentareGeografica'));   
 });
 
+Entrust::routeNeedsPermission( 'admin/users*', 'manage_users', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'admin/roles*', 'manage_roles', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'factur*', 'manage_finance', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'detalii_factura*', 'manage_finance', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'livrabile_nefacturate*', 'manage_finance', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'incasar*', 'manage_finance', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'registru_intrare*', 'manage_registru_intrare', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'registru_iesire*', 'manage_registru_iesire', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'investitie_por_axa12_list', 'list_por_axa12', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'investitie_por_axa12_edit', 'edit_por_axa12', Response::view('error.403', [], 403));
+Entrust::routeNeedsPermission( 'investitie_por_axa12_add', 'add_por_axa12', Response::view('error.403', [], 403));

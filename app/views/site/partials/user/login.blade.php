@@ -36,7 +36,7 @@
 
 							<div class="col-sm-12 controls">
 							  <input type="submit" class="btn btn-success" value="{{ Lang::get('confide::confide.login.submit') }}" />
-							  <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
+							  <!-- a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a-->
 							</div>
 						</div>
 

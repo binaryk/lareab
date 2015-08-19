@@ -1,0 +1,1 @@
+{{ Form::submit($value, $options + ['class' => 'btn btn-primary btn-lg']) }}

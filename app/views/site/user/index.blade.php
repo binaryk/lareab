@@ -1,79 +1,49 @@
-@extends('site.layouts.default')
+@extends('layouts.master')
 
 {{-- Web site Title --}}
 @section('title')
-{{{ Lang::get('user/user.settings') }}} ::
+    <p>Modifica date utilizator</p>
 @parent
-@stop
-
-{{-- New Laravel 4 Feature in use --}}
-@section('styles')
-@parent
-body {
-	background: #f2f2f2;
-}
 @stop
 
 {{-- Content --}}
 @section('content')
-<div class="page-header">
-	<h3>Edit your settings</h3>
-</div>
-<form class="form-horizontal" method="post" action="{{ URL::to('user/' . $user->id . '/edit') }}"  autocomplete="off">
-    <!-- CSRF Token -->
-    <input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
-    <!-- ./ csrf token -->
-    <!-- General tab -->
-    <div class="tab-pane active" id="tab-general">
-        <!-- username -->
-        <div class="form-group {{{ $errors->has('username') ? 'error' : '' }}}">
-            <label class="col-md-2 control-label" for="username">Username</label>
-            <div class="col-md-10">
-                <input class="form-control" type="text" name="username" id="username" value="{{{ Input::old('username', $user->username) }}}" />
-                {{ $errors->first('username', '<span class="help-inline">:message</span>') }}
-            </div>
-        </div>
-        <!-- ./ username -->
 
-        <!-- Email -->
-        <div class="form-group {{{ $errors->has('email') ? 'error' : '' }}}">
-            <label class="col-md-2 control-label" for="email">Email</label>
-            <div class="col-md-10">
-                <input class="form-control" type="text" name="email" id="email" value="{{{ Input::old('email', $user->email) }}}" />
-                {{ $errors->first('email', '<span class="help-inline">:message</span>') }}
-            </div>
-        </div>
-        <!-- ./ email -->
+<div class="row">
+    <div class="col-lg-12">
+        <form class="form" method="post" action="{{ URL::to('user/' . $user->id . '/edit') }}"  autocomplete="off">
+            <!-- CSRF Token -->
+            <input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+            <!-- ./ csrf token -->
+            <!-- General tab -->
+             <fieldset>
 
-        <!-- Password -->
-        <div class="form-group {{{ $errors->has('password') ? 'error' : '' }}}">
-            <label class="col-md-2 control-label" for="password">Password</label>
-            <div class="col-md-10">
-                <input class="form-control" type="password" name="password" id="password" value="" />
-                {{ $errors->first('password', '<span class="help-inline">:message</span>') }}
-            </div>
-        </div>
-        <!-- ./ password -->
+                <div class="col-md-6">
+                    {{ Form::textField('Nume utilizator', 'username', Input::old('username', isset($user) ? $user->username : null)) }}                    
+                </div>                 
 
-        <!-- Password Confirm -->
-        <div class="form-group {{{ $errors->has('password_confirmation') ? 'error' : '' }}}">
-            <label class="col-md-2 control-label" for="password_confirmation">Password Confirm</label>
-            <div class="col-md-10">
-                <input class="form-control" type="password" name="password_confirmation" id="password_confirmation" value="" />
-                {{ $errors->first('password_confirmation', '<span class="help-inline">:message</span>') }}
-            </div>
+        <div class="col-md-6">
+            {{ Form::textField('Email', 'email', Input::old('email', isset($user) ? $user->email : null)) }}                    
         </div>
-        <!-- ./ password confirm -->
+        <div class="col-md-6">
+            {{ Form::passwordField('Parola', 'password') }}                    
+        </div>
+        <div class="col-md-6">
+            {{ Form::passwordField('Confirmare parola', 'password_confirmation') }}                    
+        </div>
+
+
+                <!-- ./ password confirm -->
+            </fieldset>
+            <!-- ./ general tab -->
+
+        <div class="col-md-12 center"> 
+            <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" />
+            <a href="{{ URL::to('/dashboard') }}">
+                <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+            </a>                         
+        </div>
+        </form>
     </div>
-    <!-- ./ general tab -->
-
-    <!-- Form Actions -->
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-success">Update</button>
-        </div>
-    </div>
-    <!-- ./ form actions -->
-</form>
-</form>
+</div>    
 @stop

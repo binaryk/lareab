@@ -4,32 +4,33 @@ class FacturaFurnizorController extends BaseController
     public function getFacturi() 
     {
         $facturi = DB::Select("SELECT 
-            fact.id_factura, 
+            fact.id, 
             fact.serie, 
             fact.numar,
             date_format(fact.data_facturare, '%d-%m-%Y') as data_facturare,
             fact.id_beneficiar, fact.id_furnizor, fact.termen_plata,
             date_format(date_add(fact.data_facturare, interval termen_plata day), '%d-%m-%Y') AS scadenta,
             datediff(date_add(fact.data_facturare, interval termen_plata day), now()) AS zile_scadenta, fact.tva,
-            (SELECT SUM(le.pret_fara_tva) FROM livrabile_etapa le WHERE le.id_factura = fact.id_factura AND le.logical_delete = 0) AS total_desfasurator,
-            (SELECT SUM(df.pret_unitar * df.cantitate) FROM detalii_factura df WHERE df.id_factura = fact.id_factura AND df.logical_delete =0) AS total_detalii,
-            (SELECT ifnull(SUM(valoare_platita), 0) FROM plata_factura pf WHERE pf.id_factura = fact.id_factura AND pf.logical_delete = 0) AS platit,
+            (SELECT SUM(le.pret_fara_tva) FROM livrabile_etapa le WHERE le.id_factura = fact.id AND le.logical_delete = 0) AS total_desfasurator,
+            (SELECT SUM(df.pret_unitar * df.cantitate) FROM detalii_factura df WHERE df.id_factura = fact.id AND df.logical_delete =0) AS total_detalii,
+            (SELECT ifnull(SUM(valoare_platita), 0) FROM plata_factura pf WHERE pf.id_factura = fact.id AND pf.logical_delete = 0) AS platit,
             (SELECT CONCAT(c.numar, '/', date_format(c.data_semnarii, '%d-%m-%Y')) 
                 FROM contract c
-                LEFT OUTER JOIN obiectiv o ON o.id_contract = c.id_contract AND o.logical_delete = 0
-                LEFT OUTER JOIN etape_predare_livrabile epl ON o.id_obiectiv = epl.id_obiectiv AND epl.logical_delete = 0
+                LEFT OUTER JOIN obiectiv o ON o.id_contract = c.id AND o.logical_delete = 0
+                LEFT OUTER JOIN etape_predare_livrabile epl ON o.id = epl.id_obiectiv AND epl.logical_delete = 0
                 LEFT OUTER JOIN livrabile_etapa le ON le.id_etapa = epl.id_etapa AND le.logical_delete = 0
-                LEFT OUTER JOIN factura_furnizor ff ON ff.id_factura = le.id_factura AND ff.logical_delete = 0
-                WHERE le.id_factura = fact.id_factura
+                LEFT OUTER JOIN factura_furnizor ff ON ff.id = le.id_factura AND ff.logical_delete = 0
+                WHERE le.id_factura = fact.id
                 AND c.logical_delete = 0
-                GROUP BY c.id_contract) AS contract,
-            beneficiar.denumire AS beneficiar, furnizor.denumire AS furnizor
+                GROUP BY c.id) AS contract,
+            beneficiar.denumire AS beneficiar, 
+            furnizor.denumire AS furnizor
             FROM factura_furnizor fact
-            LEFT OUTER JOIN entitate beneficiar ON beneficiar.id_entitate = fact.id_beneficiar AND beneficiar.logical_delete = 0
-            LEFT OUTER JOIN entitate furnizor ON furnizor.id_entitate = fact.id_furnizor AND furnizor.logical_delete = 0
+            LEFT OUTER JOIN entitate beneficiar ON beneficiar.id = fact.id_beneficiar AND beneficiar.logical_delete = 0
+            LEFT OUTER JOIN entitate furnizor ON furnizor.id = fact.id_furnizor AND furnizor.logical_delete = 0
             WHERE fact.logical_delete = 0  
             AND fact.id_organizatie = :id_organizatie
-            ORDER BY fact.data_facturare", array('id_organizatie' => $this->date_organizatie[0]->id_organizatie));        
+            ORDER BY fact.data_facturare", array('id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));        
 
         return View::make('facturi_furnizor.list')
             ->with('facturi', $facturi);   
@@ -106,7 +107,7 @@ class FacturaFurnizorController extends BaseController
                     'id_furnizor' => Input::get('furnizor'),                    
                     'tva' => $procent_tva,
                     'termen_plata' => Input::get('termen_plata', 0),
-                    'id_organizatie' => $this->date_organizatie[0]->id_organizatie));
+                    'id_organizatie' => isset(self::organizatie()[0])?self::organizatie()[0]->id_organizatie:-1));
             }
             catch(Exception $e) {
                 return Redirect::back()->with('message', 'Eroare salvare date: ' . $e)->withInput();
@@ -135,12 +136,12 @@ class FacturaFurnizorController extends BaseController
             try
             {
                 $procent_tva = Input::get('procent_tva');
-                $procent_tva = text_2_number($procent_tva);
+                $procent_tva = self::text_2_number($procent_tva);
             }
             catch(Exception $e) {}  
             try {
                 DB::table('factura_furnizor')
-                ->where('id_factura', $id_factura)
+                ->where('id', $id_factura)
                 ->update(array(
                     'termen_plata' => Input::get('termen_plata'),
                     'tva' => $procent_tva,
@@ -218,11 +219,11 @@ class FacturaFurnizorController extends BaseController
             um.denumire AS um,
             df.pret_unitar        
             FROM detalii_factura df
-            LEFT OUTER JOIN um ON um.id_um = df.id_um AND um.logical_delete = 0            
+            LEFT OUTER JOIN um ON um.id = df.id_um AND um.logical_delete = 0            
             WHERE df.logical_delete = 0
             AND df.id_factura = :id_factura", array('id_factura' => $id_factura));        
         $factura = self::getFacturaFurnizor($id_factura);       
-        $ums = self::getUM();
+        $ums = self::object_to_array(self::getUM());
         return View::make('facturi_furnizor.list_detalii')
             ->with('factura', $factura)
             ->with('detalii', $detalii) 

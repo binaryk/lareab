@@ -52,15 +52,40 @@ return array(
 			'prefix'   => '',
 		),
 
-		'mysql' => array(
+		/*'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'lareab',
-			'username'  => 'root',
-			'password'  => '',
+			'host'      => 'mysql.hostinger.ro',
+			'database'  => 'u785875188_lrb',
+			'username'  => 'u785875188_root',
+			'password'  => '094249671',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
+			'port'      => 3306,
+		),*/
+
+		/*'mysql' => array(
+			'driver'    => 'mysql',
+			'host'      => 'localhost',
+			'database'  => '868707',
+			'username'  => '868707',
+			'password'  => '094249671',
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => '',
+			'port'      => 3306,
+		),*/
+
+		'mysql' => array(
+			'driver'    => 'mysql',
+			'host'      => 'localhost',
+			'database'  => 'leed_lareab',
+			'username'  => 'leed_root',
+			'password'  => 'root_leed_2015',
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => '',
+			'port'      => 3306,
 		),
 
 		'pgsql' => array(

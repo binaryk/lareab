@@ -28,7 +28,7 @@
                         @elseif(Input::old('cif')) has-success 
                         @endif">
                         <label>CIF</label>
-                        <input class="form-control" name="cif" type="text" value="{{ Input::old('cif') }}" 
+                        <input class="form-control text-uppercase" name="cif" type="text" value="{{ Input::old('cif') }}" 
                         @if ($errors->has('cif')) 
                             title="{{ $errors->first('cif') }}" 
                         @endif>
@@ -207,7 +207,7 @@
                     </div>                                                                 
                     
                     <div class="form-group col-lg-12 text-center">
-                        <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg" value="Salveaza" />
                     </div>
                     {{ Form::token() }}
                 </fieldset>

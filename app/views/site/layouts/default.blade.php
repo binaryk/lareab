@@ -17,7 +17,7 @@
     {{ HTML::style('assets/css/sb-admin-2.css'); }}
    
     <!-- Custom Fonts -->
-    {{ HTML::style('assets/font-awesome-4.1.0/css/font-awesome.min.css'); }}
+    {{ HTML::style('assets/font-awesome-4.3.0/css/font-awesome.min.css'); }}
 
     
 	
