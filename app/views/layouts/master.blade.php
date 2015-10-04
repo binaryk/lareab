@@ -567,6 +567,10 @@
                                     <a href="{{ URL::route('template_contract') }}"> Template contract</a>
                                 </li>
                                 @endif
+                                @yield('sidebar-nomenclator')
+                                @if(in_array(Config::get('providers.achizitii'),Config::get('app.providers')))
+                                    @include('achizitii::~layout.parts.nomenclator.achizitii')
+                                @endif
                             </ul>
                         </li>
                         @if (Entrust::can('list_contract') || Entrust::can('list_obiectiv'))
@@ -738,7 +742,9 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header" style="  padding-bottom: 0px; margin: 15px 5px;">@yield('title')</h1>
+               <h1 class="page-header" style="padding-bottom: 0px; margin: 15px 5px;">@yield('title')
+                @include('layouts.parts.~breadcrumbs')
+               </h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>

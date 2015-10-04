@@ -17,7 +17,8 @@ class HomeController extends BaseController {
 
 
     public function home()
-    {
+    { 
+
         return View::make('site/home');
     }
 }

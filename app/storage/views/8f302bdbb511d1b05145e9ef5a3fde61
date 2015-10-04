@@ -585,6 +585,10 @@
                                     <a href="<?php echo URL::route('template_contract'); ?>"> Template contract</a>
                                 </li>
                                 <?php endif; ?>
+                                <?php echo $__env->yieldContent('sidebar-nomenclator'); ?>
+                                <?php if(in_array(Config::get('providers.achizitii'),Config::get('app.providers'))): ?>
+                                    <?php echo $__env->make('achizitii::~layout.parts.nomenclator.achizitii', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+                                <?php endif; ?>
                             </ul>
                         </li>
                         <?php if(Entrust::can('list_contract') || Entrust::can('list_obiectiv')): ?>
@@ -756,7 +760,9 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header" style="  padding-bottom: 0px; margin: 15px 5px;"><?php echo $__env->yieldContent('title'); ?></h1>
+               <h1 class="page-header" style="padding-bottom: 0px; margin: 15px 5px;"><?php echo $__env->yieldContent('title'); ?>
+                <?php echo $__env->make('layouts.parts.~breadcrumbs', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+               </h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
