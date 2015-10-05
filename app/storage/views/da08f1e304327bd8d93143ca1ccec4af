@@ -1,0 +1,123 @@
+
+
+<?php $__env->startSection('title'); ?>
+    <p>Adauga / modifica garantie de participare</p>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+	<div class="row">
+    	<div class="col-lg-12">
+    		<form role="form" action="<?php echo URL::current(); ?>" method="post">
+    			<fieldset>
+    				<?php if(Session::has('message')): ?>
+                        <p class="alert <?php if($errors->isEmpty()): ?> alert-success <?php else: ?> alert-danger <?php endif; ?>"><?php echo Session::get('message'); ?></p>
+                    <?php endif; ?>
+                    <?php echo Form::open(); ?>
+
+
+                    <div class="col-md-12">
+                        <?php echo Form::textNumericField('Valoare garantie de participare', 'valoare', isset($gr_participare->valoare) ? $gr_participare->valoare : 0); ?>                    
+                    </div>
+
+                    <div class="col-md-6">
+                        <?php echo Form::textNumericField('Perioada de valabilitate a garantiei de participare', 'perioada_valabilitate', isset($gr_participare->perioada_valabilitate) ? $gr_participare->perioada_valabilitate : 0); ?>                    
+                    </div>                     
+
+                    <div class="col-md-6">
+                        <?php echo Form::selectField('Unitate de masura de timp', 'um_timp', $ums_timp, isset($gr_participare->id_um) ? $gr_participare->id_um : null); ?>
+
+                    </div>                        
+
+                    <div class="form-group col-lg-6">
+                        <label>Data constituirii garantiei de participare</label>
+                        <div class="input-group 
+                        <?php if($errors->has('data_constituirii')): ?> has-error 
+                        <?php elseif(Input::old('data_constituirii')): ?> has-success 
+                        <?php endif; ?>">
+                            <input 
+                                class="form-control data-picker" 
+                                name="data_constituirii" 
+                                data-placement="top" 
+                                placeholder="Data deschiderii contului de garantie" 
+                                type="text"
+
+                            <?php if($gr_participare): ?>
+                                value = "<?php echo $gr_participare->data_constituirii; ?>"
+                            <?php else: ?> 
+                                value = "<?php echo Input::old('data_constituirii'); ?>"
+                            <?php endif; ?> 
+                            <?php if($errors->has('data_constituirii')): ?> 
+                                title="<?php echo $errors->first('data_constituirii'); ?>" 
+                            <?php endif; ?> />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label>Data eliberarii garantiei de participare</label>
+                        <div class="input-group 
+                        <?php if($errors->has('data_eliberarii')): ?> has-error 
+                        <?php elseif(Input::old('data_eliberarii')): ?> has-success 
+                        <?php endif; ?>">
+                            <input 
+                                class="form-control data-picker" 
+                                name="data_eliberarii" 
+                                data-placement="top" 
+                                placeholder="Data eliberarii garantiei de participare" 
+                                type="text"
+
+                            <?php if($gr_participare): ?>
+                                value = "<?php echo $gr_participare->data_eliberarii; ?>"
+                            <?php else: ?> 
+                                value = "<?php echo Input::old('data_eliberarii'); ?>"
+                            <?php endif; ?> 
+                            <?php if($errors->has('data_eliberarii')): ?> 
+                                title="<?php echo $errors->first('data_eliberarii'); ?>" 
+                            <?php endif; ?> />
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6                   
+                        <?php if($errors->has('necesita_garantie')): ?> has-error 
+                        <?php elseif(Input::old('necesita_garantie')): ?> has-success 
+                        <?php endif; ?>">
+                        <div class="checkbox checkbox-primary">
+                             <?php if($gr_participare): ?> 
+                             <?php echo Form::checkbox('necesita_garantie', '1', $gr_participare->necesita_garantie ); ?> 
+                             <?php else: ?>
+                             <?php echo Form::checkbox('necesita_garantie', '1', (Input::old('necesita_garantie', ''))); ?>
+
+                             <?php endif; ?>                               
+                            <label for="necesita_garantie" class="label_check">S-a constituit garantie de participare</label>
+                        </div>
+                    </div> 
+
+                    <div class="form-group col-lg-12 text-center">               
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg" value="Salveaza" />
+                        <?php echo Form::token(); ?>
+
+                    </div>
+
+                    <?php echo Form::close(); ?>   
+
+    			</fieldset>
+    		</form>
+        </div>
+    </div>	
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('footer_scripts'); ?>
+    
+    <?php echo HTML::script('segmentare.js'); ?>
+
+    <script>
+        
+        $(function() {
+            $( ".data-picker" ).datepicker({ minDate: 0, dateFormat: "dd-mm-yy"});         
+        });
+
+    </script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

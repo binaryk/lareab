@@ -1,0 +1,48 @@
+<div class="table form-group<?php echo $feedback ? ' has-' . $feedback : ''; ?>">
+	<label class="control-label" for="<?php echo $name; ?>">
+		<?php if($feedback == Easy\Form\Base::FEEDBACK_SUCCESS): ?>
+			<i class="fa fa-check"></i>
+		<?php elseif($feedback == Easy\Form\Base::FEEDBACK_WARNING): ?>
+			<i class="fa fa-bell-o"></i>
+		<?php elseif($feedback == Easy\Form\Base::FEEDBACK_ERROR): ?>
+			<i class="fa fa-times-circle-o"></i>
+		<?php endif; ?>
+		<?php echo $caption; ?>
+
+	</label>
+
+	<table class="table table-bordered" id = <?php echo $name; ?>>
+		<thead>
+				
+				<?php if(isset($records['header'])): ?>
+						
+					<?php foreach($records['header'] as $r => $record): ?>
+						
+							<th><?php echo $record['caption']; ?></th>
+					
+					<?php endforeach; ?>
+				
+				<?php endif; ?>
+
+		</thead>
+		<tbody>
+				<?php if(isset($records['body'])): ?>
+						
+					<?php foreach($records['body'] as $r => $record): ?>
+						
+							<tr>
+								<td><?php echo $record['caption']->control; ?></td>
+							</tr>
+					
+					<?php endforeach; ?>
+				
+				<?php endif; ?>
+		</tbody>
+	</table>
+
+
+	<?php if($help): ?>
+		<p class="help-block"><?php echo $help; ?></p>
+	<?php endif; ?>
+</div>
+

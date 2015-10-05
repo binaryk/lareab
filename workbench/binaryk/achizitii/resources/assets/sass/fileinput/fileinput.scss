@@ -1,0 +1,16 @@
+.one-file
+{
+	>div:nth-child(2)
+	{
+		width:100%;
+		.file-preview-thumbnails
+		{
+			width:100%;
+			img
+			{
+				max-width:initial !important;
+				max-height:initial !important;
+			}
+		}
+	}
+}

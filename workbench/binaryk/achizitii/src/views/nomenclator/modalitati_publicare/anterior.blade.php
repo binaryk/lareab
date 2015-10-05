@@ -1,0 +1,1 @@
+{{ Binaryk\Models\Nomenclator\ModalitatiPublicare::anterior()[$record->anunt_anterior] }}

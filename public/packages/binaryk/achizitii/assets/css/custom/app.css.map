@@ -1,0 +1,1 @@
+{"version":3,"sources":["app.less","app.css"],"names":[],"mappings":"AAAA;EACC,8BAAA;ECCA","file":"app.css","sourcesContent":[".panel-heading{\r\n\tpadding: 1px 15px !important;\r\n}",null],"sourceRoot":"/source/"}

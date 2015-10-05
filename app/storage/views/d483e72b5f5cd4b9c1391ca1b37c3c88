@@ -1,0 +1,23 @@
+<?php if($errors->has($name)): ?> <div class="form-group has-error"> <?php else: ?> <div class="form-group"> <?php endif; ?>
+
+	<?php if(!is_null($label)): ?>
+		<?php echo Form::label($name, $label, ['class' => 'control-label']); ?>
+
+	<?php endif; ?>
+	<?php if(!is_null($group)): ?>
+		<div class="input-group">
+		<?php echo Form::text($name, $value, $options + ['class' => 'form-control', 'placeholder' => $label]); ?>
+
+		<span class="input-group-addon"><?php echo $group; ?></span>
+		</div>
+		
+	<?php else: ?>
+		<?php echo Form::text($name, $value, $options + ['class' => 'form-control', 'placeholder' => $label]); ?>
+
+	<?php endif; ?>
+
+	<?php if($errors->has($name)): ?>
+		<p class="help-block"><?php echo $errors->first($name); ?></p>
+	<?php endif; ?>
+
+</div>

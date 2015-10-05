@@ -1,0 +1,5 @@
+[2015-08-19 16:26:59] edu.ERROR: 500 - Class 'TipProceduriAchizitii' not found @ /lareab
+exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Class 'TipProceduriAchizitii' not found' in C:\xampp\htdocs\lareab\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:301
+Stack trace:
+#0 [internal function]: Illuminate\Exception\Handler->handleShutdown()
+#1 {main} [] []

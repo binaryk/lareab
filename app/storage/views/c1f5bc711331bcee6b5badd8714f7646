@@ -1,0 +1,1 @@
+<?php echo Binaryk\Models\Nomenclator\ModalitatiPublicare::anterior()[$record->anunt_anterior]; ?>

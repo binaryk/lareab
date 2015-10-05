@@ -1,0 +1,7 @@
+<div class="form-group<?php echo $feedback ? ' has-' . $feedback : ''; ?>">
+	<?php if($caption): ?>
+		<label><?php echo $caption; ?></label>
+	<?php endif; ?>
+	<?php echo Form::select($name, $options, $value, $attributes); ?>
+
+</div>

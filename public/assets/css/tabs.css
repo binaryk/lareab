@@ -1,0 +1,56 @@
+/*----- Tabs -----*/
+.tabs {
+    width:100%;
+    display:inline-block;
+}
+ 
+    /*----- Tab Links -----*/
+    /* Clearfix */
+    .tab-links:after {
+        display:block;
+        clear:both;
+        content:'';
+    }
+ 
+    .tab-links li {
+        margin:0px 5px;
+        float:left;
+        list-style:none;
+    }
+ 
+        .tab-links a {
+            padding:9px 15px;
+            display:inline-block;
+            border-style: solid;
+            border-width: 1px;
+            border-radius:3px 3px 0px 0px;
+            border-color: #428BCA;
+            background: #FCF8E3;
+            transition:all linear 0.15s;
+        }
+ 
+        .tab-links a:hover {
+            background:#428BCA;
+            text-decoration:none;
+            color: #333333;
+        }
+
+        .tab-links a:link {
+            text-decoration:none;
+        }
+
+ 
+    /*----- Content of Tabs -----*/
+    .tab-content {
+        padding:15px;
+        border-radius:3px;
+        background:#fff;
+    }
+ 
+        .tab {
+            display:none;
+        }
+ 
+        .tab.active {
+            display:block;
+        }

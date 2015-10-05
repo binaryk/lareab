@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="_token" content="<?php echo csrf_token(); ?>" />
+
+    <title>Reabilitare EU</title>
+
+    <!-- Bootstrap Core CSS -->
+    <?php echo HTML::style('assets/css/bootstrap.min.css');; ?>
+
+    <!-- Custom CSS -->
+    <?php echo HTML::style('assets/css/sb-admin-2.css');; ?>
+
+   
+    <!-- Custom Fonts -->
+    <?php echo HTML::style('assets/font-awesome-4.3.0/css/font-awesome.min.css');; ?>
+
+
+    
+	
+	<?php echo HTML::style('assets/css/login.css');; ?>
+
+
+    <?php echo $__env->yieldContent('head_scripts'); ?>
+
+</head>
+
+<body>
+
+	<?php echo $__env->yieldContent('content'); ?>
+	    
+    <!-- jQuery Version 1.11.0 -->
+    <?php echo HTML::script('assets/js/jquery-1.11.1.js');; ?>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <?php echo HTML::script('assets/js/bootstrap.min.js');; ?>
+
+
+    <!-- Custom Theme JavaScript -->
+    <?php echo HTML::script('assets/js/sb-admin-2.js');; ?>
+
+
+    
+	
+	<!-- Metis Menu Plugin JavaScript -->
+    <?php echo HTML::script('assets/js/plugins/metisMenu/metisMenu.min.js');; ?>
+
+
+    <?php echo $__env->yieldContent('footer_scripts'); ?> 
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+[2015-08-22 19:42:27] edu.ERROR: 500 - syntax error, unexpected '$t' (T_VARIABLE) @ /lareab
+exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'syntax error, unexpected '$t' (T_VARIABLE)' in C:\xampp\htdocs\lareab\app\database\migrations\2015_08_22_193822_create_table_ach_modalitati_publicare.php:23
+Stack trace:
+#0 [internal function]: Illuminate\Exception\Handler->handleShutdown()
+#1 {main} [] []

@@ -1,0 +1,43 @@
+<div class="row dt-row-form modalitati-info-form" id="modalitati-info-form">
+	<div class="modalitati-details col-xs-11 pull-right">
+		 <table class="table" id="table-modalitati">
+		 	<thead>
+		 		<th style="width: 5% !important;">#</th> 
+		 		<th>Mod publicare</th> 
+		 		<th>Anunț intenție public. anterior</th> 
+		 		<th>Tip complexitate</th> 
+		 		<th>Zile D-P</th> 
+		 		<th style="width: 5% !important;">Acțiuni</th> 
+		 	</thead>
+		 	<tbody>
+			 	<?php foreach($modalitati as $key => $modalitate): ?>
+			 		<tr>
+			 			<td style="text-align: center"> 
+			 				<a href="#" class="btn btn-default"><?php echo $key + 1; ?> </a>
+			 			</td>
+				 		<td><a href="#" data-pk="<?php echo $modalitate->id; ?>" data-url="<?php echo URL::route('nomenclator-modalitate-update'); ?>" data-name="nume" class="modalitate-nume" data-type="text" data-value="<?php echo $modalitate->nume; ?>"></a>
+	                    </td>
+	                    <td></td>
+	                    <td></td>
+	                    <td></td>
+			 			<td> 
+	 				       	<a href=""><i class="fa fa-eraser text-red"></i> 
+		 				       <span class="text-red">Ştergere</span>
+	 				       	</a>
+			 			</td>
+			 		</tr>
+				<?php endforeach; ?>
+		 	</tbody>
+		 </table>
+	</div>
+</div>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function($) { 
+		 $('.modalitate-nume').editable({ 
+		 	mode: 'inline',
+		 	highlight: '#fff'
+		 });
+	});
+</script>

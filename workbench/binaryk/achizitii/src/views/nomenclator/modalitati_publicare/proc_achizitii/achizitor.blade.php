@@ -1,0 +1,1 @@
+{{ $record->tip_achizitor ?  \Binaryk\Models\Nomenclator\Tip::find( $record->tip_achizitor )->nume : '-' }}

@@ -1,0 +1,1 @@
+{{ Binaryk\Models\Nomenclator\ModalitatiPublicare::zile()[$record->zile_dp] }}

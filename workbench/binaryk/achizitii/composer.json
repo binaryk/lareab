@@ -1,0 +1,25 @@
+{
+    "name": "binaryk/achizitii",
+    "description": "",
+    "authors": [
+        {
+            "name": "binaryk",
+            "email": "lupacescueduard@yahoo.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [ 
+            "src", 
+            "~libs",
+            "~achizitii" 
+        ],
+        "psr-0": {
+            "Binaryk\\Achizitii\\": "src/" 
+        }
+    },
+    "minimum-stability": "stable" 
+}

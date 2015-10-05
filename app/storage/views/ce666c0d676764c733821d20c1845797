@@ -1,0 +1,7 @@
+<?php $__env->startSection('actions-items'); ?>
+<li>
+<a href="<?php echo route('nomenclator-tip-anunt', ['id' => 'tip-anunt','id_procedura' => $record->id]); ?>" ><i class="fa fa-cicle"></i> <span>Vezi tipurile de anunțuri</span></a></li>
+<li class="divider"></li>
+@parent
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('achizitii::nomenclator.general_actions.actions', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

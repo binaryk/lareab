@@ -1,0 +1,300 @@
+
+
+<?php $__env->startSection('title'); ?> 
+    <p>Modifica obiectiv
+        <?php if(isset($obiectiv->numar)): ?> <?php echo $obiectiv->numar; ?> din data <?php echo $obiectiv->data_semnare_obiectiv; ?> <?php endif; ?>
+    </p>    
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <form role="form" action="<?php echo URL::current(); ?>" method="post">
+                <fieldset>
+                    <?php if(Session::has('message')): ?>
+                        <p class="alert <?php if($errors->isEmpty()): ?> alert-success <?php else: ?> alert-danger <?php endif; ?>"><?php echo Session::get('message'); ?></p>
+                    <?php endif; ?>
+
+                    <div class="col-md-6">
+                        <?php echo Form::selectField('Al carui departament este obiectivul?', 'departament', $departamente, $obiectiv->id_departament); ?>                    
+                    </div>                     
+                    
+                    <div class="col-md-2">
+                        <?php echo Form::textField('Numar inregistrare proiect', 'nr_reg_proiect', $obiectiv->nr_reg_proiect, ['title'=>'Numarul de inregistrare dat proiectului in registrul de proiecte']); ?>                    
+                    </div> 
+                    
+                    <div class="col-md-2">  
+                        <?php echo Form::textField('Numar obiectiv','numar', $obiectiv->numar); ?>
+
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <?php echo Form::textField('Data semnarii', 'data_semnare', $obiectiv->data_semnare_obiectiv, ['class'=>'form-control date1'], '<i class="fa fa-calendar"></i>'); ?>                    
+                    </div>
+
+                    <div class="col-md-8">  
+                        <?php echo Form::textField('Denumire','denumire_obj', $obiectiv->denumire_obj); ?>
+
+                    </div>                                             
+                    
+                    <div class="col-md-4">
+                        <?php echo Form::selectField('Stadiu obiectiv', 'stadiu_obiectiv', ['' => 'Selectioneaza stadiul'] + $stadii_obiectiv, $obiectiv->id_stadiu); ?>                    
+                    </div>
+
+                    <div class="col-md-12">
+                        <?php echo Form::selectField('Tempate', 'template', 
+                        ['' => 'Selectioneaza template-ul pe baza caruia se creeaza obiectivul'] + $templates, 
+                        $obiectiv->id_template); ?>                    
+                    </div>                                                                                                    
+                     
+                    <div class="col-md-12">
+                        <?php echo Form::selectField('Contractul de care apatine acest obiectiv', 'contract', 
+                        ['' => 'Selectioneaza contractul de care apartine acest obiectiv'] + $contracte, 
+                        $obiectiv->id_contract); ?>                    
+                    </div>                                                               
+
+                    <div class="form-group col-lg-4
+                        <?php if($errors->has('tara')): ?> has-error 
+                        <?php elseif(Input::old('tara')): ?> has-success 
+                        <?php endif; ?> ">
+                        <label>Tara</label>
+                        <select 
+                            id="tara" 
+                            class="selectpicker form-control" 
+                            name="tara" 
+                            data-live-search="true">
+                            <option   
+                            <?php if(Input::old('tara')): ?> 
+                                value="<?php echo Input::old('tara'); ?>"
+                            <?php else: ?> 
+                                value="<?php echo $obiectiv->id_tara; ?>" 
+                            <?php endif; ?>><?php echo $obiectiv->tara; ?>
+
+                            </option>                            
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-4
+                        <?php if($errors->has('regiune')): ?> has-error 
+                        <?php elseif(Input::old('regiune')): ?> has-success 
+                        <?php endif; ?> ">
+                        <label>Regiune</label>
+                        <select 
+                            name="regiune" 
+                            id="regiune" 
+                            class="selectpicker form-control" 
+                            data-live-search="true">                                         
+                            <option   
+                            <?php if(Input::old('regiune')): ?> 
+                                value="<?php echo Input::old('regiune'); ?>"            
+                            <?php else: ?> 
+                                value="<?php echo $obiectiv->id_regiune; ?>" 
+                            <?php endif; ?>><?php echo $obiectiv->regiune; ?>
+
+                            </option>                                    
+                        </select>        
+                    </div>
+
+                    <div class="form-group judet col-lg-4
+                        <?php if($errors->has('judet')): ?> has-error 
+                        <?php elseif(Input::old('judet')): ?> has-success 
+                        <?php endif; ?> ">
+                        <label for = "">Judet</label>
+                        <select 
+                            name="judet" 
+                            id="judet" 
+                            class="selectpicker form-control" 
+                            data-live-search="true">
+                            <option   
+                            <?php if(Input::old('judet')): ?> 
+                                value="<?php echo Input::old('judet'); ?>"
+                            <?php else: ?> 
+                                value="<?php echo $obiectiv->id_judet; ?>" 
+                            <?php endif; ?>><?php echo $obiectiv->judet; ?>
+
+                            </option>                                    
+                        </select>
+                    </div>
+
+                    <div class="form-group col-lg-12
+                        <?php if($errors->has('localitate')): ?> has-error 
+                        <?php elseif(Input::old('localitate')): ?> has-success 
+                        <?php endif; ?> ">
+                        <label for = "">Localitate</label>
+                        <select 
+                            name="localitate" 
+                            id="localitate" 
+                            class="selectpicker form-control" 
+                            data-live-search="true"> 
+                            <option   
+                            <?php if(Input::old('localitate')): ?> 
+                                value="<?php echo Input::old('localitate'); ?>"
+                            <?php else: ?> 
+                                value="<?php echo $obiectiv->id_localitate; ?>" 
+                            <?php endif; ?>><?php echo $obiectiv->localitate; ?>
+
+                            </option>                                              
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <?php echo Form::textField('Adresa', 'adresa', $obiectiv->adresa); ?>                    
+                    </div>
+
+                    <div class="col-md-4">
+                        <?php echo Form::textField('Cod postal', 'cod_postal', $obiectiv->cod_postal); ?>                    
+                    </div> 
+                    
+                    <?php if(Entrust::can('manage_finance')): ?>
+                        <div class="col-md-4">
+                            <?php echo Form::textNumericField('Valoare fara TVA', 'valoare_obiectiv', $obiectiv->valoare); ?>                    
+                        </div>
+
+                        <div class="col-md-4">
+                            <?php echo Form::textNumericField('Procent TVA(%)', 'procent_tva', $obiectiv->tva); ?>                    
+                        </div>              
+                    <?php endif; ?>                                                                  
+                    
+                    <div class="col-md-12 center"> 
+                        <input type="submit" name="btn_submit" class="btn btn-primary btn-lg button-width" value="Salveaza" onclick="this.value='Se salveaza ..';this.disabled='disabled'; this.form.submit();" />
+                        <a href="<?php echo URL::route('obiectiv_list_contract', $obiectiv->id_contract); ?>">
+                            <input type="button" id="back" class="btn btn-warning btn-lg button-width" value="Inapoi" />
+                        </a>                         
+                    </div>
+                    <?php echo Form::token(); ?> 
+                </fieldset>
+            </form>
+        </div>
+    </div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('footer_scripts'); ?>
+    <?php echo HTML::script('assets/js/segmentare.js'); ?>
+
+    <script>        
+        $(document).ready(function(){       
+            var tari = getTari();
+            //console.log(tari);
+            tari = JSON.parse(tari);
+            console.log(tari);
+            var valoare_anterioara = $('#tara').val();
+            $("#tara").empty().append('<option value="0">Selecteaza o tarisoara</option>');                
+            for (var key in tari) {
+                if (tari.hasOwnProperty(key)) {
+                    if (tari[key].id_tara.toString() === valoare_anterioara)
+                    {
+                        $("#tara").append('<option selected value="' + 
+                        tari[key].id_tara+'">' + 
+                        tari[key].denumire + '</option>');   
+                    }   
+                    else
+                    {                                
+                        $("#tara").append('<option value="' + 
+                        tari[key].id_tara+'">' + 
+                        tari[key].denumire + '</option>');   
+                    }                    
+                }            
+            }
+            $("#tara").change();
+        })
+          
+        $('#tara').change(function(){            
+            var functie = 'getRegiuni_tara_' + $(this).val().toString();
+            //console.log(functie);
+            var fn = window[functie];
+            var regiuni = null;
+            if (typeof fn === "function") 
+                regiuni = fn();            
+            
+            //console.log(regiuni);            
+            regiuni = JSON.parse(regiuni);
+            //console.log(regiuni);
+            var id_regiune = $("#regiune").val(); 
+            //alert(id_regiune);
+            $("#regiune").empty().append('<option value="0">Selecteaza o regiune</option>');                
+            for (var key in regiuni) {
+                if (regiuni.hasOwnProperty(key)) {                
+                    /*$("#regiune").append('<option value="' + 
+                        regiuni[key].id_regiune+'">' + 
+                        regiuni[key].denumire + '</option>'); */               
+                    if (regiuni[key].id_regiune.toString() == id_regiune)
+                    {                
+                        $("#regiune").append('<option selected value="' + 
+                            regiuni[key].id_regiune+'">' + 
+                            regiuni[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#regiune").append('<option value="' + 
+                            regiuni[key].id_regiune+'">' + 
+                            regiuni[key].denumire + '</option>');                            
+                }            
+            }
+            $('#regiune').change();
+        });   
+
+        $('#regiune').change(function(){
+            var functie = 'getJudete_regiune_' + $(this).val().toString();
+            //console.log(functie);
+            var fn = window[functie];
+            var judete = null;
+            if (typeof fn === "function") 
+                judete = fn();            
+   
+            judete = JSON.parse(judete);
+            var id_judet = $("#judet").val();
+            $("#judet").empty().append('<option value="0">Selecteaza un judet</option>');                
+            for (var key in judete) {
+                if (judete.hasOwnProperty(key)) {                
+                    /*$("#judet").append('<option value="' + 
+                        judete[key].id_judet+'">' + 
+                        judete[key].denumire + '</option>');*/
+                    if (judete[key].id_judet.toString() == id_judet)
+                    {                
+                        $("#judet").append('<option selected value="' + 
+                            judete[key].id_judet+'">' + 
+                            judete[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#judet").append('<option value="' + 
+                            judete[key].id_judet+'">' + 
+                            judete[key].denumire + '</option>');                                      
+                }            
+            }
+            $('#judet').change();
+        });   
+
+        $('#judet').change(function(){
+            var functie = 'getLocalitati_judet_' + $(this).val().toString();
+            //console.log(functie);
+            var fn = window[functie];
+            var localitati = null;
+            if (typeof fn === "function") 
+                localitati = fn();            
+
+            localitati = JSON.parse(localitati);
+            var id_localitate = $("#localitate").val();
+            $("#localitate").empty().append('<option value="0">Selecteaza o localitate</option>');                
+            for (var key in localitati) {
+                if (localitati.hasOwnProperty(key)) {                
+                    /*$("#localitate").append('<option value="' + 
+                        localitati[key].id_localitate + '">' + 
+                        localitati[key].denumire + '</option>'); */
+                    if (localitati[key].id_localitate.toString() == id_localitate)
+                    {                
+                        $("#localitate").append('<option selected value="' + 
+                            localitati[key].id_localitate+'">' + 
+                            localitati[key].denumire + '</option>');                
+                    }
+                    else
+                        $("#localitate").append('<option value="' + 
+                            localitati[key].id_localitate+'">' + 
+                            localitati[key].denumire + '</option>');                                           
+                }            
+            }
+        });
+
+        $(function() {
+            $(".date1").datepicker({ minDate: new Date(2010, 1, 1), dateFormat: "dd-mm-yy" });         
+        });
+    </script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

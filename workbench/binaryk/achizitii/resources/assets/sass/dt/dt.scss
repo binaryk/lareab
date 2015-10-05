@@ -1,0 +1,285 @@
+.content-wrapper
+{
+	background-color:#F7F7F7;
+	>section
+	{
+		padding:4px;
+	}
+	.box-header, .box-body
+	{
+		padding:2px;
+	}
+	.box-header
+	{
+		.box-title
+		{
+			font-size:15px;
+			font-weight:bold;
+		}
+	}
+}
+.select2-drop-active {
+	z-index: 999999 !important;
+}
+
+.dt-container
+{
+	.row-dt-toolbar, .row-dt, .row-dt-info, .row-dt-processing
+	{
+		margin:0px 0px 0px 0px;
+	}
+
+	.dt-tb-left, .dt-tb-right
+	{
+		padding:0px 0px 0px 0px;
+		margin:0px 0px 0px 0px;
+		height:30px;
+	}
+
+	.dt-table, .dt-info, .dt-processing
+	{
+		padding:0px 0px 0px 0px;
+	}
+
+	.dt-tb-left
+	{
+		.dataTables_length, .dataTables_filter
+		{
+			float:left;
+			text-align:left;
+			margin-left:0px;
+			label
+			{
+				margin-bottom:0px;
+			}
+		}
+	}
+
+	.dt-tb-right
+	{
+		background-color:#fff;
+		.dataTables_paginate
+		{
+			margin:0px 0px 0px 0px;
+			padding:0px 0px 0px 0px;
+			border:none !important;
+			background-color:#fff;
+			ul.pagination
+			{
+				margin:0px 0px 0px 0px;
+				padding:0px 0px 0px 0px;
+				border:none !important;
+				background-color:#fff;
+				.paginate_button, .paginate_button.active 
+				{
+					margin:0px 0px 0px 0px;
+					padding:0px 0px 0px 0px;
+					border:none !important;
+					outline:0px;
+					background-color:#fff;
+					a, span
+					{
+						padding:4px 10px;
+						margin-left:-1px;
+						background-color:#fff;
+						border:1px solid #ddd;
+						box-shadow:none;
+						height:30px !important;
+						i
+						{
+							padding:3px;
+						}
+					}
+					&:focus, &:hover
+					{
+						margin:0px 0px 0px 0px;
+						padding:0px 0px 0px 0px;
+						border:none;
+					}
+				}
+				.paginate_button.active
+				{
+					a, span
+					{
+						background-color:#337ab7;
+						color:#fff;
+						padding:4px 10px;
+					}
+				}
+			}
+		}
+	}
+
+	.dt-info
+	{
+		margin:0px 0px 2px 0px;
+		.dataTables_info
+		{
+			padding:0px 4px 0px 4px;
+			margin:0px 0px 0px 0px;
+			width:100%;
+			background-color:#fafafa;
+			color:#363636;
+			border:1px solid #ddd;
+		}
+	}
+
+	div.dataTables_processing
+	{
+		position:initial;
+		margin:0px 0px 0px 0px;
+		padding:0px 0px 0px 0px;
+		font-size:14px;
+		color:#009;
+	}
+
+	table.dataTable
+	{
+		border:1px solid #ddd;
+		border-collapse:collapse !important;
+		thead
+		{
+			outline:none;
+			th
+			{
+				outline:none;
+				vertical-align:middle;
+				font-size:14px;
+			}
+		}
+		tbody
+		{
+			.selected
+			{
+				background-color:#337ab7;
+				color:#F7F7F7;
+			}
+			td.td-align-right
+			{
+				text-align:right;
+			}
+			td.td-align-left
+			{
+				text-align:left;
+			}
+			td.td-align-center
+			{
+				text-align:center;
+			}
+
+		}
+		td, th
+		{
+			border:1px solid #ddd;
+			border-collapse:collapse !important;
+
+			.label
+			{
+				padding:0px 2px;
+			}
+		}
+		td
+		{
+			padding:2px 3px;
+			font-size:13px;
+		}
+		th
+		{
+			padding:5px 3px;
+			background-color:#fafafa;
+			font-size:14px;
+		}
+	}
+
+	.dataTables_empty
+	{
+		background-color:#f9f2f4;
+		color:#c7254e;
+		text-align:left !important;
+	}
+
+	.td-actions
+	{
+		>.btn-group
+		{
+			button
+			{
+				padding:6px 8px !important;
+			}
+		}
+		.dropdown-menu
+		{
+			.divider
+			{
+				margin:4px 0px;
+			}
+			li
+			{
+				a
+				{
+					padding:2px 10px;
+				}
+			}
+		}
+	}
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; // remove the gap so it doesn't close
+ }
+
+#dt-action-message
+{
+	.alert
+	{
+		padding:5px;
+		border-radius:5px !important;
+		margin:0px 0px 0px 0px;
+	}
+	.alert-dismissable .close
+	{
+		top:5px;
+		right:5px;
+		color:#fff;
+		opacity:0.7;
+	}
+
+	.alert-dismissable .close:hover{
+		opacity: 1;
+	}
+
+}
+
+.show-on-hover
+{
+	display:none; 
+	font-size:14px;
+	line-height:30px;
+}
+
+tr:hover .show-on-hover
+{
+	display:inline-block !important;
+}
+
+.summary-cell
+{
+	float:left;
+	text-align:right;
+	height:20px;
+	line-height:20px;
+	background-color:#3c8dbc;
+	padding:0px 3px;
+	color:#fff;
+	font-weight:bold;
+}
+
+.dt-toolbar-container
+{
+	.alert
+	{
+		margin:0px;
+		padding:6px;
+	}
+}

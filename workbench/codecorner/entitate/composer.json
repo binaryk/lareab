@@ -1,0 +1,24 @@
+{
+    "name": "codecorner/entitate",
+    "description": "Firme din grup, parteneri ai grupului, entitati publice (UAT, Asociatii de proprietari)",
+    "authors": [
+        {
+            "name": "codecorner",
+            "email": "lunguc@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations",
+			"src/controllers"
+        ],
+        "psr-0": {
+            "Codecorner\\Entitate\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
