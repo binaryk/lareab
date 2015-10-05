@@ -8,7 +8,7 @@
             "name": "Catalin Lungu",
             "homepage": "http://www.andrewelkins.com"
         }
-    ],
+    ], 
     "require": {
         "laravel/framework": "~4.2",
         "zizaco/confide": "~4.0",
