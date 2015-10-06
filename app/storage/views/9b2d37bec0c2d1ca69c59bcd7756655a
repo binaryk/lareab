@@ -1,0 +1,5 @@
+<?php $__env->startSection('actions-items'); ?>
+<li class="action-update-record" data-id="<?php echo $record->id; ?>"><a href="#"><i class="fa fa-edit"></i> <span>Editare</span></a></li>
+<li class="action-delete-record" data-id="<?php echo $record->id; ?>"><a href="#"><i class="fa fa-eraser text-red"></i> <span class="text-red">Ştergere</span></a></li>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('achizitii::~layouts.datatable.actions', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

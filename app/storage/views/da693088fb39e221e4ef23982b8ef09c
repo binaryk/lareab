@@ -1,0 +1,20 @@
+<div class="form-group<?php echo $feedback ? ' has-' . $feedback : ''; ?>">
+	<?php if( ! empty($caption) ): ?>
+		<label class="control-label" for="<?php echo $name; ?>">
+			<?php if($feedback == Easy\Form\Base::FEEDBACK_SUCCESS): ?>
+				<i class="fa fa-check"></i>
+			<?php elseif($feedback == Easy\Form\Base::FEEDBACK_WARNING): ?>
+				<i class="fa fa-bell-o"></i>
+			<?php elseif($feedback == Easy\Form\Base::FEEDBACK_ERROR): ?>
+				<i class="fa fa-times-circle-o"></i>
+			<?php endif; ?>
+			<?php echo $caption; ?>
+
+		</label>
+    <?php endif; ?>
+    <?php echo Form::text($name, $value, $attributes); ?>
+
+    <?php if($help): ?>
+		<p class="help-block"><?php echo $help; ?></p>
+	<?php endif; ?>
+</div>
