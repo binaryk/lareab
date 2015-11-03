@@ -1,0 +1,1 @@
+<span title="<?php echo $record->descriere_obiect_contract; ?>"><?php echo $record->denumire_obiect_contract; ?></span>

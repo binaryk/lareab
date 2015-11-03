@@ -1,0 +1,18 @@
+<div class="form-group">
+    <?php if(@caption): ?>
+    <label for="<?php echo $name; ?>"><?php echo $caption; ?></label>
+<?php endif; ?>
+	<div class="input-group<?php echo $feedback ? ' has-' . $feedback : ''; ?>">
+    <?php if( $addon['before']): ?>
+    	<span class="input-group-addon"><?php echo $addon['before']; ?></span>
+    <?php endif; ?>
+    <?php echo Form::text($name, $value, $attributes); ?>
+
+    <?php if( $addon['after']): ?>
+    	<span class="input-group-addon"><?php echo $addon['after']; ?></span>
+    <?php endif; ?>
+	</div>
+</div>
+<?php if($help): ?>
+    <p class="help-block"><?php echo $help; ?></p>
+<?php endif; ?>

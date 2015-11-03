@@ -1,5 +1,4 @@
-<?php
-namespace Binaryk\Models\Nomenclator; 
+<?php namespace Binaryk\Models\Nomenclator; 
 
 class ClasificareDocumente extends \Eloquent { 
 

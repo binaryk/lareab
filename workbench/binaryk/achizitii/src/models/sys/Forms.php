@@ -15,6 +15,9 @@ class Forms
 		'template-achizitii'           => '\Binaryk\Achizitii\Form\TemplateAchizitiiRecord',
 		'tip-anunt' 			       => '\Binaryk\Achizitii\Form\TipAnuntRecord',
 		'modalitati-publicare'	       => '\Binaryk\Achizitii\Form\ModalitatiPublicareRecord',
+
+		'lista-proiecte'	           => '\Binaryk\Achizitii\Form\ProiecteRecordValidation',
+		'plan-achizitii-proiect'	   => '\Binaryk\Achizitii\Form\PlanachizitiiproiectRecordValidation',
 	];
 
 	public function __construct($id)

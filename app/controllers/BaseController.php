@@ -9,6 +9,7 @@ class BaseController extends Controller {
      * @return \BaseController
      */
     protected $date_organizatie = null;
+    
     public function __construct()
     {
         $this->beforeFilter('csrf', array('on' => 'post'));        

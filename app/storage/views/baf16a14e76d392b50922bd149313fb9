@@ -1,0 +1,33 @@
+<div class="col-xs-12">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			Detalii
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-xs-12 col-md-4">
+					<?php echo $controls[15]->out(); ?>
+
+				</div>
+				<div class="col-xs-12 col-md-8">
+					<?php echo $controls[16]->out(); ?>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-md-6">
+					<?php echo $controls[17]->out(); ?>
+
+				</div>
+				<div class="col-xs-12 col-md-3">
+					<?php echo $controls[18]->out(); ?>
+
+				</div>
+				<div class="col-xs-12 col-md-3">
+					<?php echo $controls[19]->out(); ?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

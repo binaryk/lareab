@@ -24,12 +24,11 @@ $app = new Illuminate\Foundation\Application;
 */
 
 $env = $app->detectEnvironment(array(
-
-    'edu' => ["WIN-KE1FRDKJTPK"], 
-    'local' => array(gethostname()), // Change this to your local machine hostname.
-    'staging' => array('your-staging-machine-name'),
+	'ovidiu'     => ['LAPTOP2'],
+    'edu'        => ["WIN-KE1FRDKJTPK"], 
+    'staging'    => array('your-staging-machine-name'),
     'production' => array('your-production-machine-name'),
-
+    'local'      => array(gethostname()), // Change this to your local machine hostname.
 ));
 
 /*

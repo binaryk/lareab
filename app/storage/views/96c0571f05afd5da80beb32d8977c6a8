@@ -1,3 +1,0 @@
-<li>
-	<a href="<?php echo URL::route('tip-proceduri-achizitii'); ?>">Tip proceduri achizitii</a>
-</li>

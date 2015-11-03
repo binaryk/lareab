@@ -1,6 +1,4 @@
-<?php
-
-namespace Binaryk\Controllers\Datatable;
+<?php namespace Binaryk\Controllers\Datatable;
 
 class DatatableController extends \Datatable\DatatableController
 {

@@ -1,0 +1,1 @@
+{{ $record->tip_achizitor }}

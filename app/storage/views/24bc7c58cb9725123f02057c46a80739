@@ -1,0 +1,1 @@
+<a href="#" class="vezi-modalitati-publicare" data-anunt="<?php echo $record->tip_anunt; ?>"><?php echo $record->tip_anunt_nume; ?></a>

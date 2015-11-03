@@ -1,0 +1,1 @@
+<a href="#" class="vezi-modalitati-publicare" data-anunt="{{$record->tip_anunt}}">{{ $record->tip_anunt_nume }}</a>

@@ -51,7 +51,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 							{
 								var __date = moment(record[field], 'YYYY-MM-DD');
 								record[field] = __date.format('DD.MM.YYYY');
-								console.log('11.05 Moment> ' + field + ' = ' + record[field]);
 							}
 						}
 						control.val(record[field]);
@@ -97,7 +96,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 
 		if( (result.action == 'update') || (result.action == 'delete') )
 		{
-			console.log(result);
 			this.fillfields(result.record, result.action);
 		}
 		
@@ -135,7 +133,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 				$(this).css({'background-color':'#fff'});
 			}
 		})
-		console.log('3.2. -----> Custom after Empty controls');
 		this.afterEmptyControls();
 	};
 
@@ -146,7 +143,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 		$(this.formid + ' ' + this.classDoButton).removeClass('btn-do-delete');
 		$(this.formid + ' #action-title').html('');
 		$(this.formid + ' ' + this.classDoButton).html('');
-		console.log('3.1. -----> Empty controls');
 		this.emptyControls();
 		$(this.formid).hide();
 	};
@@ -154,9 +150,7 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 	this.loadform = function(action, record_id)
 	{ 
 		var self = this;
-		console.log('2 -----> Hide Action Message');
 		this.hideActionMessage();
-		console.log('3 -----> Hide form');
         this.hideform();
 		$.ajax({
 			url      : this.loadformurl,
@@ -166,8 +160,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
         	success  : function(result)
         	{
         		self.record_id = record_id;
-        		console.log('4 -----> Show form');
-        		console.log(result);
         		self.showform(result);
         		$(self.classDoButton).removeClass('disabled');
         	}
@@ -296,7 +288,7 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 
 	this.hideFieldsErrors = function()
 	{
-		var controls   = $(this.classSourceControl);
+		var controls   = $(this.classSourceControls);
 		controls.each(function(i){
 			var formgroup = $(this).closest('.form-group');
 			if(formgroup.length > 0)
@@ -356,7 +348,6 @@ function DTFORM(formid, loadformurl, model, doactionurl, dt)
 		var self = this;
 
 		$(this.classActionInsert).on('click', function(){
-			console.log('1 -----> Click on [Add] => load form');
 			self.loadform('insert', null);
 		});
 		

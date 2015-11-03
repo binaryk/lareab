@@ -1,0 +1,1 @@
+<span title="{{ $record->descriere_obiect_contract }}">{{ $record->denumire_obiect_contract }}</span>

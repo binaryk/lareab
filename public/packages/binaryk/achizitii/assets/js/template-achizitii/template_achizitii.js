@@ -5,19 +5,11 @@ function TemplateAchizitii( parameters )
 	this.tip_achizitii_url = parameters.get_tip_achizitie_url;
 	this.tableClass   = 'table#tip_achizitii';
 	this.tach 	      = parameters.tach;
-	var self = this;
+	this.endpoints    = parameters.endpoints;
 
-	this.generateCombobox = function(parameters ){
-		/*var combobox = new COMBOBOX({
-			'url'     : parameters.url,
-			'id'      : parameters.id,
-			'control' : parameters.control,
-			'field'   : parameters.field,
-			'model'	  : parameters.model 
-		});
-		console.log(combobox);*/
-		// return combobox;
-	}
+	this.modal = new CtModal({'id' : '#frm-template-achizitii'});
+
+	var self = this;
 
 	this.onAchizitorChange = function( event, id_tip_achizitor, id_tip_procedura ){
 		var combobox = new COMBOBOX({
@@ -28,30 +20,16 @@ function TemplateAchizitii( parameters )
 			'model'	  : '\\Binaryk\\Models\\Nomenclator\\TipProceduriAchizitii' 
 		});
 		combobox.populate(id_tip_procedura);
-
 	}
 
-	this.addRow = function(btn){
-		var select = '<select class="form-control data-source input-group form-select init-on-update-delete array_data" id="tip_achizitie" data-control-source="tip_achizitie" data-control-type="combobox" name="tip_achizitie" style="background-color: rgb(255, 255, 255);"> </select>';
-		var data=[select];
-		console.log(data);
-		self.tach.row.add(data).draw();
-
+	this.onProceduraChange = function( event, id_tip_procedura, id_tip_anunt )
+	{
 		var combobox = new COMBOBOX({
-			'url'     :self.tip_achizitii_url.init,
-			'id'      :66,
-			'control' :'.array_data:last',
-			'field'   :'nume',
-			'model'	  :'\\Binaryk\\Models\\Nomenclator\\TipAchizitii' 
-		}); 
-		combobox.populate(0);
-	}
-	
-	
-	this.initHandlers = function(){
-		$(document).on('click', '#add_row', function(e){
-			self.addRow(this);
+			'url'     : this.proceduriurl.url_anunt,
+			'id'      : id_tip_procedura,
+			'control' : '#tip_anunt',
 		});
+		combobox.populate(id_tip_anunt);
 	}
 
 	this.initCalendar = function(){
@@ -71,20 +49,49 @@ function TemplateAchizitii( parameters )
 		}
 	}
 
-	this.getTipAchizitii = function(id_template){
-		var table = new Table({
-			parent_id	: id_template,
-			parent_model: 'Binaryk\\Models\\Nomenclator\\Template',
-			url 	    : self.tip_achizitii_url.url,
-			control     : 'table#tip_achizitii'   
-		});
-
-		table.populate();
+	this.checkTipAchizitii = function( tip_achizitii)
+	{
+		for(tip in tip_achizitii)
+		{
+			$('#tip-achizitii-' + tip_achizitii[tip].id).prop('checked', true);
+		}
 	}
+
+	$('#box-template-achizitii').on('click', '.vezi-modalitati-publicare, #view-modalitati-publicare-by-tip-anunt', function(e){
+		var id_tip_anunt = 0;
+
+		if( $(this).data('anunt') )
+		{
+			id_tip_anunt = $(this).data('anunt');
+		}
+		else
+		{
+			id_tip_anunt = $('#tip_anunt').val();
+		}
+
+		if( id_tip_anunt != 0)
+		{
+			e.preventDefault();
+			$.ajax({
+				url : self.endpoints['get-modal-modalitati-publicare-by-tip-anunt'],
+				type : 'POST',
+				dataType : 'json',
+				data : {'id_tip_anunt' : id_tip_anunt },
+				success : function(result){
+					if(result.success)
+					{
+						self.modal.show(result.modal.header, result.modal.body, result.modal.footer);
+					}
+				}
+			});
+		}
+	});
 
 	this.init = function(){
 		self.initCalendar();
+		/*
 		self.initHandlers();
+		*/
 	}
 
 }

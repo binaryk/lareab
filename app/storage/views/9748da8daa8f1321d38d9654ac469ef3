@@ -1,7 +1,0 @@
- 
-<?php $__env->startSection('datatable-specific-page-jquery-initializations'); ?> 
-	
-	
-
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('achizitii::~layouts.datatable.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

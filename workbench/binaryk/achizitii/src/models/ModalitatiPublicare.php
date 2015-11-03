@@ -1,5 +1,4 @@
-<?php
-namespace Binaryk\Models\Nomenclator; 
+<?php namespace Binaryk\Models\Nomenclator; 
 
 class ModalitatiPublicare extends \Eloquent { 
 
@@ -9,12 +8,12 @@ class ModalitatiPublicare extends \Eloquent {
 
     protected static $anterior     = [ '1' => 'Nu', '2' => 'Da' ];
     protected static $complexitate = [ '1' => 'Redus', '2' => 'Normal/Mare' ];
-    protected static $zile = [ '1' => '4', '2' => '6','3' => '10', '4' => '36','5' => '52' ];
-
+    protected static $zile         = [ '1' => '4', '2' => '6','3' => '10', '4' => '36','5' => '52' ];
 
     public static function getRecord( $id )
     {
-        return self::find($id);
+        $record = self::find($id);
+        return $record;
     }
 
     public static function createRecord($data )
@@ -64,6 +63,44 @@ class ModalitatiPublicare extends \Eloquent {
 
     public function procedura(){
         return $this->belongsTo('Binaryk\Models\Nomenclator\TipProceduriAchizitii','id_tip_procedura');
+    }
+
+    public static function toTextAnterior( $value )
+    {
+        if( array_key_exists($value, self::$anterior) )
+        {
+            return self::$anterior[$value];
+        }
+        return '-';
+    }
+
+    public static function toTextTipComplexitate( $value )
+    {
+        if( array_key_exists($value, self::$complexitate) )
+        {
+            return self::$complexitate[$value];
+        }
+        return '-';
+    }
+
+    public static function toTextZileDP( $value )
+    {
+        if( array_key_exists($value, self::$zile) )
+        {
+            return self::$zile[$value];
+        }
+        return '-';
+    }
+
+    public static function toFormByTipAnunt($id_tip_anunt)
+    {
+        $tip_anunt = TipAnunturi::find( $id_tip_anunt );
+        $items = self::where('id_tip_anunt', $id_tip_anunt)->orderBy('id')->get();
+        return [
+            'header' => 'Modalitati de publicare aferente tipului de anunt<br/>' . $tip_anunt->nume,
+            'body'   => \View::make('achizitii::nomenclator.modalitati_publicare.parts.modal_body')->with(['records' => $items])->render(),
+            'footer' => '<button type="button" class="btn btn-default" data-dismiss="modal">Renunta</button>',
+        ];
     } 
 
 } 

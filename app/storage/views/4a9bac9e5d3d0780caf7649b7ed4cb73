@@ -1,0 +1,1 @@
+<a href="<?php echo route('dosar-achizitii-index', ['id_template_achizitii' => $record->id]); ?>" class="btn btn-primary">Dosar achiziții</a>

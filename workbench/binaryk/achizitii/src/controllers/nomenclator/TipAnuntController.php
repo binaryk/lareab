@@ -27,4 +27,3 @@ class TipAnuntController extends \Datatable\DatatableController {
 	}
 
 }
-

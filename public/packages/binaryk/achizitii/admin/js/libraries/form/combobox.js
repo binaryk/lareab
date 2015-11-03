@@ -40,7 +40,7 @@ function COMBOBOX(parameters)
         	{
         		console.log('--------------------->', result.options);
         		self.setOptions(result.options, value);
-        		// console.log(self.control + ' <----- ' + value);
+        		console.log(self.control + ' <----- ' + value);
         		$(self.control).val(value);
         	}
 		})

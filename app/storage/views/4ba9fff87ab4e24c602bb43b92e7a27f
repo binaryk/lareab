@@ -1,0 +1,40 @@
+<?php $__env->startSection('_content'); ?>
+	@parent
+	<?php echo $modal_form->out(); ?>
+
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('custom-styles'); ?>
+	@parent
+	<link rel="stylesheet" type="text/css" href="<?php echo asset('packages/binaryk/achizitii/assets/css/custom/plan-achizitii-proiect.css'); ?>"> 
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('custom-scripts'); ?>
+	@parent
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/packages/inputmask/js/jquery.inputmask.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/packages/inputmask/js/jquery.inputmask.numeric.extensions.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/packages/moment/moment.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/packages/numeral/numeral.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/packages/numeral/languages/ro.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/admin/js/libraries/commons/helper.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/admin/js/libraries/form/ctmodal.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo asset('packages/binaryk/achizitii/assets/js/plan-achizitii-proiect/plan-achizitii-proiect.js'); ?>"></script>
+	<script>
+	numeral.language('ro');
+	numeral.defaultFormat('(0,0.0000)');
+	moment.locale('ro');
+	</script>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('datatable-specific-page-jquery-initializations'); ?>
+	var pap = new PlanAchizitiiProiect({
+		'endpoints' : {
+			'get-curs-valutar'    : "<?php echo URL::route('get-curs-valutar'); ?>",
+			'get-form-templates'  : "<?php echo URL::route('get-form-templates'); ?>",
+			'get-template-record' : "<?php echo URL::route('get-template-record'); ?>"
+		},
+		'proiect' : <?php echo $proiect; ?>,
+		form : form
+	})
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('achizitii::~layouts.datatable.index', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

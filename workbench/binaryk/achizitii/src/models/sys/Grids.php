@@ -19,6 +19,10 @@ class Grids {
 		'clasificare-documente' => '\Binaryk\Achizitii\Grid\ClasificareDocumenteGrids',
 		'template-achizitii'    => '\Binaryk\Achizitii\Grid\TemplateAchizitiiGrids',
 		'modalitati-publicare'  => '\Binaryk\Achizitii\Grid\ModalitatiPublicareGrids',
+
+
+		'lista-proiecte'         => '\Binaryk\Achizitii\Grid\ProiecteGrid',
+		'plan-achizitii-proiect' => '\Binaryk\Achizitii\Grid\PlanachizitiiproiectGrid',
 	];
 
 	public function __construct($id) {

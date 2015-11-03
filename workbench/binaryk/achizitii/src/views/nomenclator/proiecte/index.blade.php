@@ -1,0 +1,1 @@
+@extends('achizitii::~layouts.datatable.index')

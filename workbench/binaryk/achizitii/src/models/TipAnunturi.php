@@ -1,10 +1,9 @@
-<?php
-namespace Binaryk\Models\Nomenclator; 
+<?php namespace Binaryk\Models\Nomenclator; 
 
-class TipAnunturi extends \Eloquent { 
+class TipAnunturi extends \Eloquent 
+{ 
 
 	protected $table = 'ach_tip_anunturi';
-
 	protected $fillable = ['nume', 'id_tip_procedura'];
 
     public static function getRecord( $id )
@@ -41,6 +40,19 @@ class TipAnunturi extends \Eloquent {
     {
         return [0 => ' -- Selectaţi un anunț --'] + self::orderBy('id')->lists('nume', 'id');
     }
+
+    public static function toPopulateCombobox( $id_tip_procedura )
+    {
+        $data = [0 => ' -- Selectaţi un tip de anunț --'] + self::where('id_tip_procedura', $id_tip_procedura)->orderBy('id')->lists('nume', 'id');
+        $result = [];
+        foreach($data as $id => $option)
+        {
+            $result[] = ['id' => $id, 'text' => $option];
+        }
+        return $result;
+        // return [0 => ' -- Selectaţi un anunț --'] + self::where('id_tip_procedura', $id_tip_procedura)->orderBy('id')->lists('nume', 'id');
+    }
+
 
     public function procedura(){
         return $this->belongsTo('Binaryk\Models\Nomenclator\TipProceduriAchizitii','id_tip_procedura');

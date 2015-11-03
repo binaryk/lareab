@@ -15,3 +15,6 @@
     </li>     
 </ul>
 </li>
+<li>
+    <a href="{{ URL::route('proiecte-index') }}">Proiecte</a>
+</li>

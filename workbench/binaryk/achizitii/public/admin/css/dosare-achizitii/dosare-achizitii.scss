@@ -1,0 +1,61 @@
+#dosar-achizitii-container
+{
+	.btn-add, .form-group
+	{
+		margin:0 !important;
+	}
+
+	.list-group-item
+	{
+		padding:4px 6px;
+		&:hover
+		{
+			background-color:#C2E0FF;
+			color:#000;
+		}
+	}
+
+	td, th
+	{
+		border:none !important;
+		padding:3px !important;
+	}
+
+	td:nth-child(1)
+	{
+		text-align:right;
+		width:40%;
+		vertical-align:top !important;
+	}
+
+	.form-control-feedback
+	{
+		top:0px !important;
+	}
+
+	p.help-block
+	{
+		font-size:80%;
+		color:#F00;
+		margin-top:1px;
+		margin-bottom:1px;
+	}
+
+	.selected-item
+	{
+		background-color:#CCFFCC;
+		color:#000;
+	}
+
+	.delete-record
+	{
+		color:#F00;
+		display:none;
+	}
+
+	.edit-record
+	{
+		color:#000;
+		display:none;
+	}
+}

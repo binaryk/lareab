@@ -1,4 +1,5 @@
 <?php namespace Binaryk\Controllers\Nomenclator; 
+
 use BaseController;
 use Illuminate\Support\Facades\View; 
 use Binaryk\Models\Sys\Grids;
@@ -41,5 +42,14 @@ class TemplateAchizitiiController extends \Datatable\DatatableController {
 		return \Response::json([ 'options' => $result->achizitii ]);
 	} 
 
-}
+	public function getTipAnuntByTipProcedura()
+	{
+		return \Response::json(['success' => true, 'options' => \Binaryk\Models\Nomenclator\TipAnunturi::toPopulateCombobox(\Input::get('id'))]);
+	}
 
+	public function getModalFormModalitatiPublicareByTipAnunt()
+	{
+		return \Response::json(['success' => true, 'modal' => \Binaryk\Models\Nomenclator\ModalitatiPublicare::toFormByTipAnunt(\Input::get('id_tip_anunt'))]);
+	}
+
+}

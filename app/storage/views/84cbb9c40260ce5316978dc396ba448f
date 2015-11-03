@@ -1,0 +1,71 @@
+ 
+
+<?php $__env->startSection('title'); ?>
+    Dosar achizitii (<i><?php echo $template_achizitii->nume; ?></i>)
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('_content'); ?>
+<div class="row">
+	<div class="col-xs-12">
+		<div id="dosar-achizitii-container">
+
+			<div class="row">
+				<div class="col-xs-12">
+					<div>
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs" role="tablist">
+							<li role="presentation" class="active">
+								<a v-on="click:changeTip('achizitor')" href="#achizitor" aria-controls="achizitor" role="tab" data-toggle="tab">Achizitor</a>
+							</li>
+							<li role="presentation">
+								<a v-on="click:changeTip('ofertant')" href="#ofertant" aria-controls="ofertant" role="tab" data-toggle="tab">Ofertant</a>
+							</li>
+						</ul>
+
+						<!-- Tab panes -->
+						<div class="tab-content" style="margin-top:12px">
+							<div role="tabpanel" class="tab-pane active" id="achizitor">
+								<?php echo $__env->make('achizitii::nomenclator.dosare_achizitii.lista-documente', ['tip' => 'achizitor', 'lista' => $documente_achizitor], array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+							</div>
+							<div role="tabpanel" class="tab-pane" id="ofertant">
+								<?php echo $__env->make('achizitii::nomenclator.dosare_achizitii.lista-documente', ['tip' => 'ofertant', 'lista' => $documente_ofertant], array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('custom-styles'); ?>
+	<?php echo HTML::style('packages/binaryk/achizitii/assets/css/custom/dosare-achizitii.css'); ?>
+
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('custom-scripts'); ?>
+	<?php echo HTML::script('packages/binaryk/achizitii/assets/js/template-achizitii/dosar-achizitii.js'); ?>
+
+	<?php echo HTML::script('packages/binaryk/achizitii/packages/vue/vue.min.js'); ?>
+
+	<?php echo HTML::script('packages/binaryk/achizitii/packages/vue/vue-resource.min.js'); ?>
+
+	<script>
+		var dosarAchizitii = new Dosarchizitii({
+			documente_achizitor   : <?php echo $documente_achizitor; ?>,
+			documente_ofertant    : <?php echo $documente_ofertant; ?>,
+			clasificare_documente : <?php echo $clasificare_documente; ?>,
+			mod_solicitare        : <?php echo json_encode($mod_solicitare); ?>,
+			mod_predare           : <?php echo json_encode($mod_predare); ?>,
+			template_achizitii    : <?php echo $template_achizitii; ?>,
+			endpoints             : {
+				'insert' : "<?php echo route('insert-document-dosar-achizitie'); ?>",
+				'update' : "<?php echo route('update-document-dosar-achizitie'); ?>",
+				'delete' : "<?php echo route('delete-document-dosar-achizitie'); ?>"
+			}
+		});
+	</script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('achizitii::~layout.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
